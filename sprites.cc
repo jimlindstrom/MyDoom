@@ -13,6 +13,8 @@ bool sprites_init(wad_file const *wad)
 {
   wad_lump const *sprite_lump = NULL;
   uint8_t const *sprite_ptr;
+  uint8_t frame_idx, rotation_idx;
+  char name_prefix[5];
   int i;
 
   num_sprites = 0;
@@ -35,8 +37,22 @@ bool sprites_init(wad_file const *wad)
   {
     if (sprite_lump->get_num_bytes() > 0)
     {
-      printf("reading sprite %s\n", sprite_lump->get_name());
-      sprites[i++].set_from_lump_data(sprite_lump->get_data());
+      strncpy(name_prefix, sprite_lump->get_name(), 4); name_prefix[4] = 0;
+      sprites[i].set_name_prefix(name_prefix);
+
+      frame_idx = sprite_lump->get_name()[4] - 'A';
+      sprites[i].set_frame_idx(frame_idx);
+
+      rotation_idx = sprite_lump->get_name()[5] - '0';
+      if(rotation_idx > 8)
+      {
+        printf("ERROR: Sprite \"%s\" has rotation index of %d\n", sprite_lump->get_name(), rotation_idx);
+        return false;
+      }
+      sprites[i].set_rotation_idx(rotation_idx);
+
+      sprites[i].set_from_lump_data(sprite_lump->get_data());
+      i++;
     }
   }
 
