@@ -16,7 +16,7 @@ public:
   void set_name(char const *_name);
   void set_data(void const *src, int32_t _num_bytes);
 
-  bool is_named(char const *_name);
+  bool is_named(char const *_name) const;
   
 private:
   char *name;

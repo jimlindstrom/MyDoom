@@ -9,7 +9,7 @@
 #define COLORS_PER_PALETTE	256
 #define BYTES_PER_COLOR		  3
 
-palette palettes[NUM_PALETTES];
+static palette palettes[NUM_PALETTES];
 
 bool palettes_init(wad_file const *wad)
 {
@@ -33,4 +33,13 @@ bool palettes_init(wad_file const *wad)
   palettes[0].print_html_file("/tmp/palettes.html");
 
   return true;
+}
+
+void palettes_destroy(void)
+{
+}
+
+palette const *palettes_get(int idx)
+{
+  return &palettes[idx];
 }

@@ -10,6 +10,10 @@ SRC=wad_header.cc \
     palettes.cc \
     colormap.cc \
     colormaps.cc \
+    flat.cc \
+    flats.cc \
+    sprite.cc \
+    sprites.cc \
     test.cc 
 
 all:

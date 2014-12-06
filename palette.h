@@ -12,7 +12,7 @@ public:
   bool from_linear_256_array(uint8_t const *data);
   void print_html_file(char const *filename);
 
-  color_rgb const *get_color(int color_idx);
+  color_rgb const *get_color(int color_idx) const;
 
 private:
   int num_colors;

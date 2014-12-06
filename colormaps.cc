@@ -34,3 +34,7 @@ bool colormaps_init(wad_file const *wad)
 
   return true;
 }
+
+void colormaps_destroy(void)
+{
+}

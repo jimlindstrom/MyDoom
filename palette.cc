@@ -29,7 +29,7 @@ bool palette::from_linear_256_array(uint8_t const *data)
   return true;
 }
 
-color_rgb const *palette::get_color(int color_idx)
+color_rgb const *palette::get_color(int color_idx) const
 {
   // FIXME: assert color_idx<num_colors
   return &colors[color_idx];
