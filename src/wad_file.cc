@@ -65,7 +65,7 @@ bool wad_file::read_lumps(FILE *f)
       printf("ERROR: invalid WAD directory %d of %d\n", lump_idx, num_lumps);
       return false;
     }
-    //dir.print();
+    dir.print();
     pos = ftell(f);
 
     fseek(f, dir.get_filepos(), SEEK_SET);
@@ -117,7 +117,7 @@ wad_lump const *wad_file::get_next_lump(wad_lump const *cur_lump) const
 
   for(int lump_idx=0; lump_idx<(num_lumps-1); lump_idx++)
   {
-    if(lumps[lump_idx].is_named(cur_lump->get_name()))
+    if(&lumps[lump_idx] == cur_lump)
     {
       return &lumps[lump_idx+1];
     }

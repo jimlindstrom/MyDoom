@@ -33,10 +33,11 @@ bool wad_directory::is_named(char const *_name)
 
 void wad_directory::print(void)
 {
-  printf("Directory:\n");
-  printf("  filepos: %d\n", filepos);
-  printf("  size: %d\n", size);
-  printf("  name: %s\n", name);
+  printf("Directory:");
+  printf("\tname: %-10s", name);
+  printf("\tfilepos: % 9d", filepos);
+  printf("\tsize: % 8d", size);
+  printf("\n");
 }
 
 bool wad_directory::is_valid(void)

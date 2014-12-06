@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "patches.h"
 #include "wall_texture.h"
 
 wall_texture::wall_texture()
@@ -15,8 +16,10 @@ wall_texture::~wall_texture()
   if(patches) { delete[] patches; }
 }
 
-bool wall_texture::read_from_maptexture_data(uint8_t const *data)
+bool wall_texture::read_from_maptexture_data(uint8_t const *data, patch_names_lump const *pnames)
 {
+  char const *patch_name;
+
   memcpy(name, data, 8);             data += 8;
   name[8] = NULL;
 
@@ -29,11 +32,14 @@ bool wall_texture::read_from_maptexture_data(uint8_t const *data)
   patches = new wall_patch[num_patches];
   for(int i=0; i<num_patches; i++)
   {
-    patches[i].originx  = *((uint16_t*)data); data += 2;
-    patches[i].originy  = *((uint16_t*)data); data += 2;
-    patches[i].patch    = *((uint16_t*)data); data += 2;
-    patches[i].stepdir  = *((uint16_t*)data); data += 2;
-    patches[i].colormap = *((uint16_t*)data); data += 2;
+    patches[i].originx   = *((uint16_t*)data); data += 2;
+    patches[i].originy   = *((uint16_t*)data); data += 2;
+    patches[i].patch_num = *((uint16_t*)data); data += 2;
+    patches[i].stepdir   = *((uint16_t*)data); data += 2;
+    patches[i].colormap  = *((uint16_t*)data); data += 2;
+
+    patch_name = pnames->get_patch_name_by_num(patches[i].patch_num);
+    patches[i]._patch = patches_get_by_name(patch_name);
   }
 
   return is_valid();

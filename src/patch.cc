@@ -2,14 +2,14 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "sprite.h"
+#include "patch.h"
 
-sprite::sprite()
+patch::patch()
  : picture_data()
 {
 }
 
-sprite::~sprite()
+patch::~patch()
 {
 }
 

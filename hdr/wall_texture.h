@@ -3,14 +3,18 @@
 
 #include <stdint.h>
 
+#include "patch.h"
+#include "patch_names_lump.h"
+
 class wall_patch
 {
 public:
-  uint16_t originx;  // A short int defining the horizontal offset of the patch relative to the upper-left of the texture
-  uint16_t originy;  // A short int defining the vertical offset of the patch relative to the upper-left of the texture
-  uint16_t patch;    // A short int defining the patch number (as listed in PNAMES) to draw
-  uint16_t stepdir;  // ?
-  uint16_t colormap; // ?
+  uint16_t originx;    // A short int defining the horizontal offset of the patch relative to the upper-left of the texture
+  uint16_t originy;    // A short int defining the vertical offset of the patch relative to the upper-left of the texture
+  uint16_t patch_num;  // A short int defining the patch number (as listed in PNAMES) to draw
+  uint16_t stepdir;    // ?
+  uint16_t colormap;   // ?
+  patch const *_patch;
 };
 
 class wall_texture
@@ -19,7 +23,7 @@ public:
   wall_texture();
   ~wall_texture();
 
-  bool read_from_maptexture_data(uint8_t const *data);
+  bool read_from_maptexture_data(uint8_t const *data, patch_names_lump const *pnames);
 
   bool is_valid(void);
 
