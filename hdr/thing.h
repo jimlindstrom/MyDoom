@@ -1,6 +1,10 @@
 #ifndef __THING_H
 #define __THING_H
 
+#include <stdint.h>
+
+#define THING_NUM_BYTES 10 // size on disk (in the lump)
+
 #define THING_MASK_LEVELS_1_AND_2	0x0001	// Thing is on skill levels 1 & 2
 #define THING_MASK_LEVEL_3		0x0002	// Thing is on skill level 3
 #define THING_MASK_LEVELS_4_AND_5	0x0004	// Thing is on skill levels 4 & 5
@@ -13,7 +17,7 @@ public:
   thing();
   ~thing();
 
-  bool read_from_lump_data(uint8_t *lump_data);
+  bool read_from_lump_data(uint8_t const *lump_data);
 
   int16_t get_x(void) const { return x; }
   int16_t get_y(void) const { return y; }

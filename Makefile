@@ -21,10 +21,15 @@ SRC=src/wad_header.cc \
     src/texture_lump.cc \
     src/wall_texture.cc \
     src/wall_textures.cc \
+    src/thing.cc \
+    src/linedef.cc \
+    src/sidedef.cc \
+    src/vertex.cc \
+    src/segment.cc \
+    src/subsector.cc \
+    src/episode_map.cc \
+    src/episode_maps.cc \
     src/test.cc 
-
-    #src/thing.cc \
-    #src/things.cc \
 
 all:
 	$(CC) $(CCFLAGS) $(SRC) -o test

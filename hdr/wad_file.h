@@ -24,6 +24,7 @@ public:
 
   bool read(char const *filename);
 
+  wad_lump const *get_first_lump(void) const;
   wad_lump const *find_lump_by_name(char const *name) const;
   wad_lump const *get_next_lump(wad_lump const *cur_lump) const;
 

@@ -7,6 +7,7 @@
 #include "sprites.h"
 #include "patches.h"
 #include "wall_textures.h"
+#include "episode_maps.h"
 
 int main(int argc, char **argv)
 {
@@ -22,10 +23,12 @@ int main(int argc, char **argv)
   sprites_init(&w);
   patches_init(&w);
   wall_textures_init(&w);
+  episode_maps_init(&w);
 
   printf("\nSuccess!\n\n");
 
   printf("Shutting down...\n");
+  episode_maps_destroy();
   wall_textures_destroy();
   patches_destroy();
   sprites_destroy();
