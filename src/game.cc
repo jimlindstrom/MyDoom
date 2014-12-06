@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 
 #include "game.h"
 
@@ -45,5 +46,7 @@ void game_destroy(void)
 void game_run(void)
 {
   printf("Running...\n");
+
+  while(1) { sleep(1); }
 }
 
