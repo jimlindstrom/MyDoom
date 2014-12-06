@@ -29,6 +29,8 @@ SRC=src/wad_header.cc \
     src/subsector.cc \
     src/node.cc \
     src/sector.cc \
+    src/reject_table.cc \
+    src/block_map.cc \
     src/episode_map.cc \
     src/episode_maps.cc \
     src/test.cc 

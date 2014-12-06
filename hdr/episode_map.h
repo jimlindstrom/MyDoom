@@ -12,6 +12,8 @@
 #include "subsector.h"
 #include "node.h"
 #include "sector.h"
+#include "reject_table.h"
+#include "block_map.h"
 
 class episode_map
 {
@@ -47,6 +49,9 @@ private:
 
   int num_sectors;
   sector *sectors;
+
+  reject_table reject_tbl;
+  block_map    _block_map;
 
   bool read_things(wad_lump const *lump);
   bool read_linedefs(wad_lump const *lump);

@@ -35,7 +35,7 @@ bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
   name = new char[strlen(lump->get_name())+1];
   strcpy(name, lump->get_name());
 
-  printf("\treading %s\n", name);
+  //printf("\treading %s\n", name);
 
   cur_lump = wad->get_next_lump(lump);
   while(!done)
@@ -74,11 +74,11 @@ bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
     }
     else if(strcmp(cur_lump->get_name(),"REJECT")==0)
     {
-      printf("\t\tSkipping lump: \"%s\"\n", cur_lump->get_name());
+      reject_tbl.read_from_lump(lump, num_sectors);
     }
     else if(strcmp(cur_lump->get_name(),"BLOCKMAP")==0)
     {
-      printf("\t\tSkipping lump: \"%s\"\n", cur_lump->get_name());
+      _block_map.read_from_lump(lump, num_sectors);
     }
     else
     {
