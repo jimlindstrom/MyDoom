@@ -22,7 +22,7 @@ bool is_episode_name(char const *lump_name)
 bool episode_maps_init(wad_file const *wad)
 {
   wad_lump const *lump = NULL;
-  int i;
+  int i=0;
 
   num_episode_maps = 0;
   for(lump = wad->get_first_lump();

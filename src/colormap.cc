@@ -15,8 +15,6 @@ colormap::~colormap()
 
 bool colormap::set_data(uint8_t const *data, uint32_t _num_brightnesses)
 {
-  int idx;
-
   num_brightnesses = _num_brightnesses;
   brightnesses = new uint8_t[num_brightnesses];
   

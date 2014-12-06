@@ -12,7 +12,6 @@ static sprite *sprites = NULL;
 bool sprites_init(wad_file const *wad)
 {
   wad_lump const *sprite_lump = NULL;
-  uint8_t const *sprite_ptr;
   uint8_t frame_idx, rotation_idx;
   char name_prefix[5];
   int i;

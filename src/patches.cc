@@ -12,7 +12,6 @@ static patch *patches = NULL;
 bool patches_init(wad_file const *wad)
 {
   wad_lump const *patch_lump = NULL;
-  uint8_t const *patch_ptr;
   int i;
 
   num_patches = 0;

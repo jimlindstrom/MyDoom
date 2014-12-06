@@ -16,8 +16,6 @@ flat::~flat()
 
 bool flat::set_data(uint8_t const *_data)
 {
-  int idx;
-
   data = new uint8_t[FLAT_NUM_BYTES];
   
   memcpy(&data[0], _data, FLAT_NUM_BYTES);

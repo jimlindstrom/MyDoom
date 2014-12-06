@@ -26,7 +26,7 @@ bool wall_texture::read_from_maptexture_data(uint8_t const *data, patch_names_lu
   masked         = *((uint32_t*)data); data += 4;
   width          = *((uint16_t*)data); data += 2;
   height         = *((uint16_t*)data); data += 2;
-  uint32_t dummy = *((uint32_t*)data); data += 4; // ignored
+                                       data += 4; // ignored
   num_patches    = *((uint16_t*)data); data += 2;
 
   patches = new wall_patch[num_patches];

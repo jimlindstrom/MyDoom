@@ -21,7 +21,6 @@ wad_file::~wad_file()
 bool wad_file::read(char const *filename)
 {
   FILE *f;
-  int d;
 
   f = fopen(filename, "r");
    
@@ -44,7 +43,6 @@ bool wad_file::read(char const *filename)
 
 bool wad_file::read_lumps(FILE *f)
 {
-  int lump_idx;
   long int pos;
   uint32_t lump_num_bytes;
   uint8_t *lump_data;
@@ -105,7 +103,7 @@ wad_lump const *wad_file::find_lump_by_name(char const *name) const
 {
   int lump_idx;
 
-  for(int lump_idx=0; lump_idx<num_lumps; lump_idx++)
+  for(lump_idx=0; lump_idx<num_lumps; lump_idx++)
   {
     if(lumps[lump_idx].is_named(name))
     {
@@ -120,7 +118,7 @@ wad_lump const *wad_file::get_next_lump(wad_lump const *cur_lump) const
 {
   int lump_idx;
 
-  for(int lump_idx=0; lump_idx<(num_lumps-1); lump_idx++)
+  for(lump_idx=0; lump_idx<(num_lumps-1); lump_idx++)
   {
     if(&lumps[lump_idx] == cur_lump)
     {

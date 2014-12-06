@@ -12,7 +12,6 @@ static flat *flats = NULL;
 bool flats_init(wad_file const *wad)
 {
   wad_lump const *flat_lump = NULL;
-  uint8_t const *flat_ptr;
   int i;
 
   num_flats = 0;
