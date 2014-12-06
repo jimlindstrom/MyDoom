@@ -14,6 +14,9 @@ SRC=src/wad_header.cc \
     src/flats.cc \
     src/sprite.cc \
     src/sprites.cc \
+    src/texture_lump.cc \
+    src/wall_texture.cc \
+    src/wall_textures.cc \
     src/test.cc 
 
 all:
