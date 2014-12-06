@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "game.h"
+
 #include "wad_file.h"
 #include "palettes.h"
 #include "colormaps.h"
@@ -9,7 +11,7 @@
 #include "wall_textures.h"
 #include "episode_maps.h"
 
-int main(int argc, char **argv)
+void game_init(void)
 {
   wad_file w;
 
@@ -24,10 +26,13 @@ int main(int argc, char **argv)
   patches_init(&w);
   wall_textures_init(&w);
   episode_maps_init(&w);
+  printf("Successfully initialized.\n\n");
+}
 
-  printf("\nSuccess!\n\n");
-
-  printf("Shutting down...\n");
+void game_destroy(void)
+{
+  printf("\n");
+  printf("Shutting down.\n");
   episode_maps_destroy();
   wall_textures_destroy();
   patches_destroy();
@@ -35,6 +40,10 @@ int main(int argc, char **argv)
   flats_destroy();
   colormaps_destroy();
   palettes_destroy();
-
-  return 0;
 }
+
+void game_run(void)
+{
+  printf("Running...\n");
+}
+

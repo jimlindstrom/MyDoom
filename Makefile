@@ -33,7 +33,8 @@ SRC=src/wad_header.cc \
     src/block_map.cc \
     src/episode_map.cc \
     src/episode_maps.cc \
-    src/test.cc 
+    src/game.cc \
+    src/main.cc 
 
 all:
 	$(CC) $(CCFLAGS) $(SRC) -o test
