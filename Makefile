@@ -1,20 +1,20 @@
 
 CC=clang++ 
-CCFLAGS=-g
+CCFLAGS=-g -Ihdr/
 
-SRC=wad_header.cc \
-    wad_directory.cc \
-    wad_lump.cc \
-    wad_file.cc \
-    palette.cc \
-    palettes.cc \
-    colormap.cc \
-    colormaps.cc \
-    flat.cc \
-    flats.cc \
-    sprite.cc \
-    sprites.cc \
-    test.cc 
+SRC=src/wad_header.cc \
+    src/wad_directory.cc \
+    src/wad_lump.cc \
+    src/wad_file.cc \
+    src/palette.cc \
+    src/palettes.cc \
+    src/colormap.cc \
+    src/colormaps.cc \
+    src/flat.cc \
+    src/flats.cc \
+    src/sprite.cc \
+    src/sprites.cc \
+    src/test.cc 
 
 all:
 	$(CC) $(CCFLAGS) $(SRC) -o test
