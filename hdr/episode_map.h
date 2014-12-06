@@ -10,6 +10,8 @@
 #include "vertex.h"
 #include "segment.h"
 #include "subsector.h"
+#include "node.h"
+#include "sector.h"
 
 class episode_map
 {
@@ -40,12 +42,20 @@ private:
   int num_subsectors;
   subsector *subsectors;
 
+  int num_nodes;
+  node *nodes;
+
+  int num_sectors;
+  sector *sectors;
+
   bool read_things(wad_lump const *lump);
   bool read_linedefs(wad_lump const *lump);
   bool read_sidedefs(wad_lump const *lump);
   bool read_vertexes(wad_lump const *lump);
   bool read_segments(wad_lump const *lump);
   bool read_subsectors(wad_lump const *lump);
+  bool read_nodes(wad_lump const *lump);
+  bool read_sectors(wad_lump const *lump);
 };
 
 #endif

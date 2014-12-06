@@ -11,6 +11,8 @@ episode_map::episode_map()
   vertexes   = NULL;
   segments   = NULL;
   subsectors = NULL;
+  nodes      = NULL;
+  sectors    = NULL;
 }
 
 episode_map::~episode_map()
@@ -21,6 +23,8 @@ episode_map::~episode_map()
   if(vertexes)   { delete[] vertexes;   }
   if(segments)   { delete[] segments;   }
   if(subsectors) { delete[] subsectors; }
+  if(nodes)      { delete[] nodes;      }
+  if(sectors)    { delete[] sectors;    }
 }
 
 bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
@@ -62,11 +66,11 @@ bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
     }
     else if(strcmp(cur_lump->get_name(),"NODES")==0)
     {
-      printf("\t\tSkipping lump: \"%s\"\n", cur_lump->get_name());
+      if(!read_nodes(cur_lump)) { return false; }
     }
     else if(strcmp(cur_lump->get_name(),"SECTORS")==0)
     {
-      printf("\t\tSkipping lump: \"%s\"\n", cur_lump->get_name());
+      if(!read_sectors(cur_lump)) { return false; }
     }
     else if(strcmp(cur_lump->get_name(),"REJECT")==0)
     {
@@ -171,6 +175,36 @@ bool episode_map::read_subsectors(wad_lump const *lump)
   {
     subsector_ptr = lump->get_data() + (i*SUBSECTOR_NUM_BYTES);
     subsectors[i].read_from_lump_data(subsector_ptr);
+  }
+
+  return true;
+}
+
+bool episode_map::read_nodes(wad_lump const *lump)
+{
+  uint8_t const *node_ptr;
+  num_subsectors = lump->get_num_bytes() / NODE_NUM_BYTES;
+  nodes = new node[num_nodes];
+
+  for(int i=0; i<num_nodes; i++)
+  {
+    node_ptr = lump->get_data() + (i*NODE_NUM_BYTES);
+    nodes[i].read_from_lump_data(node_ptr);
+  }
+
+  return true;
+}
+
+bool episode_map::read_sectors(wad_lump const *lump)
+{
+  uint8_t const *sector_ptr;
+  num_sectors = lump->get_num_bytes() / SECTOR_NUM_BYTES;
+  sectors = new sector[num_sectors];
+
+  for(int i=0; i<num_sectors; i++)
+  {
+    sector_ptr = lump->get_data() + (i*SECTOR_NUM_BYTES);
+    sectors[i].read_from_lump_data(sector_ptr);
   }
 
   return true;
