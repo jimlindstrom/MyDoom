@@ -14,6 +14,7 @@
 #include "sector.h"
 #include "reject_table.h"
 #include "block_map.h"
+#include "overhead_map.h"
 
 class episode_map
 {
@@ -24,8 +25,10 @@ public:
   bool read_from_lump(wad_file const *wad, wad_lump const *lump);
 
   char const *get_name(void) const { return name; }
+  int get_num_things(void) const { return num_things; }
+  thing const *get_nth_thing(int n) const { return &things[n]; }
 
-  void draw_overhead_map(int screen_width, int screen_height) const;
+  void draw_overhead_map(overhead_map *omap) const;
 
 private:
   char *name;

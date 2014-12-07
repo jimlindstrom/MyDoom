@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "thing_types.h"
+
 #define THING_NUM_BYTES 10 // size on disk (in the lump)
 
 #define THING_MASK_LEVELS_1_AND_2	0x0001	// Thing is on skill levels 1 & 2
@@ -30,6 +32,11 @@ public:
   bool is_on_in_level_3(void) const { return (flags & THING_MASK_LEVEL_3); }
   bool is_on_in_level_4(void) const { return (flags & THING_MASK_LEVELS_4_AND_5); }
   bool is_on_in_level_5(void) const { return (flags & THING_MASK_LEVELS_4_AND_5); }
+  bool is_on_in_level_n(int n) const { return ((n==1) && is_on_in_level_1()) ||
+                                              ((n==2) && is_on_in_level_2()) ||
+                                              ((n==3) && is_on_in_level_3()) ||
+                                              ((n==4) && is_on_in_level_4()) ||
+                                              ((n==5) && is_on_in_level_5()); }
   bool is_deaf(void) const { return (flags & THING_MASK_DEAF); }
   bool is_not_single_player(void) const { return (flags & THING_MASK_NOT_SINGLE_PLAYER); }
 

@@ -16,6 +16,9 @@ public:
   int16_t get_x(void) const { return x; }
   int16_t get_y(void) const { return y; }
 
+  void set_x(int _x) { x=_x; }
+  void set_y(int _y) { y=_y; }
+
 private:
   int16_t x;
   int16_t y;

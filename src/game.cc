@@ -1,76 +1,54 @@
-#include <stdio.h>
-#include <unistd.h>
-
 #include "game.h"
-
-#include "wad_file.h"
-#include "palettes.h"
-#include "colormaps.h"
-#include "flats.h"
-#include "sprites.h"
-#include "patches.h"
-#include "wall_textures.h"
-#include "episode_maps.h"
 #include "frame_buf.h"
 
-static int screen_width  = 640;
-static int screen_height = 480;
-
-void game_init(void)
+game::game()
 {
-  wad_file w;
-
-  printf("Reading WAD file.\n");
-  w.read("data/Doom1.WAD");
-
-  printf("Initializing...\n");
-  if(!palettes_init(&w) || 
-     !colormaps_init(&w) || 
-     !flats_init(&w) || 
-     !sprites_init(&w) || 
-     !patches_init(&w) || 
-     !wall_textures_init(&w) || 
-     !episode_maps_init(&w) || 
-     !frame_buf_init(screen_width, screen_height))
-  {
-    exit(0);
-  }
-  printf("Successfully initialized.\n\n");
+  level = 1;
 }
 
-void game_destroy(void)
+game::~game()
 {
-  printf("\n");
-  printf("Shutting down.\n");
-  episode_maps_destroy();
-  wall_textures_destroy();
-  patches_destroy();
-  sprites_destroy();
-  flats_destroy();
-  colormaps_destroy();
-  palettes_destroy();
-  frame_buf_destroy();
 }
 
-void game_run(void)
+void game::init_things(void)
 {
-  episode_map const *cur_map;
+  int i;
+  thing const *cur_thing;
 
-  printf("Running...\n");
-
-  cur_map = episode_maps_get_by_name("E1M1");
-  if(!cur_map)
+  for(i=0; i<_map->get_num_things(); i++)
   {
-    printf("ERROR: couldn't find map\n");
-    return;
+    cur_thing = _map->get_nth_thing(i);
+    if(cur_thing->is_on_in_level_n(level))
+    {
+      switch(cur_thing->get_thing_type())
+      {
+        case THING_PLAYER_1_START_TYPE:
+          printf("setting player!\n");
+          _player.set_x(cur_thing->get_x());
+          _player.set_y(cur_thing->get_y());
+          _player.set_facing_angle(cur_thing->get_facing_angle());
+          break;
+  
+        default:
+          // ignore
+          break;
+      }
+    }
   }
+}
 
-  while(1)
-  {
-    frame_buf_clear();
-    cur_map->draw_overhead_map(screen_width, screen_height);
-    frame_buf_flush_to_ui();
-    usleep(10);
-  }
+void game::do_frame(void)
+{
+  overhead_map omap;
+  bbox map_bbox(10, screen_height-10, 10, screen_width-10);
+  omap.set_bbox(&map_bbox);
+  omap.set_scale(0.125);
+  omap.translate_origin(-190,390);
+  omap.draw_bbox();
+
+  frame_buf_clear();
+  _map->draw_overhead_map(&omap);
+  _player.draw_overhead_map(&omap);
+  frame_buf_flush_to_ui();
 }
 

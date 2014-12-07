@@ -396,36 +396,24 @@ void episode_map::link_sidedefs_to_children(void)
   }
 }
 
-void episode_map::draw_overhead_map(int screen_width, int screen_height) const
+void episode_map::draw_overhead_map(overhead_map *omap) const
 {
-  bbox map_bbox; 
-  map_bbox.y_top    = 10; 
-  map_bbox.y_bottom = screen_height-10; 
-  map_bbox.x_left   = 10; 
-  map_bbox.x_right  = screen_width-10;
-
-  color_rgba red; red.r = 255; red.g =   0; red.b =   0; red.a = 255;
-  color_rgba grn; grn.r =   0; grn.g = 255; grn.b =   0; grn.a = 255;
-  color_rgba blu; blu.r =   0; blu.g =   0; blu.b = 255; blu.a = 255;
-
-  overhead_map omap;
-  omap.set_bbox(&map_bbox);
-  omap.set_scale(0.125);
-  omap.translate_origin(-190,390);
-  omap.draw_bbox();
+  color_rgba red(255,   0,   0, 255);
+  color_rgba grn(  0, 255,   0, 255);
+  color_rgba blu(  0,   0, 255, 255);
 
 /*  for(int i=0; i<num_nodes; i++)
   {
     node const *cur_node = &nodes[i];
  
-    omap.draw_partition_line(cur_node->get_partition(),  &red);
+    omap->draw_partition_line(cur_node->get_partition(),  &red);
     if(cur_node->get_left()->is_subsector())
     {
-      omap.draw_node_bbox(&(cur_node->get_left()->_bbox),  &grn);
+      omap->draw_node_bbox(&(cur_node->get_left()->_bbox),  &grn);
     }
     if(cur_node->get_right()->is_subsector())
     {
-      omap.draw_node_bbox(&(cur_node->get_right()->_bbox), &blu);
+      omap->draw_node_bbox(&(cur_node->get_right()->_bbox), &blu);
     }
   }*/
   for(int i=0; i<num_linedefs; i++)
@@ -433,6 +421,6 @@ void episode_map::draw_overhead_map(int screen_width, int screen_height) const
     linedef const *l = &linedefs[i];
     vertex const *v1 = l->get_start_vertex();
     vertex const *v2 = l->get_end_vertex();
-    omap.draw_line(v1, v2, &blu);
+    omap->draw_line(v1, v2, &blu);
   }
 }

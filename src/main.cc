@@ -3,7 +3,7 @@
 #include <pthread.h>
 
 #include "ui.h"
-#include "game.h"
+#include "games.h"
 
 // NOTE: This has to be the main thread for Cocoa not to freak out
 void run_ui_thread()
