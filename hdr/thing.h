@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+#include "vertex.h"
 #include "thing_types.h"
 
 #define THING_NUM_BYTES 10 // size on disk (in the lump)
@@ -21,8 +22,7 @@ public:
 
   bool read_from_lump_data(uint8_t const *lump_data);
 
-  int16_t get_x(void) const { return x; }
-  int16_t get_y(void) const { return y; }
+  vertex const *get_map_position(void) const { return &map_position; }
   int16_t get_facing_angle(void) const { return facing_angle; }
   uint16_t get_thing_type(void) const { return thing_type; }
   uint16_t get_flags(void) const { return flags; }
@@ -41,8 +41,8 @@ public:
   bool is_not_single_player(void) const { return (flags & THING_MASK_NOT_SINGLE_PLAYER); }
 
 private:
-  int16_t x, y;  // FIXME: signed?
-  int16_t facing_angle; // FIXME: signed?
+  vertex map_position;
+  int16_t facing_angle;
   uint16_t thing_type, flags;
 
 };

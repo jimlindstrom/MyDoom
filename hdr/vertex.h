@@ -16,6 +16,7 @@ public:
   int16_t get_x(void) const { return x; }
   int16_t get_y(void) const { return y; }
 
+  void set_to(vertex const *v) { x=v->get_x(); y=v->get_y(); }
   void set_x(int _x) { x=_x; }
   void set_y(int _y) { y=_y; }
 

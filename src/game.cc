@@ -23,8 +23,7 @@ void game::init_things(void)
       switch(cur_thing->get_thing_type())
       {
         case THING_PLAYER_1_START_TYPE:
-          _player.set_x(cur_thing->get_x());
-          _player.set_y(cur_thing->get_y());
+          _player.set_map_position(cur_thing->get_map_position());
           _player.set_facing_angle(cur_thing->get_facing_angle());
           break;
   
