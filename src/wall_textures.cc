@@ -55,3 +55,16 @@ void wall_textures_destroy(void)
   if (wall_textures) { delete[] wall_textures; }
 }
 
+wall_texture const *wall_textures_get_by_name(char const *name)
+{
+  for(int i=0; i<num_wall_textures; i++)
+  {
+    if(strcmp(wall_textures[i].get_name(), name) == 0)
+    {
+      return &wall_textures[i];
+    }
+  }
+
+  return NULL;
+}
+

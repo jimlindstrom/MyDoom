@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+#include "vertex.h"
+#include "sidedef.h"
+
 #define LINEDEF_NUM_BYTES 14 // size on disk (in the lump)
 
 #define LINEDEF_FLAGS_MASK_BLOCKS_PLAYERS_AND_MONSTERS	0x0001 // blocks players and monsters 
@@ -24,22 +27,32 @@ public:
 
   bool read_from_lump_data(uint8_t const *lump_data);
 
-  uint16_t get_start_vertex(void) const { return start_vertex; }
-  uint16_t get_end_vertex(void) const { return end_vertex; }
+  uint16_t get_start_vertex_num(void) const { return start_vertex_num; }
+  uint16_t get_end_vertex_num(void) const { return end_vertex_num; }
   uint16_t get_flags(void) const { return flags; }
   uint16_t get_special_type(void) const { return special_type; }
   uint16_t get_sector_tag(void) const { return sector_tag; }
-  uint16_t get_right_sidedef(void) const { return right_sidedef; }
-  uint16_t get_left_sidedef(void) const { return left_sidedef; }
+  uint16_t get_right_sidedef_num(void) const { return right_sidedef_num; }
+  uint16_t get_left_sidedef_num(void) const { return left_sidedef_num; }
+
+  void set_left_sidedef(sidedef const *_sidedef);
+  void set_right_sidedef(sidedef const *_sidedef);
+  void alloc_vertexes(void);
+  void set_nth_vertex(int n, vertex const *v);
 
 private:
-  uint16_t start_vertex;
-  uint16_t end_vertex;
+  uint16_t start_vertex_num;
+  uint16_t end_vertex_num;
   uint16_t flags;
   uint16_t special_type;
   uint16_t sector_tag;
-  uint16_t right_sidedef;
-  uint16_t left_sidedef;
+  uint16_t right_sidedef_num;
+  uint16_t left_sidedef_num;
+
+  sidedef const *left_sidedef;
+  sidedef const *right_sidedef;
+  uint16_t num_vertexes;
+  vertex const **vertexes;
 };
 
 #endif

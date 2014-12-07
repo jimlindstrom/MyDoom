@@ -17,8 +17,8 @@ public:
   int16_t get_y(void) const { return y; }
 
 private:
-  int16_t x; // FIXME: signed?
-  int16_t y; // FIXME: signed?
+  int16_t x;
+  int16_t y;
 };
 
 #endif

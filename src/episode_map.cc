@@ -4,6 +4,7 @@
 #include "episode_map.h"
 #include "color.h"
 #include "overhead_map.h"
+#include "wall_textures.h"
 
 episode_map::episode_map()
 {
@@ -87,7 +88,11 @@ bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
     cur_lump = wad->get_next_lump(cur_lump);
   }
 
-  link_nodes();
+  link_nodes_to_children();
+  link_subsectors_to_segments();
+  link_segments_to_children();
+  link_linedefs_to_children();
+  link_sidedefs_to_children();
 
   return true;
 }
@@ -222,7 +227,7 @@ bool episode_map::read_sectors(wad_lump const *lump)
   return true;
 }
 
-void episode_map::link_nodes(void)
+void episode_map::link_nodes_to_children(void)
 {
   int child_num;
   for(int i=0; i<num_nodes; i++)
@@ -245,6 +250,118 @@ void episode_map::link_nodes(void)
     else
     {
       nodes[i].set_right_node( &(nodes[child_num]) );
+    }
+  }
+}
+
+void episode_map::link_subsectors_to_segments(void)
+{
+  segment *seg;
+  int seg_num;
+
+  for(int i=0; i<num_subsectors; i++)
+  {
+    subsectors[i].allocate_segments();
+    for(int j=0; j<subsectors[i].get_num_segments(); j++)
+    {
+      seg_num = subsectors[i].get_first_segment_num()+j;
+      seg = &segments[seg_num];
+      subsectors[i].set_nth_segment(j, seg);
+    }
+  }
+}
+
+void episode_map::link_segments_to_children(void)
+{
+  for(int i=0; i<num_segments; i++)
+  {
+    int linedef_num = segments[i].get_linedef_num();
+    linedef *ld = &linedefs[linedef_num];
+    segments[i].set_linedef(ld);
+
+    segments[i].alloc_vertexes();
+    if(segments[i].get_start_vertex_num() <= segments[i].get_end_vertex_num())
+    {
+      for(int j=segments[i].get_start_vertex_num(); j<=segments[i].get_end_vertex_num(); j++)
+      {
+        int n = j - segments[i].get_start_vertex_num();
+        vertex *v = &vertexes[j];
+        segments[i].set_nth_vertex(n, v);
+      }
+    }
+    else
+    {
+      for(int j=segments[i].get_start_vertex_num(); j>=segments[i].get_end_vertex_num(); j--)
+      {
+        int n = segments[i].get_start_vertex_num() - j;
+        vertex *v = &vertexes[j];
+        segments[i].set_nth_vertex(n, v);
+      }
+    }
+  }
+}
+
+void episode_map::link_linedefs_to_children(void)
+{
+  int sidedef_num, n, i, j;
+
+  for(i=0; i<num_linedefs; i++)
+  {
+    sidedef_num = linedefs[i].get_left_sidedef_num();
+    linedefs[i].set_left_sidedef(&sidedefs[sidedef_num]);
+
+    sidedef_num = linedefs[i].get_right_sidedef_num();
+    linedefs[i].set_right_sidedef(&sidedefs[sidedef_num]);
+
+    linedefs[i].alloc_vertexes();
+    if(linedefs[i].get_start_vertex_num() <= linedefs[i].get_end_vertex_num())
+    {
+      for(j=linedefs[i].get_start_vertex_num(); j<=linedefs[i].get_end_vertex_num(); j++)
+      {
+        n = j - linedefs[i].get_start_vertex_num();
+        linedefs[i].set_nth_vertex(n, &vertexes[j]);
+      }
+    }
+    else
+    {
+      for(j=linedefs[i].get_start_vertex_num(); j>=linedefs[i].get_end_vertex_num(); j--)
+      {
+        n = linedefs[i].get_start_vertex_num() - j;
+        linedefs[i].set_nth_vertex(n, &vertexes[j]);
+      }
+    }
+  }
+}
+
+void episode_map::link_sidedefs_to_children(void)
+{
+  wall_texture const *tex;
+
+  for(int i=0; i<num_sidedefs; i++)
+  {
+    int sector_num = sidedefs[i].get_sector_num();
+    sector *s = &sectors[sector_num];
+    sidedefs[i].set_sector(s);
+
+    tex = wall_textures_get_by_name(sidedefs[i].get_upper_texture_name());
+    if(tex) { sidedefs[i].set_upper_texture(tex); }
+    else if(strlen(sidedefs[i].get_upper_texture_name())>1)
+    {
+      printf("WARNING: couldn't find sidedef %d's upper texture \"%s\"\n", i, sidedefs[i].get_upper_texture_name());
+    }
+
+    tex = wall_textures_get_by_name(sidedefs[i].get_lower_texture_name());
+    if(tex) { sidedefs[i].set_lower_texture(tex); }
+    else if(strlen(sidedefs[i].get_lower_texture_name())>1)
+    {
+      printf("WARNING: couldn't find sidedef %d's lower texture \"%s\"\n", i, sidedefs[i].get_lower_texture_name());
+    }
+
+    tex = wall_textures_get_by_name(sidedefs[i].get_mid_texture_name());
+    if(tex) { sidedefs[i].set_mid_texture(tex); }
+    else if(strlen(sidedefs[i].get_mid_texture_name())>1)
+    {
+      printf("WARNING: couldn't find sidedef %d's mid texture \"%s\"\n", i, sidedefs[i].get_mid_texture_name());
     }
   }
 }
