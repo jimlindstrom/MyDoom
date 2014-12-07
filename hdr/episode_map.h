@@ -25,7 +25,7 @@ public:
 
   char const *get_name(void) const { return name; }
 
-  void draw_overhead_map(void) const;
+  void draw_overhead_map(int screen_width, int screen_height) const;
 
 private:
   char *name;

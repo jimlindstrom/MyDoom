@@ -65,13 +65,12 @@ void game_run(void)
     return;
   }
 
-  frame_buf_clear();
-  cur_map->draw_overhead_map();
-  frame_buf_flush_to_ui();
-  frame_buf_flush_to_ui();
-  sleep(1);
-  frame_buf_flush_to_ui();
-
-  while(1) { sleep(1); }
+  while(1)
+  {
+    frame_buf_clear();
+    cur_map->draw_overhead_map(screen_width, screen_height);
+    frame_buf_flush_to_ui();
+    usleep(10);
+  }
 }
 

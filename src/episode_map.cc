@@ -222,9 +222,14 @@ bool episode_map::read_sectors(wad_lump const *lump)
   return true;
 }
 
-void episode_map::draw_overhead_map(void) const
+void episode_map::draw_overhead_map(int screen_width, int screen_height) const
 {
-  bbox map_bbox; map_bbox.y_top = 10; map_bbox.y_bottom = 470; map_bbox.x_left = 10; map_bbox.x_right = 630;
+  bbox map_bbox; 
+  map_bbox.y_top    = 10; 
+  map_bbox.y_bottom = screen_height-10; 
+  map_bbox.x_left   = 10; 
+  map_bbox.x_right  = screen_width-10;
+
   color_rgba red; red.r = 255; red.g =   0; red.b =   0; red.a = 255;
   color_rgba grn; grn.r =   0; grn.g = 255; grn.b =   0; grn.a = 255;
   color_rgba blu; blu.r =   0; blu.g =   0; blu.b = 255; blu.a = 255;
@@ -239,7 +244,7 @@ void episode_map::draw_overhead_map(void) const
   {
     node const *cur_node = &nodes[i];
   
-    omap.draw_partition_line(cur_node->get_partition(), &red);
+    omap.draw_partition_line(cur_node->get_partition(),  &red);
     omap.draw_node_bbox(&(cur_node->get_left()->_bbox),  &grn);
     omap.draw_node_bbox(&(cur_node->get_right()->_bbox), &blu);
   }
