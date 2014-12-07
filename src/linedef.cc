@@ -4,12 +4,12 @@
 
 linedef::linedef()
 {
-  vertexes = NULL;
+  left_sidedef = NULL;
+  right_sidedef = NULL;
 }
 
 linedef::~linedef()
 {
-  if(vertexes) { delete[] vertexes; }
 }
 
 bool linedef::read_from_lump_data(uint8_t const *lump_data)
@@ -35,21 +35,13 @@ void linedef::set_right_sidedef(sidedef const *_sidedef)
   right_sidedef = _sidedef;
 }
 
-void linedef::alloc_vertexes(void)
+void linedef::set_start_vertex(vertex const *v)
 {
-  if(start_vertex_num > end_vertex_num)
-  {
-    num_vertexes = end_vertex_num - start_vertex_num + 1;
-  }
-  else
-  {
-    num_vertexes = start_vertex_num - end_vertex_num + 1;
-  }
-  vertexes = new vertex const *[num_vertexes];
+  start_vertex = v;
 }
 
-void linedef::set_nth_vertex(int n, vertex const *v)
+void linedef::set_end_vertex(vertex const *v)
 {
-  vertexes[n] = v;
+  end_vertex = v;
 }
 

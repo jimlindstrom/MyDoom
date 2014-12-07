@@ -235,20 +235,36 @@ void episode_map::link_nodes_to_children(void)
     child_num = nodes[i].get_left()->child_num;
     if(nodes[i].get_left()->is_subsector())
     {
+      if(child_num >= num_subsectors)
+      {
+        printf("WAARNING: node %d's left child is subsector %d > num_subsectors %d\n", i, child_num, num_subsectors);
+      }
       nodes[i].set_left_subsector( &(subsectors[child_num]) );
     }
     else
     {
+      if(child_num >= num_nodes)
+      {
+        printf("WAARNING: node %d's left child is nodes %d > num_nodes %d\n", i, child_num, num_nodes);
+      }
       nodes[i].set_left_node( &(nodes[child_num]) );
     }
 
     child_num = nodes[i].get_right()->child_num;
     if(nodes[i].get_right()->is_subsector())
     {
+      if(child_num >= num_subsectors)
+      {
+        printf("WAARNING: node %d's right child is subsector %d > num_subsectors %d\n", i, child_num, num_subsectors);
+      }
       nodes[i].set_right_subsector( &(subsectors[child_num]) );
     }
     else
     {
+      if(child_num >= num_nodes)
+      {
+        printf("WAARNING: node %d's right child is nodes %d > num_nodes %d\n", i, child_num, num_nodes);
+      }
       nodes[i].set_right_node( &(nodes[child_num]) );
     }
   }
@@ -265,6 +281,10 @@ void episode_map::link_subsectors_to_segments(void)
     for(int j=0; j<subsectors[i].get_num_segments(); j++)
     {
       seg_num = subsectors[i].get_first_segment_num()+j;
+      if(seg_num >= num_segments)
+      {
+        printf("WARNING: subsector %d points to segment %d > num_segments %d\n", i, seg_num, num_segments);
+      }
       seg = &segments[seg_num];
       subsectors[i].set_nth_segment(j, seg);
     }
@@ -279,12 +299,17 @@ void episode_map::link_segments_to_children(void)
     linedef *ld = &linedefs[linedef_num];
     segments[i].set_linedef(ld);
 
+    // FIXME: this is probably wrong. I'm guessing there's just two vertices.
     segments[i].alloc_vertexes();
     if(segments[i].get_start_vertex_num() <= segments[i].get_end_vertex_num())
     {
       for(int j=segments[i].get_start_vertex_num(); j<=segments[i].get_end_vertex_num(); j++)
       {
         int n = j - segments[i].get_start_vertex_num();
+        if(j >= num_vertexes)
+        {
+          printf("WARNING: segment %d links to vertex %d > num_vertexes %d\n", i, j, num_vertexes);
+        }
         vertex *v = &vertexes[j];
         segments[i].set_nth_vertex(n, v);
       }
@@ -294,6 +319,10 @@ void episode_map::link_segments_to_children(void)
       for(int j=segments[i].get_start_vertex_num(); j>=segments[i].get_end_vertex_num(); j--)
       {
         int n = segments[i].get_start_vertex_num() - j;
+        if(j >= num_vertexes)
+        {
+          printf("WARNING: segment %d links to vertex %d > num_vertexes %d\n", i, j, num_vertexes);
+        }
         vertex *v = &vertexes[j];
         segments[i].set_nth_vertex(n, v);
       }
@@ -303,33 +332,43 @@ void episode_map::link_segments_to_children(void)
 
 void episode_map::link_linedefs_to_children(void)
 {
-  int sidedef_num, n, i, j;
+  int sidedef_num, vertex_num, i;
 
   for(i=0; i<num_linedefs; i++)
   {
-    sidedef_num = linedefs[i].get_left_sidedef_num();
-    linedefs[i].set_left_sidedef(&sidedefs[sidedef_num]);
-
-    sidedef_num = linedefs[i].get_right_sidedef_num();
-    linedefs[i].set_right_sidedef(&sidedefs[sidedef_num]);
-
-    linedefs[i].alloc_vertexes();
-    if(linedefs[i].get_start_vertex_num() <= linedefs[i].get_end_vertex_num())
+    if(linedefs[i].has_left_sidedef())
     {
-      for(j=linedefs[i].get_start_vertex_num(); j<=linedefs[i].get_end_vertex_num(); j++)
+      sidedef_num = linedefs[i].get_left_sidedef_num();
+      if(sidedef_num >= num_sidedefs)
       {
-        n = j - linedefs[i].get_start_vertex_num();
-        linedefs[i].set_nth_vertex(n, &vertexes[j]);
+        printf("WARNING: linedef %d's left sidedef is %d > num_sidedefs %d\n", i, sidedef_num, num_sidedefs);
       }
+      linedefs[i].set_left_sidedef(&sidedefs[sidedef_num]);
     }
-    else
+
+    if(linedefs[i].has_right_sidedef())
     {
-      for(j=linedefs[i].get_start_vertex_num(); j>=linedefs[i].get_end_vertex_num(); j--)
+      sidedef_num = linedefs[i].get_right_sidedef_num();
+      if(sidedef_num >= num_sidedefs)
       {
-        n = linedefs[i].get_start_vertex_num() - j;
-        linedefs[i].set_nth_vertex(n, &vertexes[j]);
+        printf("WARNING: linedef %d's right sidedef is %d > num_sidedefs %d\n", i, sidedef_num, num_sidedefs);
       }
+      linedefs[i].set_right_sidedef(&sidedefs[sidedef_num]);
     }
+
+    vertex_num = linedefs[i].get_start_vertex_num();
+    if(vertex_num >= num_vertexes)
+    {
+      printf("WARNING: linedef %d's start vertex is %d, >= num_vertexes %d\n", i, vertex_num, num_vertexes);
+    }
+    linedefs[i].set_start_vertex(&vertexes[vertex_num]);
+
+    vertex_num = linedefs[i].get_end_vertex_num();
+    if(vertex_num >= num_vertexes)
+    {
+      printf("WARNING: linedef %d's end vertex is %d, >= num_vertexes %d\n", i, vertex_num, num_vertexes);
+    }
+    linedefs[i].set_end_vertex(&vertexes[vertex_num]);
   }
 }
 
@@ -384,7 +423,7 @@ void episode_map::draw_overhead_map(int screen_width, int screen_height) const
   omap.translate_origin(-190,390);
   omap.draw_bbox();
 
-  for(int i=0; i<num_nodes; i++)
+/*  for(int i=0; i<num_nodes; i++)
   {
     node const *cur_node = &nodes[i];
  
@@ -397,5 +436,12 @@ void episode_map::draw_overhead_map(int screen_width, int screen_height) const
     {
       omap.draw_node_bbox(&(cur_node->get_right()->_bbox), &blu);
     }
+  }*/
+  for(int i=0; i<num_linedefs; i++)
+  {
+    linedef const *l = &linedefs[i];
+    vertex const *v1 = l->get_start_vertex();
+    vertex const *v2 = l->get_end_vertex();
+    omap.draw_line(v1, v2, &blu);
   }
 }

@@ -19,6 +19,8 @@
 #define LINEDEF_FLAGS_MASK_NEVER_ON_AUTOMAP		0x0080 // never shows on automap 
 #define LINEDEF_FLAGS_MASK_ALWAYS_ON_AUTOMAP		0x0100 // always shows on automap
 
+#define LINEDEF_HAS_NO_SIDEDEF				65535 // would be -1 if we had used int16_t vs uint16_t
+
 class linedef
 {
 public:
@@ -35,10 +37,15 @@ public:
   uint16_t get_right_sidedef_num(void) const { return right_sidedef_num; }
   uint16_t get_left_sidedef_num(void) const { return left_sidedef_num; }
 
+  bool has_left_sidedef(void) const { return (left_sidedef_num != LINEDEF_HAS_NO_SIDEDEF); }
+  bool has_right_sidedef(void) const { return (right_sidedef_num != LINEDEF_HAS_NO_SIDEDEF); }
+
   void set_left_sidedef(sidedef const *_sidedef);
   void set_right_sidedef(sidedef const *_sidedef);
-  void alloc_vertexes(void);
-  void set_nth_vertex(int n, vertex const *v);
+  void set_start_vertex(vertex const *v);
+  void set_end_vertex(vertex const *v);
+  vertex const *get_start_vertex(void) const { return start_vertex; }
+  vertex const *get_end_vertex(void) const { return end_vertex; }
 
 private:
   uint16_t start_vertex_num;
@@ -51,8 +58,8 @@ private:
 
   sidedef const *left_sidedef;
   sidedef const *right_sidedef;
-  uint16_t num_vertexes;
-  vertex const **vertexes;
+  vertex const *start_vertex;
+  vertex const *end_vertex;
 };
 
 #endif
