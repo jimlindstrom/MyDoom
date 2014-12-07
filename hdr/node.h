@@ -3,37 +3,16 @@
 
 #include <stdint.h>
 
+#include "bbox.h"
 #include "subsector.h"
-
-#define NODE_NUM_BYTES 28 // size on disk (in the lump)
+#include "partition_line.h"
 
 #define NODE_CHILD_NUM_MASK       0x7fff
 #define NODE_CHILD_TYPE_MASK      0x8000
 #define NODE_CHILD_TYPE_SUBSECTOR 0x8000
 #define NODE_CHILD_TYPE_NODE      0x0000
 
-class partition_line
-{
-public:
-  int16_t x;
-  int16_t y;
-  int16_t dx;
-  int16_t dy;
-};
-
-class node;
-
-class bbox
-{
-public:
-  bbox() { y_top=0; y_bottom=0; x_left=0; x_right=0; }
-  bbox(int yt, int yb, int xl, int xr) { y_top=yt; y_bottom=yb; x_left=xl; x_right=xr; }
-
-  int16_t y_top;
-  int16_t y_bottom;
-  int16_t x_left;
-  int16_t x_right;
-};
+class node; // forward declaration, so it can be used in node_child_link
 
 class node_child_link
 {
@@ -47,6 +26,8 @@ public:
   bool is_subsector() const { return (child_type == NODE_CHILD_TYPE_SUBSECTOR); }
   bool is_node() const      { return (child_type == NODE_CHILD_TYPE_NODE); }
 };
+
+#define NODE_NUM_BYTES 28 // size on disk (in the lump)
 
 class node
 {
