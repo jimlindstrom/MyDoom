@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
 
@@ -18,6 +19,8 @@ void *game_main(void *data)
   game_init();
   game_run();
   game_destroy();
+
+  exit(0);
 
   return NULL;
 }

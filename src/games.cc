@@ -72,7 +72,7 @@ void game_run(void)
 
   cur_game->init_things();
 
-  while(1)
+  while(!cur_game->is_done())
   {
     cur_game->do_frame();
     usleep(10);
@@ -82,3 +82,20 @@ void game_run(void)
   cur_game = NULL;
   cur_map = NULL;
 }
+
+void game_post_event_key_up(int key_code)
+{
+  if(cur_game)
+  {
+    cur_game->handle_key_up(key_code);
+  }
+}
+
+void game_post_event_key_down(int key_code)
+{
+  if(cur_game)
+  {
+    cur_game->handle_key_down(key_code);
+  }
+}
+

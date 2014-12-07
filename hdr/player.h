@@ -19,9 +19,25 @@ public:
 
   void draw_overhead_map(overhead_map *omap) const;
 
+  void set_is_turning_right(bool val) { is_turning_right = val; }
+  void set_is_turning_left(bool val) { is_turning_left = val; }
+  void set_is_moving_forward(bool val) { is_moving_forward = val; }
+  void set_is_moving_backward(bool val) { is_moving_backward = val; }
+  void set_is_strafing_right(bool val) { is_strafing_right = val; }
+  void set_is_strafing_left(bool val) { is_strafing_left = val; }
+
+  void move(void);
+
 private:
   vertex  map_position;
   int16_t facing_angle;
+
+  bool is_turning_right;
+  bool is_turning_left;
+  bool is_moving_forward;
+  bool is_moving_backward;
+  bool is_strafing_right;
+  bool is_strafing_left;
 };
 
 #endif

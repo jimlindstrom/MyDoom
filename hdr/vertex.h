@@ -20,6 +20,8 @@ public:
   void set_x(int _x) { x=_x; }
   void set_y(int _y) { y=_y; }
 
+  void translate(vertex const *v) { x += v->get_x(); y += v->get_y(); }
+
 private:
   int16_t x;
   int16_t y;

@@ -17,7 +17,14 @@ public:
 
   void do_frame(void);
 
+  void handle_key_down(int key_code);
+  void handle_key_up(int key_code);
+  void handle_quit(void) { done = true; }
+
+  bool is_done(void) const { return done; }
+
 private:
+  bool done;
   int screen_width;
   int screen_height;
   int level;
