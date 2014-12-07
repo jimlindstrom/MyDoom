@@ -293,26 +293,30 @@ void episode_map::link_subsectors_to_segments(void)
 
 void episode_map::link_segments_to_children(void)
 {
-  for(int i=0; i<num_segments; i++)
+  int i, linedef_num, v_num;
+  linedef *ld;
+  vertex *v;
+
+  for(i=0; i<num_segments; i++)
   {
-    int linedef_num = segments[i].get_linedef_num();
-    linedef *ld = &linedefs[linedef_num];
+    linedef_num = segments[i].get_linedef_num();
+    ld = &linedefs[linedef_num];
     segments[i].set_linedef(ld);
 
-    int v_num = segments[i].get_start_vertex_num();
+    v_num = segments[i].get_start_vertex_num();
     if(v_num >= num_vertexes)
     {
       printf("WARNING: segment %d links to vertex %d > num_vertexes %d\n", i, v_num, num_vertexes);
     }
-    vertex *v = &vertexes[v_num];
+    v = &vertexes[v_num];
     segments[i].set_start_vertex(v);
 
-    int v_num = segments[i].get_end_vertex_num();
+    v_num = segments[i].get_end_vertex_num();
     if(v_num >= num_vertexes)
     {
       printf("WARNING: segment %d links to vertex %d > num_vertexes %d\n", i, v_num, num_vertexes);
     }
-    vertex *v = &vertexes[v_num];
+    v = &vertexes[v_num];
     segments[i].set_end_vertex(v);
   }
 }
