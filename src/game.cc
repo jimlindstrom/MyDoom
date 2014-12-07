@@ -27,6 +27,7 @@ void game::init_things(void)
           _player.set_x(cur_thing->get_x());
           _player.set_y(cur_thing->get_y());
           _player.set_facing_angle(cur_thing->get_facing_angle());
+          printf("player angle: %d\n", cur_thing->get_facing_angle());
           break;
   
         default:
