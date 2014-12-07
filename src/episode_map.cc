@@ -243,9 +243,15 @@ void episode_map::draw_overhead_map(int screen_width, int screen_height) const
   for(int i=0; i<num_nodes; i++)
   {
     node const *cur_node = &nodes[i];
-  
+ 
     omap.draw_partition_line(cur_node->get_partition(),  &red);
-    omap.draw_node_bbox(&(cur_node->get_left()->_bbox),  &grn);
-    omap.draw_node_bbox(&(cur_node->get_right()->_bbox), &blu);
+    if(cur_node->get_left()->is_subsector())
+    {
+      omap.draw_node_bbox(&(cur_node->get_left()->_bbox),  &grn);
+    }
+    if(cur_node->get_right()->is_subsector())
+    {
+      omap.draw_node_bbox(&(cur_node->get_right()->_bbox), &blu);
+    }
   }
 }
