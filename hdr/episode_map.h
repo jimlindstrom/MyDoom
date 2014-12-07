@@ -23,6 +23,8 @@ public:
 
   bool read_from_lump(wad_file const *wad, wad_lump const *lump);
 
+  char const *get_name(void) const { return name; }
+
 private:
   char *name;
 

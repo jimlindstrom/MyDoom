@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "episode_maps.h"
 #include "episode_map.h"
@@ -56,3 +57,14 @@ void episode_maps_destroy(void)
   if(episode_maps) { delete[] episode_maps; }
 }
 
+episode_map const *episode_maps_get_by_name(char const *name)
+{
+  for(int i=0; i<num_episode_maps; i++)
+  {
+    if(strcmp(episode_maps[i].get_name(), name) == 0)
+    {
+      return &episode_maps[i];
+    }
+  }
+  return NULL;
+}

@@ -45,7 +45,16 @@ void game_destroy(void)
 
 void game_run(void)
 {
+  episode_map const *cur_map;
+
   printf("Running...\n");
+
+  cur_map = episode_maps_get_by_name("E1M1");
+  if(!cur_map)
+  {
+    printf("ERROR: couldn't find map\n");
+    return;
+  }
 
   while(1) { sleep(1); }
 }
