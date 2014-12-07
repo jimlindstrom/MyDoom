@@ -65,6 +65,8 @@ private:
   bool read_subsectors(wad_lump const *lump);
   bool read_nodes(wad_lump const *lump);
   bool read_sectors(wad_lump const *lump);
+
+  void link_nodes(void);
 };
 
 #endif

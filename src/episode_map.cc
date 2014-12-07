@@ -37,8 +37,6 @@ bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
   name = new char[strlen(lump->get_name())+1];
   strcpy(name, lump->get_name());
 
-  //printf("\treading %s\n", name);
-
   cur_lump = wad->get_next_lump(lump);
   while(!done)
   {
@@ -88,6 +86,8 @@ bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
     }
     cur_lump = wad->get_next_lump(cur_lump);
   }
+
+  link_nodes();
 
   return true;
 }
@@ -220,6 +220,33 @@ bool episode_map::read_sectors(wad_lump const *lump)
   }
 
   return true;
+}
+
+void episode_map::link_nodes(void)
+{
+  int child_num;
+  for(int i=0; i<num_nodes; i++)
+  {
+    child_num = nodes[i].get_left()->child_num;
+    if(nodes[i].get_left()->is_subsector())
+    {
+      nodes[i].set_left_subsector( &(subsectors[child_num]) );
+    }
+    else
+    {
+      nodes[i].set_left_node( &(nodes[child_num]) );
+    }
+
+    child_num = nodes[i].get_right()->child_num;
+    if(nodes[i].get_right()->is_subsector())
+    {
+      nodes[i].set_right_subsector( &(subsectors[child_num]) );
+    }
+    else
+    {
+      nodes[i].set_right_node( &(nodes[child_num]) );
+    }
+  }
 }
 
 void episode_map::draw_overhead_map(int screen_width, int screen_height) const

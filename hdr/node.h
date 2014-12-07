@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "subsector.h"
+
 #define NODE_NUM_BYTES 28 // size on disk (in the lump)
 
 #define NODE_CHILD_NUM_MASK       0x7fff
@@ -19,6 +21,8 @@ public:
   int16_t dy;
 };
 
+class node;
+
 class bbox
 {
 public:
@@ -31,9 +35,11 @@ public:
 class node_child_link
 {
 public:
-  bbox     _bbox;
-  uint16_t child_type;
-  uint16_t child_num;
+  bbox       _bbox;
+  uint16_t   child_type;
+  uint16_t   child_num;
+  node      *_node;
+  subsector *_subsector;
 
   bool is_subsector() const { return (child_type == NODE_CHILD_TYPE_SUBSECTOR); }
   bool is_node() const      { return (child_type == NODE_CHILD_TYPE_NODE); }
@@ -50,6 +56,11 @@ public:
   partition_line const *get_partition(void) const { return &partition; }
   node_child_link const *get_left(void) const { return &left; }
   node_child_link const *get_right(void) const { return &right; }
+
+  void set_left_node(node *_node) { left._node = _node; }
+  void set_right_node(node *_node) { right._node = _node; }
+  void set_left_subsector(subsector *_subsector) { left._subsector = _subsector; }
+  void set_right_subsector(subsector *_subsector) { right._subsector = _subsector; }
 
 private:
   partition_line partition;
