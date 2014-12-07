@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define NODE_NUM_BYTES 4 // size on disk (in the lump)
+#define NODE_NUM_BYTES 28 // size on disk (in the lump)
 
 #define NODE_CHILD_NUM_MASK       0x7fff
 #define NODE_CHILD_TYPE_MASK      0x8000

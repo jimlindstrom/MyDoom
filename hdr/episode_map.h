@@ -25,6 +25,8 @@ public:
 
   char const *get_name(void) const { return name; }
 
+  void draw_overhead_map(void) const;
+
 private:
   char *name;
 

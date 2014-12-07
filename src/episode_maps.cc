@@ -44,7 +44,10 @@ bool episode_maps_init(wad_file const *wad)
   {
     if(is_episode_name(lump->get_name()))
     {
-      episode_maps[i].read_from_lump(wad, lump);
+      if(!episode_maps[i].read_from_lump(wad, lump))
+      {
+        return false;
+      }
       i++;
     }
   }

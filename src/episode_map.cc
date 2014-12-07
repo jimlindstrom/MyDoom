@@ -2,6 +2,8 @@
 #include <stdio.h>
 
 #include "episode_map.h"
+#include "color.h"
+#include "overhead_map.h"
 
 episode_map::episode_map()
 {
@@ -183,13 +185,23 @@ bool episode_map::read_subsectors(wad_lump const *lump)
 bool episode_map::read_nodes(wad_lump const *lump)
 {
   uint8_t const *node_ptr;
-  num_subsectors = lump->get_num_bytes() / NODE_NUM_BYTES;
+  num_nodes = lump->get_num_bytes() / NODE_NUM_BYTES;
   nodes = new node[num_nodes];
 
   for(int i=0; i<num_nodes; i++)
   {
     node_ptr = lump->get_data() + (i*NODE_NUM_BYTES);
     nodes[i].read_from_lump_data(node_ptr);
+    if(nodes[i].get_left()->is_node() && nodes[i].get_left()->child_num>num_nodes)
+    {
+      printf("ERROR: left child node num (%d) is greater than # of nodes (%d)\n", nodes[i].get_left()->child_num, num_nodes);
+      return false;
+    }
+    if(nodes[i].get_right()->is_node() && nodes[i].get_right()->child_num>num_nodes)
+    {
+      printf("ERROR: right child node num (%d) is greater than # of nodes (%d)\n", nodes[i].get_right()->child_num, num_nodes);
+      return false;
+    }
   }
 
   return true;
@@ -210,3 +222,25 @@ bool episode_map::read_sectors(wad_lump const *lump)
   return true;
 }
 
+void episode_map::draw_overhead_map(void) const
+{
+  bbox map_bbox; map_bbox.y_top = 10; map_bbox.y_bottom = 470; map_bbox.x_left = 10; map_bbox.x_right = 630;
+  color_rgba red; red.r = 255; red.g =   0; red.b =   0; red.a = 255;
+  color_rgba grn; grn.r =   0; grn.g = 255; grn.b =   0; grn.a = 255;
+  color_rgba blu; blu.r =   0; blu.g =   0; blu.b = 255; blu.a = 255;
+
+  overhead_map omap;
+  omap.set_bbox(&map_bbox);
+  omap.set_scale(0.125);
+  omap.translate_origin(-190,390);
+  omap.draw_bbox();
+
+  for(int i=0; i<num_nodes; i++)
+  {
+    node const *cur_node = &nodes[i];
+  
+    omap.draw_partition_line(cur_node->get_partition(), &red);
+    omap.draw_node_bbox(&(cur_node->get_left()->_bbox),  &grn);
+    omap.draw_node_bbox(&(cur_node->get_right()->_bbox), &blu);
+  }
+}

@@ -11,6 +11,10 @@
 #include "patches.h"
 #include "wall_textures.h"
 #include "episode_maps.h"
+#include "frame_buf.h"
+
+static int screen_width  = 640;
+static int screen_height = 480;
 
 void game_init(void)
 {
@@ -20,13 +24,17 @@ void game_init(void)
   w.read("data/Doom1.WAD");
 
   printf("Initializing...\n");
-  palettes_init(&w);
-  colormaps_init(&w);
-  flats_init(&w);
-  sprites_init(&w);
-  patches_init(&w);
-  wall_textures_init(&w);
-  episode_maps_init(&w);
+  if(!palettes_init(&w) || 
+     !colormaps_init(&w) || 
+     !flats_init(&w) || 
+     !sprites_init(&w) || 
+     !patches_init(&w) || 
+     !wall_textures_init(&w) || 
+     !episode_maps_init(&w) || 
+     !frame_buf_init(screen_width, screen_height))
+  {
+    exit(0);
+  }
   printf("Successfully initialized.\n\n");
 }
 
@@ -41,6 +49,7 @@ void game_destroy(void)
   flats_destroy();
   colormaps_destroy();
   palettes_destroy();
+  frame_buf_destroy();
 }
 
 void game_run(void)
@@ -55,6 +64,13 @@ void game_run(void)
     printf("ERROR: couldn't find map\n");
     return;
   }
+
+  frame_buf_clear();
+  cur_map->draw_overhead_map();
+  frame_buf_flush_to_ui();
+  frame_buf_flush_to_ui();
+  sleep(1);
+  frame_buf_flush_to_ui();
 
   while(1) { sleep(1); }
 }
