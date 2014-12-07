@@ -299,34 +299,21 @@ void episode_map::link_segments_to_children(void)
     linedef *ld = &linedefs[linedef_num];
     segments[i].set_linedef(ld);
 
-    // FIXME: this is probably wrong. I'm guessing there's just two vertices.
-    segments[i].alloc_vertexes();
-    if(segments[i].get_start_vertex_num() <= segments[i].get_end_vertex_num())
+    int v_num = segments[i].get_start_vertex_num();
+    if(v_num >= num_vertexes)
     {
-      for(int j=segments[i].get_start_vertex_num(); j<=segments[i].get_end_vertex_num(); j++)
-      {
-        int n = j - segments[i].get_start_vertex_num();
-        if(j >= num_vertexes)
-        {
-          printf("WARNING: segment %d links to vertex %d > num_vertexes %d\n", i, j, num_vertexes);
-        }
-        vertex *v = &vertexes[j];
-        segments[i].set_nth_vertex(n, v);
-      }
+      printf("WARNING: segment %d links to vertex %d > num_vertexes %d\n", i, v_num, num_vertexes);
     }
-    else
+    vertex *v = &vertexes[v_num];
+    segments[i].set_start_vertex(v);
+
+    int v_num = segments[i].get_end_vertex_num();
+    if(v_num >= num_vertexes)
     {
-      for(int j=segments[i].get_start_vertex_num(); j>=segments[i].get_end_vertex_num(); j--)
-      {
-        int n = segments[i].get_start_vertex_num() - j;
-        if(j >= num_vertexes)
-        {
-          printf("WARNING: segment %d links to vertex %d > num_vertexes %d\n", i, j, num_vertexes);
-        }
-        vertex *v = &vertexes[j];
-        segments[i].set_nth_vertex(n, v);
-      }
+      printf("WARNING: segment %d links to vertex %d > num_vertexes %d\n", i, v_num, num_vertexes);
     }
+    vertex *v = &vertexes[v_num];
+    segments[i].set_end_vertex(v);
   }
 }
 

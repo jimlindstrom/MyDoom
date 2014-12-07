@@ -5,12 +5,10 @@
 
 segment::segment()
 {
-  vertexes = NULL;
 }
 
 segment::~segment()
 {
-  if(vertexes) { delete[] vertexes; }
 }
 
 bool segment::read_from_lump_data(uint8_t const *lump_data)
@@ -28,23 +26,5 @@ bool segment::read_from_lump_data(uint8_t const *lump_data)
 void segment::set_linedef(linedef const *ld)
 {
   _linedef = ld;
-}
-
-void segment::alloc_vertexes(void)
-{
-  if(start_vertex_num < end_vertex_num)
-  {
-    num_vertexes = end_vertex_num - start_vertex_num + 1;
-  }
-  else
-  {
-    num_vertexes = start_vertex_num - end_vertex_num + 1;
-  }
-  vertexes = new vertex const *[num_vertexes];
-}
-
-void segment::set_nth_vertex(int n, vertex const *v)
-{
-  vertexes[n] = v;
 }
 

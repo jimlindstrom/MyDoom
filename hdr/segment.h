@@ -24,8 +24,8 @@ public:
   uint16_t get_offset(void) const { return offset; }
 
   void set_linedef(linedef const *ld);
-  void alloc_vertexes(void);
-  void set_nth_vertex(int n, vertex const *v);
+  void set_start_vertex(vertex const *v) { start_vertex = v; }
+  void set_end_vertex(vertex const *v) { end_vertex = v; }
 
 private:
   uint16_t start_vertex_num;
@@ -35,8 +35,8 @@ private:
   uint16_t direction;        // 0 (same as linedef) or 1 (opposite of linedef)
   uint16_t offset;           // distance along linedef to start of seg
 
-  uint16_t num_vertexes;
-  vertex const **vertexes;
+  vertex const *start_vertex;
+  vertex const *end_vertex;
   linedef const *_linedef;
 };
 
