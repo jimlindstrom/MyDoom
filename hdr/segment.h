@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+#include "player.h"
 #include "vertex.h"
 #include "linedef.h"
 
@@ -26,6 +27,8 @@ public:
   void set_linedef(linedef const *ld);
   void set_start_vertex(vertex const *v) { start_vertex = v; }
   void set_end_vertex(vertex const *v) { end_vertex = v; }
+
+  void render_player_view(player const *_player, overhead_map *omap) const;
 
 private:
   uint16_t start_vertex_num;

@@ -30,3 +30,10 @@ void subsector::set_nth_segment(int n, segment const *_segment)
   segments[n] = _segment;
 }
 
+void subsector::render_player_view(player const *_player, overhead_map *omap) const
+{
+  for(int i=0; i<num_segments; i++)
+  {
+    segments[i]->render_player_view(_player, omap);
+  }
+}

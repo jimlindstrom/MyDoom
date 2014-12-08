@@ -28,3 +28,8 @@ void segment::set_linedef(linedef const *ld)
   _linedef = ld;
 }
 
+void segment::render_player_view(player const *_player, overhead_map *omap) const
+{
+  color_rgba red(255, 0, 0, 255);
+  omap->draw_line(start_vertex, end_vertex, &red);
+}

@@ -9,6 +9,7 @@ class vertex
 {
 public:
   vertex();
+  vertex(int _x, int _y) { x=_x; y=_y; }
   ~vertex();
 
   bool read_from_lump_data(uint8_t const *lump_data);

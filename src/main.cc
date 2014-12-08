@@ -1,10 +1,12 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
 
 #include "ui.h"
 #include "games.h"
+#include "tests.h"
 
 // NOTE: This has to be the main thread for Cocoa not to freak out
 void run_ui_thread()
@@ -39,6 +41,12 @@ void run_game_thread(void)
 
 int main(int argc, char **argv)
 {
+  if((argc == 2) && (strcmp(argv[1], "--test")==0))
+  {
+    tests_run();
+    return 0;
+  }
+
   run_game_thread();
   run_ui_thread();
 

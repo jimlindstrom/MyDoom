@@ -37,32 +37,6 @@ void overhead_map::draw_bbox(void)
   frame_buf_draw_line(map_bbox->x_right, map_bbox->y_top,    map_bbox->x_right, map_bbox->y_bottom, &white);
 }
 
-/*void overhead_map::draw_partition_line(partition_line const *partition, color_rgba const *c)
-{
-  int x1 = scale_and_translate_x(partition->x);
-  int y1 = scale_and_translate_y(partition->y);
-  int x2 = scale_and_translate_x(partition->x + partition->dx);
-  int y2 = scale_and_translate_y(partition->y + partition->dy);
-
-  frame_buf_draw_line(x1, y1, x2, y2, c);
-}
-
-void overhead_map::draw_node_bbox(bbox const *node_bbox, color_rgba const *c)
-{
-  frame_buf_draw_line(scale_and_translate_x(node_bbox->x_left),  scale_and_translate_y(node_bbox->y_top),
-                      scale_and_translate_x(node_bbox->x_right), scale_and_translate_y(node_bbox->y_top),
-                      c);
-  frame_buf_draw_line(scale_and_translate_x(node_bbox->x_left),  scale_and_translate_y(node_bbox->y_bottom), 
-                      scale_and_translate_x(node_bbox->x_right), scale_and_translate_y(node_bbox->y_bottom), 
-                      c);
-  frame_buf_draw_line(scale_and_translate_x(node_bbox->x_left),  scale_and_translate_y(node_bbox->y_top),    
-                      scale_and_translate_x(node_bbox->x_left),  scale_and_translate_y(node_bbox->y_bottom), 
-                      c);
-  frame_buf_draw_line(scale_and_translate_x(node_bbox->x_right), scale_and_translate_y(node_bbox->y_top),    
-                      scale_and_translate_x(node_bbox->x_right), scale_and_translate_y(node_bbox->y_bottom), 
-                      c);
-}*/
-
 int overhead_map::scale_and_translate_x(int x)
 {
   return (map_bbox->x_left + map_bbox->x_right)/2.0 + (x * map_scale) + map_dx;

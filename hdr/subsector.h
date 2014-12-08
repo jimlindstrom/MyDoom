@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "segment.h"
+#include "player.h"
 
 #define SUBSECTOR_NUM_BYTES 4 // size on disk (in the lump)
 
@@ -20,6 +21,8 @@ public:
 
   void allocate_segments(void);
   void set_nth_segment(int n, segment const *_segment);
+
+  void render_player_view(player const *_player, overhead_map *omap) const;
 
 private:
   uint16_t num_segments;

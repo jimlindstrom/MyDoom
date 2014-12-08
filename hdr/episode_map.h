@@ -15,6 +15,7 @@
 #include "reject_table.h"
 #include "block_map.h"
 #include "overhead_map.h"
+#include "player.h"
 
 class episode_map
 {
@@ -29,6 +30,8 @@ public:
   thing const *get_nth_thing(int n) const { return &things[n]; }
 
   void draw_overhead_map(overhead_map *omap) const;
+
+  void render_player_view(player const *_player, overhead_map *omap) const;
 
 private:
   char *name;

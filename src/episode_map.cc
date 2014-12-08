@@ -398,8 +398,6 @@ void episode_map::link_sidedefs_to_children(void)
 
 void episode_map::draw_overhead_map(overhead_map *omap) const
 {
-  color_rgba red(255,   0,   0, 255);
-  color_rgba grn(  0, 255,   0, 255);
   color_rgba blu(  0,   0, 255, 255);
 
 /*  for(int i=0; i<num_nodes; i++)
@@ -423,4 +421,9 @@ void episode_map::draw_overhead_map(overhead_map *omap) const
     vertex const *v2 = l->get_end_vertex();
     omap->draw_line(v1, v2, &blu);
   }
+}
+
+void episode_map::render_player_view(player const *_player, overhead_map *omap) const
+{
+  nodes[num_nodes-1].render_player_view(_player, omap);
 }
