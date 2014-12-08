@@ -20,6 +20,8 @@ bool segment::read_from_lump_data(uint8_t const *lump_data)
   direction        = *((uint16_t*)lump_data); lump_data += 2;
   offset           = *((uint16_t*)lump_data); lump_data += 2;
 
+  angle >>= 8; // FIXME: make a float, or treat as a proper fixed_t
+
   return true;
 }
 
