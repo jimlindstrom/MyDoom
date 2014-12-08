@@ -45,10 +45,18 @@ void player::move(void)
   if(is_turning_right)
   {
     facing_angle += 5;
+    if(facing_angle > 180)
+    {
+      facing_angle -= 360;
+    }
   }
   if(is_turning_left)
   {
     facing_angle -= 5;
+    if(facing_angle < -180)
+    {
+      facing_angle += 360;
+    }
   }
   if(is_moving_forward)
   {
