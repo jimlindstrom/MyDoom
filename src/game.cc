@@ -38,7 +38,6 @@ void game::init_things(void)
 
 void game::do_frame(void)
 {
-  printf("\nFRAME START\n");
   _player.move();
 
   overhead_map omap;
