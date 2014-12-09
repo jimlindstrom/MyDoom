@@ -23,9 +23,13 @@ public:
 
   void translate(vertex const *v) { x += v->get_x(); y += v->get_y(); }
 
+  float angle_to_point(vertex const *v) const;
+
 private:
   int16_t x;
   int16_t y;
 };
+
+void vertex_test(void);
 
 #endif

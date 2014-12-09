@@ -41,6 +41,8 @@ private:
   vertex const *start_vertex;
   vertex const *end_vertex;
   linedef const *_linedef;
+
+  bool is_viewer_behind(player const *_player) const;
 };
 
 #endif

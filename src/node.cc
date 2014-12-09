@@ -48,7 +48,7 @@ void node::render_player_view(player const *_player, overhead_map *omap) const
   vertex const *v;
 
   v = _player->get_map_position();
-  if(!partition.is_point_on_left(v)) // FIXME: why is this backwards?
+  if(partition.is_point_on_left(v))
   {
     leftmost_child  = &left;
     rightmost_child = &right;

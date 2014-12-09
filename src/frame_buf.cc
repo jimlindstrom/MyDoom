@@ -1,3 +1,14 @@
+/******************************************************************************
+ * 2D Coordinate system:
+ *
+ * (0, screen_height) . . . . . . . . . . . . . . (screen_width, screen_height)
+ * .                                               .
+ * .                                               .
+ * .                                               .
+ * .                                               .
+ * (0, 0)             . . . . . . . . . . . . . . (screen_width, 0)
+ *
+ ******************************************************************************/
 #include <string.h>
 #include <stdlib.h>
 
@@ -39,12 +50,14 @@ void frame_buf_flush_to_ui(void)
   ui_draw_image(frame, frame_width, frame_height);
 }
 
+/* NOTE: this flips y from bottom-up to top-down */
 void frame_buf_draw_point(int x, int y, color_rgba const *color)
 {
-  if(x>=0 && x<frame_width && y>=0 && y<frame_height)
+  int buf_y = frame_height - y - 1;
+  if(x>=0 && x<frame_width && buf_y>=0 && buf_y<frame_height)
   {
     uint8_t *ptr;
-    ptr = frame + (y*frame_width*BYTES_PER_PIXEL) + (x*BYTES_PER_PIXEL);
+    ptr = frame + (buf_y*frame_width*BYTES_PER_PIXEL) + (x*BYTES_PER_PIXEL);
     *(ptr++) = color->r;
     *(ptr++) = color->g;
     *(ptr++) = color->b;

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <math.h>
 
 #include "player.h"
@@ -44,19 +45,21 @@ void player::move(void)
 
   if(is_turning_right)
   {
-    facing_angle += 5;
-    if(facing_angle > 180)
-    {
-      facing_angle -= 360;
-    }
-  }
-  if(is_turning_left)
-  {
     facing_angle -= 5;
     if(facing_angle < -180)
     {
       facing_angle += 360;
     }
+    printf("facing angle: %d\n", facing_angle);
+  }
+  if(is_turning_left)
+  {
+    facing_angle += 5;
+    if(facing_angle > 180)
+    {
+      facing_angle -= 360;
+    }
+    printf("facing angle: %d\n", facing_angle);
   }
   if(is_moving_forward)
   {
