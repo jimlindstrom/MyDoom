@@ -50,7 +50,6 @@ void player::move(void)
     {
       facing_angle += 360;
     }
-    printf("facing angle: %d\n", facing_angle);
   }
   if(is_turning_left)
   {
@@ -59,7 +58,6 @@ void player::move(void)
     {
       facing_angle -= 360;
     }
-    printf("facing angle: %d\n", facing_angle);
   }
   if(is_moving_forward)
   {
