@@ -1,5 +1,5 @@
 CC=clang++ 
-CFLAGS=-g -Wall -DNORMALUNIX -DLINUX -m32 -Ihdr/
+CFLAGS=-g -Wall -O2 -DNORMALUNIX -DLINUX -m32 -Ihdr/
 LDFLAGS=
 LIBS=-framework Cocoa
 
