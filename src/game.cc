@@ -10,6 +10,7 @@ game::game()
 
 game::~game()
 {
+  frame_time_idx = 0;
 }
 
 void game::set_screen_resolution(int w, int h)
@@ -63,6 +64,29 @@ void game::do_frame(void)
   _player.draw_overhead_map(&omap);
   _map->render_player_view(&col_ranges, &_projector, &_player, &omap);
   frame_buf_flush_to_ui();
+
+  track_frames_per_sec();
+}
+
+void game::track_frames_per_sec(void)
+{
+  double t_cur, t_prev, delta_sec, fps;
+  int idx_prev = (frame_time_idx+1)%FRAME_TIMES_COUNT;
+  int num_frames = FRAME_TIMES_COUNT - 1;
+
+  gettimeofday(&frame_times[frame_time_idx], NULL);
+
+  t_cur  = frame_times[frame_time_idx].tv_sec + (frame_times[frame_time_idx].tv_usec/1000000.0);
+  t_prev = frame_times[idx_prev      ].tv_sec + (frame_times[idx_prev      ].tv_usec/1000000.0);
+
+  delta_sec = t_cur - t_prev;
+  if(delta_sec>0.0000001 && delta_sec<1.0)
+  {
+  fps = (double)num_frames / delta_sec;
+  printf("%.2f frames/sec (%d frames in %.6fsec)\n", fps, (FRAME_TIMES_COUNT-1), delta_sec);
+  }
+
+  frame_time_idx = ((frame_time_idx+1) % FRAME_TIMES_COUNT);
 }
 
 void game::handle_key_down(int key_code)
