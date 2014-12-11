@@ -52,6 +52,8 @@ void game::do_frame(void)
 
   _player.move();
 
+  printf("  player at (%d,%d) facing %d\n", _player.get_map_position()->get_x(), _player.get_map_position()->get_y(), _player.get_facing_angle());
+
   overhead_map omap;
   bbox map_bbox(10, screen_height-10, 10, screen_width-10);
   omap.set_bbox(&map_bbox);

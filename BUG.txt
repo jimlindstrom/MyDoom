@@ -1,0 +1,14 @@
+  player at (827,-3292) facing 85
+  segment 0x7bcda294: (896,-3104)->(896,-3360)
+    angles:[-15.2, -129.6], x:[269, 543]
+    1 clipped ranges
+      clipped range 0: [269,543], t:[0.00,1.00]
+        drawing (896,-3104)->(896,-3360)
+  segment 0x7bcda2ac: (704,-3360)->(704,-3104)
+    angles:[123.9, 38.2], x:[45, 465]
+    1 clipped ranges
+      clipped range 0: [45,268], t:[0.00,0.53]
+        drawing (704,-3360)->(704,-3224)
+
+
+Why does this clip the second one? Turn it into a test case.
