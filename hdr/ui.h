@@ -4,6 +4,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+void ui_set_headless_mode(bool new_setting);
 void ui_run_cocoa_app(void);
 void ui_resize_window(int width, int height);
 void ui_draw_image(unsigned char *image_data, int width, int height);

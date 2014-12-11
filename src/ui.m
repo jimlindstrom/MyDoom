@@ -1,12 +1,24 @@
 #import "ui_background_view.h"
 #import <Cocoa/Cocoa.h>
 
+bool headless_mode = false;
 id window;
 int window_width, window_height;
 CGContextRef window_context;
 
+void ui_set_headless_mode(bool new_setting)
+{
+  headless_mode = new_setting;
+}
+
 void ui_run_cocoa_app(void) // doesn't return until window is closed
 {
+  if(headless_mode)
+  {
+    printf("Running app (headless)\n");
+    while(1) { }
+  }
+
   id menubar;
   id appMenuItem;
   id appMenu;
@@ -51,12 +63,20 @@ void ui_resize_window(int new_width, int new_height)
   printf("resizing to %dx%d\n", new_width, new_height);
   window_width  = new_width;
   window_height = new_height;
-  [window setContentSize:NSMakeSize(window_width, window_height)];
-  window_context = [[window graphicsContext] graphicsPort];
+  if(!headless_mode)
+  {
+    [window setContentSize:NSMakeSize(window_width, window_height)];
+    window_context = [[window graphicsContext] graphicsPort];
+  }
 }
 
 void ui_draw_image(unsigned char *image_data, int width, int height)
 {
+  if(headless_mode)
+  {
+    return;
+  }
+
   CGDataProviderRef provider = CGDataProviderCreateWithData(NULL,
                                                             image_data,
                                                             width*height*4,

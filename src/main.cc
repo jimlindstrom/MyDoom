@@ -41,10 +41,17 @@ void run_game_thread(void)
 
 int main(int argc, char **argv)
 {
-  if((argc == 2) && (strcmp(argv[1], "--test")==0))
+  for(int i=1; i<argc; i++)
   {
-    tests_run();
-    return 0;
+    if(strcmp(argv[i], "--test")==0)
+    {
+      tests_run();
+      return 0;
+    }
+    else if(strcmp(argv[i], "--headless")==0)
+    {
+      ui_set_headless_mode(true);
+    }
   }
 
   run_game_thread();
