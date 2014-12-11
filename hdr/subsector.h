@@ -6,6 +6,7 @@
 #include "projector.h"
 #include "segment.h"
 #include "player.h"
+#include "column_range.h"
 
 #define SUBSECTOR_NUM_BYTES 4 // size on disk (in the lump)
 
@@ -23,7 +24,7 @@ public:
   void allocate_segments(void);
   void set_nth_segment(int n, segment const *_segment);
 
-  void render_player_view(projector const *_projector, player const *_player, overhead_map *omap) const;
+  void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const;
 
 private:
   uint16_t num_segments;

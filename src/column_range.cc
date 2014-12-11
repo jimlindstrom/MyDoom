@@ -122,7 +122,41 @@ column_range **column_range_list::insert_with_clipping(int16_t x_left, int16_t x
   return cr_ptrs;
 }
 
-column_range const *column_range_list::get_left_range()
+bool column_range_list::any_unclipped_columns_in_range(int16_t x_left, int16_t x_right) const
+{
+  column_range *cur_range = left_range;
+
+  while(cur_range && (x_left <= x_right))
+  {
+    // if there's a gap, and it's more than big enough, we're done.
+    if(x_right < cur_range->x_left)
+    {
+      return true;
+    }
+    // okay, well is there *any* gap?
+    else if(x_left < cur_range->x_left)
+    {
+      return true;
+    }
+    // no? then just advance the left past this range
+    else
+    {
+      x_left = MAX(x_left, cur_range->x_right + 1);
+    }
+
+    cur_range = cur_range->next_range;
+  }
+
+  // add any remaining, from after the right edge
+  if(x_left <= x_right)
+  {
+    return true;
+  }
+
+  return false;
+}
+
+column_range const *column_range_list::get_left_range() const
 {
   return left_range;
 }

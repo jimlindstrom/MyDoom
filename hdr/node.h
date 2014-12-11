@@ -8,6 +8,7 @@
 #include "partition_line.h"
 #include "projector.h"
 #include "player.h"
+#include "column_range.h"
 
 #define NODE_CHILD_NUM_MASK       0x7fff
 #define NODE_CHILD_TYPE_MASK      0x8000
@@ -48,7 +49,9 @@ public:
   void set_left_subsector(subsector *_subsector) { left._subsector = _subsector; }
   void set_right_subsector(subsector *_subsector) { right._subsector = _subsector; }
 
-  void render_player_view(projector const *_projector, player const *_player, overhead_map *omap) const;
+  void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const;
+
+  bool undrawn_columns_toward_bbox(bbox const *_bbox, column_range_list *col_ranges, projector const *_projector, player const *_player) const;
 
 private:
   partition_line partition;

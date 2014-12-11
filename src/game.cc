@@ -1,6 +1,7 @@
 #include "game.h"
 #include "frame_buf.h"
 #include "key_codes.h"
+#include "column_range.h"
 
 game::game()
 {
@@ -45,6 +46,9 @@ void game::init_things(void)
 
 void game::do_frame(void)
 {
+  column_range_list col_ranges;
+  printf("frame\n");
+
   _player.move();
 
   overhead_map omap;
@@ -57,7 +61,7 @@ void game::do_frame(void)
   frame_buf_clear();
   _map->draw_overhead_map(&omap);
   _player.draw_overhead_map(&omap);
-  _map->render_player_view(&_projector, &_player, &omap);
+  _map->render_player_view(&col_ranges, &_projector, &_player, &omap);
   frame_buf_flush_to_ui();
 }
 

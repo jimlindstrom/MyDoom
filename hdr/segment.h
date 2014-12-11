@@ -7,6 +7,7 @@
 #include "player.h"
 #include "vertex.h"
 #include "linedef.h"
+#include "column_range.h"
 
 #define SEGMENT_NUM_BYTES 12 // size on disk (in the lump)
 
@@ -29,7 +30,7 @@ public:
   void set_start_vertex(vertex const *v) { start_vertex = v; }
   void set_end_vertex(vertex const *v) { end_vertex = v; }
 
-  void render_player_view(projector const *_projector, player const *_player, overhead_map *omap) const;
+  void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const;
 
 private:
   uint16_t start_vertex_num;

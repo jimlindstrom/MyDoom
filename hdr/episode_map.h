@@ -16,6 +16,7 @@
 #include "block_map.h"
 #include "overhead_map.h"
 #include "player.h"
+#include "column_range.h"
 
 class episode_map
 {
@@ -31,7 +32,7 @@ public:
 
   void draw_overhead_map(overhead_map *omap) const;
 
-  void render_player_view(projector const *_projector, player const *_player, overhead_map *omap) const;
+  void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const;
 
 private:
   char *name;
