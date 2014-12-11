@@ -11,6 +11,13 @@ game::~game()
 {
 }
 
+void game::set_screen_resolution(int w, int h)
+{
+  screen_width = w;
+  screen_height = h;
+  _projector.set_screen_size(w, h);
+}
+
 void game::init_things(void)
 {
   int i;
@@ -50,7 +57,7 @@ void game::do_frame(void)
   frame_buf_clear();
   _map->draw_overhead_map(&omap);
   _player.draw_overhead_map(&omap);
-  _map->render_player_view(&_player, &omap);
+  _map->render_player_view(&_projector, &_player, &omap);
   frame_buf_flush_to_ui();
 }
 

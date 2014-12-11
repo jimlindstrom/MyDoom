@@ -31,7 +31,7 @@ public:
 
   void draw_overhead_map(overhead_map *omap) const;
 
-  void render_player_view(player const *_player, overhead_map *omap) const;
+  void render_player_view(projector const *_projector, player const *_player, overhead_map *omap) const;
 
 private:
   char *name;

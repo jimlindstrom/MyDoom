@@ -3,6 +3,7 @@
 #include "tests.h"
 #include "partition_line.h"
 #include "vertex.h"
+#include "column_range.h"
 
 static int num_tests_passed;
 static int num_tests_failed;
@@ -14,6 +15,7 @@ void tests_run(void)
 
   partition_line_test();
   vertex_test();
+  column_range_list_test();
 
   if(num_tests_failed > 0)
   {

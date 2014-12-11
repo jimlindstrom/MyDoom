@@ -423,7 +423,7 @@ void episode_map::draw_overhead_map(overhead_map *omap) const
   }
 }
 
-void episode_map::render_player_view(player const *_player, overhead_map *omap) const
+void episode_map::render_player_view(projector const *_projector, player const *_player, overhead_map *omap) const
 {
-  nodes[num_nodes-1].render_player_view(_player, omap);
+  nodes[num_nodes-1].render_player_view(_projector, _player, omap);
 }

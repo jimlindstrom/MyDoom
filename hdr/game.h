@@ -2,6 +2,7 @@
 #define __GAME_H
 
 #include "episode_map.h"
+#include "projector.h"
 #include "player.h"
 
 class game
@@ -11,7 +12,7 @@ public:
   ~game();
 
   void set_map(episode_map const *__map) { _map = __map; }
-  void set_screen_resolution(int w, int h) { screen_width = w; screen_height = h; }
+  void set_screen_resolution(int w, int h);
 
   void init_things(void);
 
@@ -30,6 +31,7 @@ private:
   int level;
   episode_map const *_map;
   player _player;
+  projector _projector;
 };
 
 #endif

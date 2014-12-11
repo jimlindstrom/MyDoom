@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+#include "projector.h"
 #include "player.h"
 #include "vertex.h"
 #include "linedef.h"
@@ -28,7 +29,7 @@ public:
   void set_start_vertex(vertex const *v) { start_vertex = v; }
   void set_end_vertex(vertex const *v) { end_vertex = v; }
 
-  void render_player_view(player const *_player, overhead_map *omap) const;
+  void render_player_view(projector const *_projector, player const *_player, overhead_map *omap) const;
 
 private:
   uint16_t start_vertex_num;
@@ -42,7 +43,8 @@ private:
   vertex const *end_vertex;
   linedef const *_linedef;
 
-  bool is_viewer_behind(player const *_player) const;
+  void calculate_angles_from_player(player const *_player, float *angle1, float *angle2) const;
+  bool is_viewer_behind(projector const *_projector, float angle1, float angle2) const;
 };
 
 #endif

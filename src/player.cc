@@ -3,7 +3,7 @@
 
 #include "player.h"
 
-#define DEG_TO_RAD(d)  (d*M_PI/180.0) // FIXME: don't use this. slow.
+#define DEG_TO_RAD(d)  ((d)*M_PI/180.0) // FIXME: don't use this. slow.
 
 player::player()
 {

@@ -16,7 +16,6 @@ public:
 
   vertex const *get_map_position(void) const { return &map_position; }
   int16_t get_facing_angle(void) const { return facing_angle; }
-  int16_t get_horiz_fov_radius() const { return 60; };
 
   void draw_overhead_map(overhead_map *omap) const;
 
