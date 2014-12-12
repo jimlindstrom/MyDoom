@@ -461,8 +461,8 @@ void segment_clip_wall_on_right_test(void)
   printf("clipped angles: [%.1f,%.1f]\n", ang_l_c, ang_r_c);
   printf("clipped x: [%.1f,%.1f]\n", x_l_c, x_r_c);
 
-  #if 0
   // This is the state in which we're simulating actually rendering the wall in the player's view
+  column_range_list _col_ranges, *col_ranges=&_col_ranges;
   column_range **clipped_ranges;
   int num_clipped_crs;
   clipped_ranges = col_ranges->insert_with_clipping(x_l_c, x_r_c, &num_clipped_crs);
@@ -484,10 +484,9 @@ void segment_clip_wall_on_right_test(void)
     v2.set_y(vertex_l->get_y() + t2*d.get_y());
     printf("      clipped range %d: [%d,%d], t:[%.2f,%.2f]\n", i, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, t1, t2);
     printf("        drawing (%.1f,%.1f)->(%.1f,%.1f)\n", v1.get_x(), v1.get_y(), v2.get_x(), v2.get_y());
-    omap->draw_line(&v1, &v2, &grn);
+    //omap->draw_line(&v1, &v2, &grn);
   }
   delete[] clipped_ranges;
-  #endif
 }
 
 void segment_clip_wall_on_left_test(void)
