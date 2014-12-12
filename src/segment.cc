@@ -49,6 +49,7 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
       ver->set_x(x); ver->set_y(y);
   
       *u = (x - vertex_l->get_x()) / (vertex_r->get_x() - vertex_l->get_x());
+      *u = 1.0 - *u; // FIXME: why?
       return true;
     }
     else
@@ -61,6 +62,7 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
       ver->set_x(x); ver->set_y(y);
   
       *u = (x - vertex_l->get_x()) / (vertex_r->get_x() - vertex_l->get_x());
+      *u = 1.0 - *u; // FIXME: why?
       return true;
     }
   }
@@ -76,6 +78,7 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
       ver->set_x(x); ver->set_y(y);
   
       *u = (y - vertex_l->get_y()) / (vertex_r->get_y() - vertex_l->get_y());
+      *u = 1.0 - *u; // FIXME: why?
       return true;
     }
     else
@@ -89,23 +92,42 @@ void segment::clip_to_lines(vector const *clip_l, vector const *clip_r,
                             vertex *v_l_c, vertex *v_r_c,
                             float *u_l_c, float *u_r_c) const
 {
-  if( !get_intersection_with_vector(clip_l, v_l_c, u_l_c) || // no intersection?
-      *u_l_c < 0.0 ) // or, intersection to left of left vertex?
+  vertex v;
+  float u;
+
+  u = -2;
+  if( !get_intersection_with_vector(clip_l, &v, &u) || // no intersection?
+      u < 0.0 ) // or, intersection to left of left vertex?
   {
     // just copy the left vertex
     v_l_c->set_x(vertex_l->get_x());
     v_l_c->set_y(vertex_l->get_y());
     *u_l_c = 0.0;
   }
+  else
+  {
+    v_l_c->set_x(v.get_x());
+    v_l_c->set_y(v.get_y());
+    *u_l_c = u;
+  }
+  printf("    u_l: %.4f (clipped to %.4f)\n", u, *u_l_c);
 
-  if( !get_intersection_with_vector(clip_r, v_r_c, u_r_c) || // no intersection?
-      *u_r_c > 1.0 ) // or, intersection to right of right vertex?
+  u = 2;
+  if( !get_intersection_with_vector(clip_r, &v, &u) || // no intersection?
+      u > 1.0 ) // or, intersection to right of right vertex?
   {
     // just copy the left vertex
     v_r_c->set_x(vertex_r->get_x());
     v_r_c->set_y(vertex_r->get_y());
     *u_r_c = 1.0;
   }
+  else
+  {
+    v_r_c->set_x(v.get_x());
+    v_r_c->set_y(v.get_y());
+    *u_r_c = u;
+  }
+  printf("    u_r: %.4f (clipped to %.4f)\n", u, *u_r_c);
 }
 
 /*********************************************************************************************/
@@ -143,16 +165,17 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
 
   printf("  segment 0x%08x: (%.1f,%.1f)->(%.1f,%.1f)\n",
          (unsigned int)this, 
-         vertex_r->get_x(), vertex_r->get_y(), 
-         vertex_l->get_x(), vertex_l->get_y() );
+         vertex_l->get_x(), vertex_l->get_y(),
+         vertex_r->get_x(), vertex_r->get_y() ); 
 
   float angle_r, angle_l;
-  calculate_angles_from_player(_player, &angle_r, &angle_l);
-  if(is_viewer_behind(_projector, angle_r, angle_l))
+  calculate_angles_from_player(_player, &angle_l, &angle_r);
+  printf("    angles: [%.1f,%.1f]\n", angle_l, angle_r);
+  if(is_viewer_behind(_projector, angle_l, angle_r))
   {
     // This is the state in which we're just rendering the map view
     color_rgba red(255, 0, 0, 255);
-    omap->draw_line(vertex_r, vertex_l, &red);
+    omap->draw_line(vertex_l, vertex_r, &red);
     return;
   }
 
@@ -167,6 +190,9 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   segment seg;
   seg.set_vertex_l(&_pvl);
   seg.set_vertex_r(&_pvr);
+  printf("    pv: (%.1f,%.1f)->(%.1f,%.1f)\n",
+         _pvl.get_x(), _pvl.get_y(),
+         _pvr.get_x(), _pvr.get_y() ); 
 
   float _ang_l_c = origin.angle_to_point(&_pvl);
   float _ang_r_c = origin.angle_to_point(&_pvr);
@@ -186,8 +212,8 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   float u_l_c, u_r_c;
   seg.clip_to_lines(&clip_l, &clip_r, &v_l_c, &v_r_c, &u_l_c, &u_r_c);
 
-  float ang_l_c = origin.angle_to_point(&v_l_c);
-  float ang_r_c = origin.angle_to_point(&v_r_c);
+  float ang_l_c = -1.0 * origin.angle_to_point(&v_l_c); // FIXME: why are we having to flip this?
+  float ang_r_c = -1.0 * origin.angle_to_point(&v_r_c); // FIXME: why are we having to flip this?
   float x_l_c = _projector->project_horiz_angle_to_x(ang_l_c);
   float x_r_c = _projector->project_horiz_angle_to_x(ang_r_c);
   printf("    clipped angles: [%.1f,%.1f]\n", ang_l_c, ang_r_c);
@@ -200,44 +226,44 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   printf("    %d clipped ranges\n", num_clipped_crs);
   color_rgba grn(0, 255, 0, 255);
 
-  #if 0
   vertex v1, v2, d;
-  d.set_x(vertex_l->get_x() - vertex_r->get_x());
-  d.set_y(vertex_l->get_y() - vertex_r->get_y());
+  d.set_x(vertex_r->get_x() - vertex_l->get_x());
+  d.set_y(vertex_r->get_y() - vertex_l->get_y());
   for(int i=0; i<num_clipped_crs; i++)
   {
-    float t1 = (clipped_ranges[i]->x_left - x1)/(float)(x2-x1);
-    v1.set_x(vertex_r->get_x() + t1*d.get_x());
-    v1.set_y(vertex_r->get_y() + t1*d.get_y());
-    float t2 = (clipped_ranges[i]->x_right- x1)/(float)(x2-x1);
-    v2.set_x(vertex_r->get_x() + t2*d.get_x());
-    v2.set_y(vertex_r->get_y() + t2*d.get_y());
+    float t1 = (clipped_ranges[i]->x_left - x_l_c)/(float)(x_r_c-x_l_c);
+    t1 = (t1*(u_r_c - u_l_c)) + u_l_c;
+    v1.set_x(vertex_l->get_x() + t1*d.get_x());
+    v1.set_y(vertex_l->get_y() + t1*d.get_y());
+    float t2 = (clipped_ranges[i]->x_right- x_l_c)/(float)(x_r_c-x_l_c);
+    t2 = (t2*(u_r_c - u_l_c)) + u_l_c;
+    v2.set_x(vertex_l->get_x() + t2*d.get_x());
+    v2.set_y(vertex_l->get_y() + t2*d.get_y());
     printf("      clipped range %d: [%d,%d], t:[%.2f,%.2f]\n", i, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, t1, t2);
-    printf("        drawing (%d,%d)->(%d,%d)\n", v1.get_x(), v1.get_y(), v2.get_x(), v2.get_y());
+    printf("        drawing (%.1f,%.1f)->(%.1f,%.1f)\n", v1.get_x(), v1.get_y(), v2.get_x(), v2.get_y());
     omap->draw_line(&v1, &v2, &grn);
   }
-  #endif
   delete[] clipped_ranges;
 }
 
-void wad_segment::calculate_angles_from_player(player const *_player, float *angle_r, float *angle_l) const
+void wad_segment::calculate_angles_from_player(player const *_player, float *angle_l, float *angle_r) const
 {
-  *angle_r = _player->get_map_position()->angle_to_point(vertex_r) - _player->get_facing_angle();
   *angle_l = _player->get_map_position()->angle_to_point(vertex_l) - _player->get_facing_angle();
+  *angle_r = _player->get_map_position()->angle_to_point(vertex_r) - _player->get_facing_angle();
 
-  if     (*angle_r >  180) { *angle_r -= 360; }
-  else if(*angle_r < -180) { *angle_r += 360; }
   if     (*angle_l >  180) { *angle_l -= 360; }
   else if(*angle_l < -180) { *angle_l += 360; }
+  if     (*angle_r >  180) { *angle_r -= 360; }
+  else if(*angle_r < -180) { *angle_r += 360; }
 }
 
-bool wad_segment::is_viewer_behind(projector const *_projector, float angle_r, float angle_l) const
+bool wad_segment::is_viewer_behind(projector const *_projector, float angle_l, float angle_r) const
 {
   return ( 
-           (angle_r < angle_l) ||
+           (angle_r > angle_l) ||
            ( 
-             (fabs(angle_r) > _projector->get_horiz_fov_radius()) && 
-             (fabs(angle_l) > _projector->get_horiz_fov_radius())
+             (fabs(angle_l) > _projector->get_horiz_fov_radius()) &&
+             (fabs(angle_r) > _projector->get_horiz_fov_radius())
            ) 
          );
 }
