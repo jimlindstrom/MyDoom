@@ -259,6 +259,9 @@ void wad_segment::calculate_angles_from_player(player const *_player, float *ang
   else if(*angle_l < -180) { *angle_l += 360; }
   if     (*angle_r >  180) { *angle_r -= 360; }
   else if(*angle_r < -180) { *angle_r += 360; }
+
+  *angle_l *= -1; // FIXME: ...
+  *angle_r *= -1; // FIXME: ...
 }
 
 bool wad_segment::is_viewer_behind(projector const *_projector, float angle_l, float angle_r) const
