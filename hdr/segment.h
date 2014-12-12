@@ -24,6 +24,7 @@ public:
   bool is_vertical(void) const;
   bool is_horizontal(void) const;
 
+  float get_length(void) const;
   float get_slope(void) const;
   void get_slope_and_y_intercept(float *slope, float *y_intercept) const;
 

@@ -25,7 +25,10 @@ public:
   void rotate(float angle);
 
   float angle_to_point(vertex const *v) const;
+  float distance_to_point(vertex const *v) const;
+
   void set_from_angle_and_radius(float angle, float radius);
+
 
 private:
   float x, y;

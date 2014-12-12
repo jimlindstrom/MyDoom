@@ -15,6 +15,11 @@ bool vector::is_horizontal(void) const
   return ((dy > -FLATNESS_EPSILON) && (dy < FLATNESS_EPSILON));
 }
 
+float vector::get_length(void) const
+{
+  return vertex_1->distance_to_point(vertex_2);
+}
+
 float vector::get_slope(void) const
 {
   float dy = vertex_2->get_y() - vertex_1->get_y();

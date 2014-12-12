@@ -28,6 +28,13 @@ float vertex::angle_to_point(vertex const *v) const
   return atan2(dy, dx) * 180.0 / M_PI; // FIXME: use rads
 }
 
+float vertex::distance_to_point(vertex const*v) const
+{
+  float dy = v->get_y() - y;
+  float dx = v->get_x() - x;
+  return sqrt(dx*dx + dy*dy);
+}
+
 void vertex::set_from_angle_and_radius(float angle, float radius)
 {
   x = radius*cos(angle * M_PI / 180.0); // FIXME: use rads

@@ -25,12 +25,12 @@ int16_t projector::get_horiz_fov_radius() const
 
 int16_t projector::project_horiz_angle_to_x(float angle) const
 {
-  return ((0.5*(screen_width-1)) + (x_proj_scale*tan(angle*M_PI/180.0))); // FIXME: use rad
+  return ((0.5*(screen_width-1)) - (x_proj_scale*tan(angle*M_PI/180.0))); // FIXME: use rad
 }
 
 float projector::unproject_x_to_horiz_angle(int16_t x) const
 {
-  return (atan2(x - ((0.5*(screen_width-1))), x_proj_scale) * 180.0/M_PI); // FIXME: use rad
+  return -(atan2(x - ((0.5*(screen_width-1))), x_proj_scale) * 180.0/M_PI); // FIXME: use rad
 }
 
 float projector::clip_horiz_angle_to_fov(float angle) const // FIXME: this may no longer get used...
@@ -92,42 +92,18 @@ void unprojector_test(void)
   float a1 = -33.3;
   int16_t x = p.project_horiz_angle_to_x(a1);
   float a2 = p.unproject_x_to_horiz_angle(x);
-  TEST_ASSERT_WITHIN(a2, a1-0.1, a1+0.1);
+  TEST_ASSERT_WITHIN(a2, a1-0.2, a1+0.2);
 }
 
 void projector_test(void)
 {
-  int w=640, h=480;
-
   projector p;
+  int w=640, h=480;
   p.set_screen_size(w, h);
 
-  /*
-   * SCENARIO:
-   * player at (777,-3307) facing 110
-   * segment 0x7bbfde94: (896,-3104)->(896,-3360)
-   *   angles:[-50.4, -134.0], x:[96, 511]
-   *   1 clipped ranges
-   *     clipped range 0: [96,511], t:[0.00,1.00]
-   *       drawing (896,-3104)->(896,-3360)
-   * segment 0x7bbfdeac: (704,-3360)->(704,-3104)
-   *   angles:[106.0, -0.2], x:[-325, 319]
-   *   1 clipped ranges
-   *     clipped range 0: [-325,95], t:[0.00,0.65]
-   *       drawing (704,-3360)->(704,-3193)
-   */
-
-  float a1 = -34.0;
-  float a2 = -20.4;
-  float a3 =  -0.2;
-  float a4 =  16.0;
-
-  TEST_ASSERT_LESS_THAN(p.project_horiz_angle_to_x(a1),
-                        p.project_horiz_angle_to_x(a2));
-  TEST_ASSERT_LESS_THAN(p.project_horiz_angle_to_x(a2),
-                        p.project_horiz_angle_to_x(a3));
-  TEST_ASSERT_LESS_THAN(p.project_horiz_angle_to_x(a3),
-                        p.project_horiz_angle_to_x(a4));
+  TEST_ASSERT_WITHIN(p.project_horiz_angle_to_x( p.get_horiz_fov_radius()),  -1,  1);
+  TEST_ASSERT_WITHIN(p.project_horiz_angle_to_x(0),                         319,321);
+  TEST_ASSERT_WITHIN(p.project_horiz_angle_to_x(-p.get_horiz_fov_radius()), 638,640);
 }
 
 void projector_tests(void)
