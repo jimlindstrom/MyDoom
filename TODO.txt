@@ -1,0 +1,7 @@
+In Progress
+---
+- Switch vertexes from int16 to float
+
+Queued up
+---
+- Switch degrees from deg to rad

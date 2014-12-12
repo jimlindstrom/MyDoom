@@ -161,7 +161,7 @@ bool episode_map::read_segments(wad_lump const *lump)
 {
   uint8_t const *segment_ptr;
   num_segments = lump->get_num_bytes() / SEGMENT_NUM_BYTES;
-  segments = new segment[num_segments];
+  segments = new wad_segment[num_segments];
 
   for(int i=0; i<num_segments; i++)
   {
@@ -272,7 +272,7 @@ void episode_map::link_nodes_to_children(void)
 
 void episode_map::link_subsectors_to_segments(void)
 {
-  segment *seg;
+  wad_segment *seg;
   int seg_num;
 
   for(int i=0; i<num_subsectors; i++)

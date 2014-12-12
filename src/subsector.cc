@@ -22,10 +22,10 @@ bool subsector::read_from_lump_data(uint8_t const *lump_data)
 
 void subsector::allocate_segments(void)
 {
-  segments = new segment const *[num_segments];
+  segments = new wad_segment const *[num_segments];
 }
 
-void subsector::set_nth_segment(int n, segment const *_segment)
+void subsector::set_nth_segment(int n, wad_segment const *_segment)
 {
   segments[n] = _segment;
 }

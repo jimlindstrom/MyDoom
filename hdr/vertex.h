@@ -9,25 +9,26 @@ class vertex
 {
 public:
   vertex();
-  vertex(int _x, int _y) { x=_x; y=_y; }
+  vertex(float _x, float _y) { x=_x; y=_y; }
   ~vertex();
 
   bool read_from_lump_data(uint8_t const *lump_data);
 
-  int16_t get_x(void) const { return x; }
-  int16_t get_y(void) const { return y; }
+  float get_x(void) const { return x; }
+  float get_y(void) const { return y; }
 
   void set_to(vertex const *v) { x=v->get_x(); y=v->get_y(); }
-  void set_x(int _x) { x=_x; }
-  void set_y(int _y) { y=_y; }
+  void set_x(float _x) { x=_x; }
+  void set_y(float _y) { y=_y; }
 
   void translate(vertex const *v) { x += v->get_x(); y += v->get_y(); }
+  void rotate(float angle);
 
   float angle_to_point(vertex const *v) const;
+  void set_from_angle_and_radius(float angle, float radius);
 
 private:
-  int16_t x;
-  int16_t y;
+  float x, y;
 };
 
 void vertex_test(void);

@@ -50,7 +50,7 @@ private:
   vertex *vertexes;
 
   int num_segments;
-  segment *segments;
+  wad_segment *segments;
 
   int num_subsectors;
   subsector *subsectors;

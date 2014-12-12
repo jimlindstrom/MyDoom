@@ -22,14 +22,14 @@ public:
   uint16_t get_first_segment_num(void) const { return first_segment_num; }
 
   void allocate_segments(void);
-  void set_nth_segment(int n, segment const *_segment);
+  void set_nth_segment(int n, wad_segment const *_segment);
 
   void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const;
 
 private:
   uint16_t num_segments;
   uint16_t first_segment_num;
-  segment const **segments;
+  wad_segment const **segments;
 };
 
 #endif
