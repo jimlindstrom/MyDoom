@@ -13,7 +13,7 @@ public:
   void set_screen_size(uint16_t _screen_width, uint16_t _screen_height);
 
   float clip_horiz_angle_to_fov(float angle) const;
-  int16_t get_horiz_fov_radius() const;
+  float get_horiz_fov_radius() const;
   int16_t project_horiz_angle_to_x(float angle) const;
   float unproject_x_to_horiz_angle(int16_t x) const;
 

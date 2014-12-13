@@ -8,7 +8,7 @@
 #include "tests.h"
 #include "common.h"
 
-#define DEBUG_PRINTING
+//#define DEBUG_PRINTING
 #include "debug.h"
 
 static uint16_t next_segment_num = 0; // for debug printing
@@ -220,7 +220,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   {
     // This is the state in which we're just rendering the map view
     color_rgba red(255, 0, 0, 255);
-    omap->draw_line(vertex_l, vertex_r, &red);
+    //omap->draw_line(vertex_l, vertex_r, &red);
     return;
   }
 
@@ -232,12 +232,6 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   _pvr.rotate(-_player->get_facing_angle());
   segment seg(&_pvl, &_pvr);
   debug_printf("    pv: (%.1f,%.1f)->(%.1f,%.1f)\n", _pvl.get_x(), _pvl.get_y(), _pvr.get_x(), _pvr.get_y()); 
-
-  #if 0 // just for debugging purposes
-  float _ang_l_c = origin.angle_to_point(&_pvl);
-  float _ang_r_c = origin.angle_to_point(&_pvr);
-  debug_printf("    angles: [%.1f,%.1f]\n", RAD_TO_DEG(_ang_l_c), RAD_TO_DEG(_ang_r_c));
-  #endif
 
   // Step 2: clip it
   vector const *clip_l = _projector->get_left_clipping_vector();
@@ -266,6 +260,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   d.set_y(vertex_r->get_y() - vertex_l->get_y());
   for(int i=0; i<num_clipped_crs; i++)
   {
+    // FIXME: there's a bug here in which x_r_c == x_l_c
     float t1 = (clipped_ranges[i]->x_left - x_l_c)/(float)(x_r_c-x_l_c);
     t1 = (t1*(u_r_c - u_l_c)) + u_l_c;
     v1.set_x(vertex_l->get_x() + t1*d.get_x());

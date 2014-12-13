@@ -53,12 +53,12 @@ public:
 
   bool undrawn_columns_toward_bbox(bbox const *_bbox, column_range_list *col_ranges, projector const *_projector, player const *_player) const;
 
+  uint16_t node_num; // for debug printing
+
 private:
   partition_line partition;
   node_child_link left;
   node_child_link right;
-
-  uint16_t node_num; // for debug printing
 };
 
 #endif

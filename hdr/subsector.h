@@ -26,6 +26,7 @@ public:
 
   void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const;
 
+  uint16_t subsector_num;
 private:
   uint16_t num_segments;
   uint16_t first_segment_num;

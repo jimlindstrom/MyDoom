@@ -63,6 +63,8 @@ public:
 
   void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const;
 
+  uint16_t segment_num; // for debug printing
+
 private:
   uint16_t vertex_r_num;
   uint16_t vertex_l_num;
@@ -77,8 +79,6 @@ private:
 
   bool is_backface(float angle_l, float angle_r) const;
   bool is_outside_fov(float angle_l, float angle_r, float horiz_fov_radius) const;
-
-  uint16_t segment_num; // for debug printing
 };
 
 void segment_tests(void);

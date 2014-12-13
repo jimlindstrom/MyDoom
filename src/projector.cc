@@ -22,7 +22,7 @@ void projector::set_screen_size(uint16_t _screen_width, uint16_t _screen_height)
   x_proj_scale = ((screen_width-1)/2.0) / tan(get_horiz_fov_radius());
 }
 
-int16_t projector::get_horiz_fov_radius() const
+float projector::get_horiz_fov_radius() const
 {
   return DEG_TO_RAD(60.0);
 } 
@@ -37,7 +37,7 @@ float projector::unproject_x_to_horiz_angle(int16_t x) const
   return (atan2(-x + ((0.5*(screen_width-1))), x_proj_scale));
 }
 
-float projector::clip_horiz_angle_to_fov(float angle) const // FIXME: this may no longer get used...
+float projector::clip_horiz_angle_to_fov(float angle) const
 {
   return MAX(-get_horiz_fov_radius(), MIN(get_horiz_fov_radius(), angle));
 }

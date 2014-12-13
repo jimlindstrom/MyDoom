@@ -400,26 +400,19 @@ void episode_map::draw_overhead_map(overhead_map *omap) const
 {
   color_rgba blu(  0,   0, 255, 255);
 
-/*  for(int i=0; i<num_nodes; i++)
-  {
-    node const *cur_node = &nodes[i];
- 
-    omap->draw_partition_line(cur_node->get_partition(),  &red);
-    if(cur_node->get_left()->is_subsector())
-    {
-      omap->draw_node_bbox(&(cur_node->get_left()->_bbox),  &grn);
-    }
-    if(cur_node->get_right()->is_subsector())
-    {
-      omap->draw_node_bbox(&(cur_node->get_right()->_bbox), &blu);
-    }
-  }*/
   for(int i=0; i<num_linedefs; i++)
   {
     linedef const *l = &linedefs[i];
-    vertex const *v1 = l->get_start_vertex();
-    vertex const *v2 = l->get_end_vertex();
-    omap->draw_line(v1, v2, &blu);
+    if(l->get_flags() & LINEDEF_FLAGS_MASK_NEVER_ON_AUTOMAP)
+    {
+      // don't draw these
+    }
+    else
+    {
+      vertex const *v1 = l->get_start_vertex();
+      vertex const *v2 = l->get_end_vertex();
+      omap->draw_line(v1, v2, &blu);
+    }
   }
 }
 
