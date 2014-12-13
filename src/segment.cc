@@ -98,38 +98,55 @@ void segment::clip_to_lines(vector const *clip_l, vector const *clip_r,
                             float *u_l_c, float *u_r_c) const
 {
   vertex v;
-  bool did_clip;
+  bool did_clip, did_set;
   float u_l, u_r;
 
-  if( !(did_clip = get_intersection_with_vector(clip_l, &v, &u_l)) || // no intersection?
-      (u_l < 0.0) || // or, intersection to left of left vertex?
-      (u_l > 1.0) )  // or, intersection to right of the right vertex?
+  did_set = false;
+  if(get_intersection_with_vector(clip_l, &v, &u_l))
   {
-    if(!did_clip) { printf("    did not clip on left\n"); } else { printf("    did clip1 on left\n"); }
+    if((u_l >= 0.0) && (u_l <= 1.0))
+    {
+      if((v.get_x() >= 0.0) && (v.get_y() >= 0))
+      {
+        printf("    clip left at %.3f\n", u_l);
+        v_l_c->set_to(&v);
+        *u_l_c = u_l;
+        did_set = true;
+      }
+      else { printf("    no clip left: in wrong quadrant\n"); }
+    }
+    else { printf("    no clip left: outside [0, 1]\n"); }
+  }
+  else { printf("    no clip left: non-intersecting\n"); }
+  if(!did_set)
+  {
     v_l_c->set_to(vertex_l);
     *u_l_c = 0.0;
   }
-  else
-  {
-    printf("    did clip2 on left\n");
-    v_l_c->set_to(&v);
-    *u_l_c = u_l;
-  }
 
-  if( !(did_clip = get_intersection_with_vector(clip_r, &v, &u_r)) || // no intersection?
-      (u_r < 0.0) || // or, intersection to left of left vertex?
-      (u_r > 1.0) )  // or, intersection to right of right vertex?
+  did_set = false;
+  if(get_intersection_with_vector(clip_r, &v, &u_r))
   {
-    if(!did_clip) { printf("    did not clip on right\n"); } else { printf("    did clip1 on right\n"); }
+    if((u_r >= 0.0) && (u_r <= 1.0))
+    {
+      if((v.get_x() >= 0.0) && (v.get_y() <= 0))
+      {
+        printf("    clip right at %.3f\n", u_r);
+        v_r_c->set_to(&v);
+        *u_r_c = u_r;
+        did_set = true;
+      }
+      else { printf("    no clip right: in wrong quadrant\n"); }
+    }
+    else { printf("    no clip right: outside [0, 1]\n"); }
+  }
+  else { printf("    no clip right: non-intersecting\n"); }
+  if(!did_set)
+  {
     v_r_c->set_to(vertex_r);
     *u_r_c = 1.0;
   }
-  else
-  {
-    printf("    did clip2 on right\n");
-    v_r_c->set_to(&v);
-    *u_r_c = u_r;
-  }
+
   printf("    u: [%.3f, %.3f] clipped to [%.3f, %.3f]\n", u_l, u_r, *u_l_c, *u_r_c);
 }
 

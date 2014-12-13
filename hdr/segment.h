@@ -16,11 +16,11 @@ class segment
 {
 public:
   segment() { }
-  segment(vertex const *vr, vertex const *vl) { vertex_r = vr; vertex_l = vl; }
+  segment(vertex const *vl, vertex const *vr) { vertex_l = vl; vertex_r = vr; }
   ~segment() { }
 
-  void set_vertex_r(vertex const *v) { vertex_r = v; }
   void set_vertex_l(vertex const *v) { vertex_l = v; }
+  void set_vertex_r(vertex const *v) { vertex_r = v; }
 
   bool is_vertical(void) const;
   bool is_horizontal(void) const;
