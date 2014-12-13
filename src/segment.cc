@@ -95,12 +95,12 @@ void segment::clip_to_lines(vector const *clip_l, vector const *clip_r,
                             float *u_l_c, float *u_r_c) const
 {
   vertex v;
-  float u;
+  float u_l, u_r;
 
-  u = -2;
-  if( !get_intersection_with_vector(clip_l, &v, &u) || // no intersection?
-      (u < 0.0) || // or, intersection to left of left vertex?
-      (u > 1.0) )  // or, intersection to right of the right vertex?
+  u_l = -2;
+  if( !get_intersection_with_vector(clip_l, &v, &u_l) || // no intersection?
+      (u_l < 0.0) || // or, intersection to left of left vertex?
+      (u_l > 1.0) )  // or, intersection to right of the right vertex?
   {
     // just copy the left vertex
     v_l_c->set_x(vertex_l->get_x());
@@ -111,14 +111,13 @@ void segment::clip_to_lines(vector const *clip_l, vector const *clip_r,
   {
     v_l_c->set_x(v.get_x());
     v_l_c->set_y(v.get_y());
-    *u_l_c = u;
+    *u_l_c = u_l;
   }
-  printf("    u_l: %.4f (clipped to %.4f)\n", u, *u_l_c);
 
-  u = 2;
-  if( !get_intersection_with_vector(clip_r, &v, &u) || // no intersection?
-      (u < 0.0) || // or, intersection to left of left vertex?
-      (u > 1.0) )  // or, intersection to right of right vertex?
+  u_r = 2;
+  if( !get_intersection_with_vector(clip_r, &v, &u_r) || // no intersection?
+      (u_r < 0.0) || // or, intersection to left of left vertex?
+      (u_r > 1.0) )  // or, intersection to right of right vertex?
   {
     // just copy the left vertex
     v_r_c->set_x(vertex_r->get_x());
@@ -129,9 +128,9 @@ void segment::clip_to_lines(vector const *clip_l, vector const *clip_r,
   {
     v_r_c->set_x(v.get_x());
     v_r_c->set_y(v.get_y());
-    *u_r_c = u;
+    *u_r_c = u_r;
   }
-  printf("    u_r: %.4f (clipped to %.4f)\n", u, *u_r_c);
+  printf("    u: [%.3f, %.3f] clipped to [%.3f, %.3f]\n", u_l, u_r, *u_l_c, *u_r_c);
 }
 
 /*********************************************************************************************/
@@ -198,8 +197,8 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
          _pvl.get_x(), _pvl.get_y(),
          _pvr.get_x(), _pvr.get_y() ); 
 
-  float _ang_l_c = origin.angle_to_point(&_pvl);
-  float _ang_r_c = origin.angle_to_point(&_pvr);
+  float _ang_l_c = -1 * origin.angle_to_point(&_pvl);
+  float _ang_r_c = -1 * origin.angle_to_point(&_pvr);
   float _x_l_c = _projector->project_horiz_angle_to_x(_ang_l_c);
   float _x_r_c = _projector->project_horiz_angle_to_x(_ang_r_c);
   printf("    angles: [%.1f,%.1f]\n", _ang_l_c, _ang_r_c);
