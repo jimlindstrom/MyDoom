@@ -23,13 +23,14 @@ void tests_run(void)
   segment_tests();
   vector_tests();
 
+  printf("\n---\n\n");
   if(num_tests_failed > 0)
   {
     printf("%d of %d tests failed\n", num_tests_failed, num_tests_failed+num_tests_passed);
   }
   else
   {
-    printf("All tests passed\n");
+    printf("All %d tests passed\n", num_tests_failed+num_tests_passed);
   }
 }
 
