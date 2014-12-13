@@ -47,11 +47,11 @@ void game::init_things(void)
     }
   }
 
-  // START: For testing a particular rendering bug
-  vertex v(1140.4,-3581.0);
+  #if 0
+  vertex v(797.1,-2983.0);
   _player.set_map_position(&v);
-  _player.set_facing_angle(10.4*M_PI/180.0);
-  // END:   For testing a particular rendering bug
+  _player.set_facing_angle(115.4*M_PI/180.0);
+  #endif
 }
 
 void game::do_frame(void)

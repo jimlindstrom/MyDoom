@@ -200,6 +200,13 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
                _player->get_map_position()->distance_to_point(vertex_r));
   #endif
 
+  // FIXME: what am I supposed to do with two-sided, unpegged, etc?
+  if(_linedef && (_linedef->get_flags() & LINEDEF_FLAGS_MASK_NEVER_ON_AUTOMAP))
+  {
+    debug_printf("    NEVER ON AUTOMAP\n");
+    return;
+  }
+
   float angle_r, angle_l;
   calculate_angles_from_player(_player, &angle_l, &angle_r);
   debug_printf("    angles: [%.1f,%.1f]\n", angle_l*180.0/M_PI, angle_r*180.0/M_PI);
