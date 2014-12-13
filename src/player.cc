@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 
+#include "common.h"
 #include "player.h"
 
 player::player()
@@ -43,7 +44,7 @@ void player::move(void)
 
   if(is_turning_right)
   {
-    facing_angle -= 5*M_PI/180.0;
+    facing_angle -= DEG_TO_RAD(5);
     if(facing_angle < -M_PI)
     {
       facing_angle += 2.0*M_PI;
@@ -51,7 +52,7 @@ void player::move(void)
   }
   if(is_turning_left)
   {
-    facing_angle += 5*M_PI/180.0;
+    facing_angle += DEG_TO_RAD(5);
     if(facing_angle > M_PI)
     {
       facing_angle -= 2.0*M_PI;

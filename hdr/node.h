@@ -57,6 +57,8 @@ private:
   partition_line partition;
   node_child_link left;
   node_child_link right;
+
+  uint16_t node_num; // for debug printing
 };
 
 #endif

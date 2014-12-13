@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 
+#include "common.h"
 #include "game.h"
 #include "frame_buf.h"
 #include "key_codes.h"
@@ -50,7 +51,7 @@ void game::init_things(void)
   #if 0
   vertex v(797.1,-2983.0);
   _player.set_map_position(&v);
-  _player.set_facing_angle(115.4*M_PI/180.0);
+  _player.set_facing_angle(DEG_TO_RAD(115.4));
   #endif
 }
 
@@ -64,7 +65,7 @@ void game::do_frame(void)
   printf("  player at (%.1f,%.1f) facing %.1f\n", 
          _player.get_map_position()->get_x(), 
          _player.get_map_position()->get_y(), 
-         _player.get_facing_angle()*180.0/M_PI);
+         RAD_TO_DEG(_player.get_facing_angle()));
 
   overhead_map omap;
   bbox map_bbox(10, screen_height-10, 10, screen_width-10);

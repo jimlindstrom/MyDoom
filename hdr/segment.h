@@ -77,6 +77,8 @@ private:
 
   bool is_backface(float angle_l, float angle_r) const;
   bool is_outside_fov(float angle_l, float angle_r, float horiz_fov_radius) const;
+
+  uint16_t segment_num; // for debug printing
 };
 
 void segment_tests(void);

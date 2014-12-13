@@ -9,12 +9,12 @@ class partition_line
 {
 public:
   partition_line() { }
-  partition_line(int _x, int _y, int _dx, int _dy) { x=_x; y=_y; dx=_dx; dy=_dy; }
+  partition_line(float _x, float _y, float _dx, float _dy) { x=_x; y=_y; dx=_dx; dy=_dy; }
 
-  int16_t x;
-  int16_t y;
-  int16_t dx;
-  int16_t dy;
+  float x;
+  float y;
+  float dx;
+  float dy;
 
   bool is_point_on_left(vertex const *v) const;
 };

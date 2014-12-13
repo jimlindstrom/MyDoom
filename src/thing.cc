@@ -1,4 +1,6 @@
 #include <math.h>
+
+#include "common.h"
 #include "thing.h"
 
 thing::thing()
@@ -18,7 +20,7 @@ bool thing::read_from_lump_data(uint8_t const *lump_data)
   flags            = *((uint16_t*)lump_data) ; lump_data += 2;
 
   // convert angle from degrees to radians
-  facing_angle = facing_angle*M_PI/180.0;
+  facing_angle = DEG_TO_RAD(facing_angle);
 
   return true;
 }

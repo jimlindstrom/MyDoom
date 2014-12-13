@@ -2,6 +2,8 @@
 #define __THING_TYPES_H
 
 #define THING_PLAYER_1_START_TYPE	1
+
+#if 0 // FIXME: need to re-do these. they have dupes in them
 #define THING_PLAYER_2_START_TYPE	2
 #define THING_PLAYER_3_START_TYPE	3
 #define THING_PLAYER_4_START_TYPE	4
@@ -744,5 +746,6 @@
 #define THING_FORMER_HUMAN_TROOPER_CLASS	"MO"
 #define THING_CACODEMON_CLASS	"MO^"
 #define THING_LOST_SOUL_CLASS	"M12O^"
+#endif
 
 #endif

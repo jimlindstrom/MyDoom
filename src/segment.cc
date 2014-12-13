@@ -6,9 +6,12 @@
 #include "segment.h"
 #include "vector.h"
 #include "tests.h"
+#include "common.h"
 
 #define DEBUG_PRINTING
 #include "debug.h"
+
+static uint16_t next_segment_num = 0; // for debug printing
 
 #define FLATNESS_EPSILON 0.00001
 
@@ -168,6 +171,8 @@ wad_segment::~wad_segment()
 
 bool wad_segment::read_from_lump_data(uint8_t const *lump_data)
 {
+  segment_num  = next_segment_num++; // for debug printing
+
   vertex_l_num = *((uint16_t*)lump_data); lump_data += 2;
   vertex_r_num = *((uint16_t*)lump_data); lump_data += 2;
   angle =(float)(*(( int16_t*)lump_data))/256.0; lump_data += 2;
@@ -176,7 +181,7 @@ bool wad_segment::read_from_lump_data(uint8_t const *lump_data)
   offset       = *((uint16_t*)lump_data); lump_data += 2;
 
   // convert angle from degrees to radians
-  angle = angle*M_PI/180.0;
+  angle = DEG_TO_RAD(angle);
 
   return true;
 }
@@ -190,8 +195,8 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
 {
   vertex origin(0,0);
 
-  debug_printf("  segment 0x%08x: (%.1f,%.1f)->(%.1f,%.1f)\n",
-         (unsigned int)this, 
+  debug_printf("  segment %d: (%.1f,%.1f)->(%.1f,%.1f)\n",
+         segment_num,
          vertex_l->get_x(), vertex_l->get_y(),
          vertex_r->get_x(), vertex_r->get_y() ); 
   #if 1
@@ -209,7 +214,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
 
   float angle_r, angle_l;
   calculate_angles_from_player(_player, &angle_l, &angle_r);
-  debug_printf("    angles: [%.1f,%.1f]\n", angle_l*180.0/M_PI, angle_r*180.0/M_PI);
+  debug_printf("    angles: [%.1f,%.1f]\n", RAD_TO_DEG(angle_l), RAD_TO_DEG(angle_r));
   if(is_backface(angle_l, angle_r) ||
      is_outside_fov(angle_l, angle_r, _projector->get_horiz_fov_radius()))
   {
@@ -231,7 +236,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   #if 0 // just for debugging purposes
   float _ang_l_c = origin.angle_to_point(&_pvl);
   float _ang_r_c = origin.angle_to_point(&_pvr);
-  debug_printf("    angles: [%.1f,%.1f]\n", _ang_l_c*180.0/M_PI, _ang_r_c*180.0/M_PI);
+  debug_printf("    angles: [%.1f,%.1f]\n", RAD_TO_DEG(_ang_l_c), RAD_TO_DEG(_ang_r_c));
   #endif
 
   // Step 2: clip it
@@ -244,7 +249,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
 
   float ang_l_c = origin.angle_to_point(&v_l_c);
   float ang_r_c = origin.angle_to_point(&v_r_c);
-  debug_printf("    clipped angles: [%.1f,%.1f]\n", ang_l_c*180.0/M_PI, ang_r_c*180.0/M_PI);
+  debug_printf("    clipped angles: [%.1f,%.1f]\n", RAD_TO_DEG(ang_l_c), RAD_TO_DEG(ang_r_c));
   float x_l_c = _projector->project_horiz_angle_to_x(ang_l_c);
   float x_r_c = _projector->project_horiz_angle_to_x(ang_r_c);
   debug_printf("    clipped x: [%.1f,%.1f]\n", x_l_c, x_r_c);
