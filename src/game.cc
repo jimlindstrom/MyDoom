@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <math.h>
+
 #include "game.h"
 #include "frame_buf.h"
 #include "key_codes.h"
@@ -43,6 +46,12 @@ void game::init_things(void)
       }
     }
   }
+
+  // START: For testing a particular rendering bug
+  vertex v(1140.4,-3581.0);
+  _player.set_map_position(&v);
+  _player.set_facing_angle(10.4*M_PI/180.0);
+  // END:   For testing a particular rendering bug
 }
 
 void game::do_frame(void)
@@ -52,7 +61,10 @@ void game::do_frame(void)
 
   _player.move();
 
-  printf("  player at (%.1f,%.1f) facing %d\n", _player.get_map_position()->get_x(), _player.get_map_position()->get_y(), _player.get_facing_angle());
+  printf("  player at (%.1f,%.1f) facing %.1f\n", 
+         _player.get_map_position()->get_x(), 
+         _player.get_map_position()->get_y(), 
+         _player.get_facing_angle()*180.0/M_PI);
 
   overhead_map omap;
   bbox map_bbox(10, screen_height-10, 10, screen_width-10);

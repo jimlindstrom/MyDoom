@@ -10,6 +10,9 @@ projector::projector()
 : clip_l(&clip_l1, &clip_l2),
   clip_r(&clip_r1, &clip_r2)
 {
+  // initialize these.
+  set_left_clipping_vector( &clip_l1, &clip_l2);
+  set_right_clipping_vector(&clip_r1, &clip_r2);
 }
 
 void projector::set_screen_size(uint16_t _screen_width, uint16_t _screen_height)
@@ -22,7 +25,7 @@ void projector::set_screen_size(uint16_t _screen_width, uint16_t _screen_height)
 
 int16_t projector::get_horiz_fov_radius() const
 {
-  return 60*M_PI/180.0;
+  return 60.0*M_PI/180.0;
 } 
 
 int16_t projector::project_horiz_angle_to_x(float angle) const

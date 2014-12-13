@@ -74,7 +74,9 @@ private:
   linedef const *_linedef;
 
   void calculate_angles_from_player(player const *_player, float *angle_l, float *angle_r) const;
-  bool is_viewer_behind(projector const *_projector, float angle_l, float angle_r) const;
+
+  bool is_backface(float angle_l, float angle_r) const;
+  bool is_outside_fov(float angle_l, float angle_r, float horiz_fov_radius) const;
 };
 
 void segment_tests(void);

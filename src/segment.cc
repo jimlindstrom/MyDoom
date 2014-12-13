@@ -63,6 +63,9 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
     else
     {
       debug_printf("    intersection case 2\n");
+      debug_printf("    vec: (%.1f,%.1f)->(%.1f,%.1f)\n",
+                   vec->get_vertex_1()->get_x(), vec->get_vertex_1()->get_y(),
+                   vec->get_vertex_2()->get_x(), vec->get_vertex_2()->get_y());
       float m1,b1;
       get_slope_and_y_intercept(&m1, &b1);
       float x = vec->get_vertex_1()->get_x();
@@ -191,11 +194,17 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
          (unsigned int)this, 
          vertex_l->get_x(), vertex_l->get_y(),
          vertex_r->get_x(), vertex_r->get_y() ); 
+  #if 1
+  debug_printf("    dist: [%.1f,%.1f]\n", 
+               _player->get_map_position()->distance_to_point(vertex_l),
+               _player->get_map_position()->distance_to_point(vertex_r));
+  #endif
 
   float angle_r, angle_l;
   calculate_angles_from_player(_player, &angle_l, &angle_r);
-  debug_printf("    angles: [%.1f,%.1f]\n", angle_l, angle_r);
-  if(is_viewer_behind(_projector, angle_l, angle_r))
+  debug_printf("    angles: [%.1f,%.1f]\n", angle_l*180.0/M_PI, angle_r*180.0/M_PI);
+  if(is_backface(angle_l, angle_r) ||
+     is_outside_fov(angle_l, angle_r, _projector->get_horiz_fov_radius()))
   {
     // This is the state in which we're just rendering the map view
     color_rgba red(255, 0, 0, 255);
@@ -215,7 +224,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   #if 0 // just for debugging purposes
   float _ang_l_c = origin.angle_to_point(&_pvl);
   float _ang_r_c = origin.angle_to_point(&_pvr);
-  debug_printf("    angles: [%.1f,%.1f]\n", _ang_l_c, _ang_r_c);
+  debug_printf("    angles: [%.1f,%.1f]\n", _ang_l_c*180.0/M_PI, _ang_r_c*180.0/M_PI);
   #endif
 
   // Step 2: clip it
@@ -228,7 +237,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
 
   float ang_l_c = origin.angle_to_point(&v_l_c);
   float ang_r_c = origin.angle_to_point(&v_r_c);
-  debug_printf("    clipped angles: [%.1f,%.1f]\n", ang_l_c, ang_r_c);
+  debug_printf("    clipped angles: [%.1f,%.1f]\n", ang_l_c*180.0/M_PI, ang_r_c*180.0/M_PI);
   float x_l_c = _projector->project_horiz_angle_to_x(ang_l_c);
   float x_r_c = _projector->project_horiz_angle_to_x(ang_r_c);
   debug_printf("    clipped x: [%.1f,%.1f]\n", x_l_c, x_r_c);
@@ -271,17 +280,17 @@ void wad_segment::calculate_angles_from_player(player const *_player, float *ang
   else if(*angle_r < -M_PI) { *angle_r += 2.0*M_PI; }
 }
 
-bool wad_segment::is_viewer_behind(projector const *_projector, float angle_l, float angle_r) const
+bool wad_segment::is_backface(float angle_l, float angle_r) const
 {
-  return ( 
-           (angle_r > angle_l) ||
-           ( 
-             ( (angle_l < -_projector->get_horiz_fov_radius()) ||
-               (angle_l >  _projector->get_horiz_fov_radius()) ) &&
-             ( (angle_r < -_projector->get_horiz_fov_radius()) ||
-               (angle_r >  _projector->get_horiz_fov_radius()) )
-           ) 
-         );
+  return (angle_r > angle_l);
+}
+
+bool wad_segment::is_outside_fov(float angle_l, float angle_r, float horiz_fov_radius) const
+{
+  return ( ( (angle_l < -horiz_fov_radius) ||
+             (angle_l >  horiz_fov_radius) ) &&
+           ( (angle_r < -horiz_fov_radius) ||
+             (angle_r >  horiz_fov_radius) ) );
 }
 
 /******************************************************************************
