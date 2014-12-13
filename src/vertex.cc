@@ -31,7 +31,7 @@ float vertex::angle_to_point(vertex const *v) const
 {
   float dy = v->get_y() - y;
   float dx = v->get_x() - x;
-  return atan2(dy, dx) * 180.0 / M_PI; // FIXME: use rads
+  return atan2(dy, dx);
 }
 
 float vertex::distance_to_point(vertex const*v) const
@@ -43,16 +43,16 @@ float vertex::distance_to_point(vertex const*v) const
 
 void vertex::set_from_angle_and_radius(float angle, float radius)
 {
-  x = radius*cos(angle * M_PI / 180.0); // FIXME: use rads
-  y = radius*sin(angle * M_PI / 180.0); // FIXME: use rads
+  x = radius*cos(angle);
+  y = radius*sin(angle);
 }
 
 void vertex::rotate(float angle)
 {
   float _x = x, _y = y;
 
-  x = (_x*cos(angle*M_PI/180.0)) - (_y*sin(angle*M_PI/180.0));
-  y = (_y*cos(angle*M_PI/180.0)) + (_x*sin(angle*M_PI/180.0));
+  x = (_x*cos(angle)) - (_y*sin(angle));
+  y = (_y*cos(angle)) + (_x*sin(angle));
 }
 
  
@@ -64,28 +64,32 @@ void vertex_test_angle_origin_to_up(void)
 {
   vertex v1(0,0);
   vertex v2(0,1);
-  TEST_ASSERT_WITHIN(v1.angle_to_point(&v2), 89.9,90.1); // 90
+  float expected_angle = M_PI/2.0; // 90 deg
+  TEST_ASSERT_WITHIN(v1.angle_to_point(&v2), expected_angle-0.01,expected_angle+0.01);
 }
 
 void vertex_test_angle_origin_to_downright(void)
 {
   vertex v1(0,0);
   vertex v2(1,-1);
-  TEST_ASSERT_WITHIN(v1.angle_to_point(&v2), -45.1,-44.9); // -45
+  float expected_angle = -M_PI/4.0; // -45 deg
+  TEST_ASSERT_WITHIN(v1.angle_to_point(&v2), expected_angle-0.01,expected_angle+0.01);
 }
 
 void vertex_test_angle_origin_to_left(void)
 {
   vertex v1(0,0);
   vertex v2(-1,0);
-  TEST_ASSERT_WITHIN(v1.angle_to_point(&v2), 179.9,180.1); // 180
+  float expected_angle = M_PI; // 180 deg
+  TEST_ASSERT_WITHIN(v1.angle_to_point(&v2), expected_angle-0.01,expected_angle+0.01);
 }
 
 void vertex_test_angle_random_to_upleft(void)
 {
   vertex v1(2,2);
   vertex v2(1,3);
-  TEST_ASSERT_WITHIN(v1.angle_to_point(&v2), 134.9,135.1); // 135
+  float expected_angle = 3.0*M_PI/4.0; // 135 deg
+  TEST_ASSERT_WITHIN(v1.angle_to_point(&v2), expected_angle-0.01,expected_angle+0.01);
 }
 
 void vertex_test_angle_to_point(void)
@@ -94,11 +98,11 @@ void vertex_test_angle_to_point(void)
   float psqrt2 =  0.7071;
   float nsqrt2 = -0.7071;
 
-  v.set_from_angle_and_radius(135.0, 1.0);
+  v.set_from_angle_and_radius(0.75*M_PI, 1.0);
   TEST_ASSERT_WITHIN(v.get_x(), nsqrt2-0.1, nsqrt2+0.01);
   TEST_ASSERT_WITHIN(v.get_y(), psqrt2-0.1, psqrt2+0.01);
 
-  v.set_from_angle_and_radius(-45.0, 1.0);
+  v.set_from_angle_and_radius(-M_PI/4.0, 1.0);
   TEST_ASSERT_WITHIN(v.get_x(), psqrt2-0.1, psqrt2+0.01);
   TEST_ASSERT_WITHIN(v.get_y(), nsqrt2-0.1, nsqrt2+0.01);
 }

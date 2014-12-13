@@ -52,7 +52,7 @@ public:
   uint16_t get_vertex_l_num(void) const { return vertex_l_num; } // end_vertex   == vertex_l
   uint16_t get_start_vertex_num(void) const { return get_vertex_r_num(); }
   uint16_t get_end_vertex_num(void) const { return get_vertex_l_num(); }
-  int16_t  get_angle(void) const { return angle; }
+  float    get_angle(void) const { return angle; }
   uint16_t get_linedef_num(void) const { return linedef_num; }
   uint16_t get_direction(void) const { return direction; }
   uint16_t get_offset(void) const { return offset; }
@@ -66,7 +66,7 @@ public:
 private:
   uint16_t vertex_r_num;
   uint16_t vertex_l_num;
-  int16_t  angle; 
+  float    angle; 
   uint16_t linedef_num;
   uint16_t direction;        // 0 (same as linedef) or 1 (opposite of linedef)
   uint16_t offset;           // distance along linedef to start of seg

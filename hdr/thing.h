@@ -23,7 +23,7 @@ public:
   bool read_from_lump_data(uint8_t const *lump_data);
 
   vertex const *get_map_position(void) const { return &map_position; }
-  int16_t get_facing_angle(void) const { return facing_angle; }
+  float get_facing_angle(void) const { return facing_angle; }
   uint16_t get_thing_type(void) const { return thing_type; }
   uint16_t get_flags(void) const { return flags; }
 
@@ -42,7 +42,7 @@ public:
 
 private:
   vertex map_position;
-  int16_t facing_angle;
+  float facing_angle;
   uint16_t thing_type, flags;
 
 };

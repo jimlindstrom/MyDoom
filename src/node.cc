@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "node.h"
 
@@ -81,12 +82,12 @@ bool node::undrawn_columns_toward_bbox(bbox const *_bbox, column_range_list *col
   v[2].set_x(_bbox->x_right); v[2].set_y(_bbox->y_top);
   v[3].set_x(_bbox->x_right); v[3].set_y(_bbox->y_bottom);
 
-  float angle[4], angle_left = 180, angle_right = -180;
+  float angle[4], angle_left = M_PI, angle_right = -M_PI;
   for(int i=0; i<4; i++)
   {
     angle[i] = _player->get_map_position()->angle_to_point(&v[i]) - _player->get_facing_angle();
-    if     (angle[i] >  180) { angle[i] -= 360; }
-    else if(angle[i] < -180) { angle[i] += 360; }
+    if     (angle[i] >  M_PI) { angle[i] -= 2.0*M_PI; }
+    else if(angle[i] < -M_PI) { angle[i] += 2.0*M_PI; }
     angle_left  = MIN(angle_left,  angle[i]);
     angle_right = MAX(angle_right, angle[i]);
   }

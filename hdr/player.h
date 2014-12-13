@@ -12,10 +12,10 @@ public:
   ~player();
 
   void set_map_position(vertex const *v) { map_position.set_to(v); }
-  void set_facing_angle(int16_t _facing_angle) { facing_angle = _facing_angle; }
+  void set_facing_angle(float _facing_angle) { facing_angle = _facing_angle; }
 
   vertex const *get_map_position(void) const { return &map_position; }
-  int16_t get_facing_angle(void) const { return facing_angle; }
+  float get_facing_angle(void) const { return facing_angle; }
 
   void draw_overhead_map(overhead_map *omap) const;
 
@@ -30,7 +30,7 @@ public:
 
 private:
   vertex  map_position;
-  int16_t facing_angle;
+  float facing_angle;
 
   bool is_turning_right;
   bool is_turning_left;
