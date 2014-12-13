@@ -43,12 +43,6 @@ void game::init_things(void)
       }
     }
   }
-
-  // ZZZZZZZZ
-  vertex test_vertex(813.1,-3325.1);
-  _player.set_map_position(&test_vertex);
-  _player.set_facing_angle(70);
-  // ZZZZZZZZ
 }
 
 void game::do_frame(void)
