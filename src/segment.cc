@@ -276,8 +276,10 @@ bool wad_segment::is_viewer_behind(projector const *_projector, float angle_l, f
   return ( 
            (angle_r > angle_l) ||
            ( 
-             (fabs(angle_l) > _projector->get_horiz_fov_radius()) && // FIXME: use two more comparisons and skip fabs
-             (fabs(angle_r) > _projector->get_horiz_fov_radius())
+             ( (angle_l < -_projector->get_horiz_fov_radius()) ||
+               (angle_l >  _projector->get_horiz_fov_radius()) ) &&
+             ( (angle_r < -_projector->get_horiz_fov_radius()) ||
+               (angle_r >  _projector->get_horiz_fov_radius()) )
            ) 
          );
 }
