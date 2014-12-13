@@ -6,11 +6,11 @@
 game::game()
 {
   level = 1;
+  frame_time_idx = 0;
 }
 
 game::~game()
 {
-  frame_time_idx = 0;
 }
 
 void game::set_screen_resolution(int w, int h)

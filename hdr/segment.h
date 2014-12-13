@@ -16,6 +16,7 @@ class segment
 {
 public:
   segment() { }
+  segment(vertex const *vr, vertex const *vl) { vertex_r = vr; vertex_l = vl; }
   ~segment() { }
 
   void set_vertex_r(vertex const *v) { vertex_r = v; }

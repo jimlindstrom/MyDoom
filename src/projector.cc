@@ -30,7 +30,7 @@ int16_t projector::project_horiz_angle_to_x(float angle) const
 
 float projector::unproject_x_to_horiz_angle(int16_t x) const
 {
-  return (atan2(x - ((0.5*(screen_width-1))), x_proj_scale) * 180.0/M_PI); // FIXME: use rad
+  return (atan2(-x + ((0.5*(screen_width-1))), x_proj_scale) * 180.0/M_PI); // FIXME: use rad
 }
 
 float projector::clip_horiz_angle_to_fov(float angle) const // FIXME: this may no longer get used...

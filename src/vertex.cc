@@ -21,6 +21,12 @@ bool vertex::read_from_lump_data(uint8_t const *lump_data)
   return true;
 }
 
+void vertex::set_to_a_minus_b(vertex const *a, vertex const *b)
+{
+  x = a->get_x() - b->get_x();
+  y = a->get_y() - b->get_y();
+}
+
 float vertex::angle_to_point(vertex const *v) const
 {
   float dy = v->get_y() - y;

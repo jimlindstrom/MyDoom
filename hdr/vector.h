@@ -9,6 +9,7 @@ class vector
 {
 public:
   vector() { }
+  vector(vertex const *v1, vertex const *v2) { vertex_1=v1; vertex_2=v2; }
   ~vector() { }
 
   vertex const *get_vertex_1(void) const { return vertex_1; }

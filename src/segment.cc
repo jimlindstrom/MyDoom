@@ -97,37 +97,29 @@ void segment::clip_to_lines(vector const *clip_l, vector const *clip_r,
   vertex v;
   float u_l, u_r;
 
-  u_l = -2;
   if( !get_intersection_with_vector(clip_l, &v, &u_l) || // no intersection?
       (u_l < 0.0) || // or, intersection to left of left vertex?
       (u_l > 1.0) )  // or, intersection to right of the right vertex?
   {
-    // just copy the left vertex
-    v_l_c->set_x(vertex_l->get_x());
-    v_l_c->set_y(vertex_l->get_y());
+    v_l_c->set_to(vertex_l);
     *u_l_c = 0.0;
   }
   else
   {
-    v_l_c->set_x(v.get_x());
-    v_l_c->set_y(v.get_y());
+    v_l_c->set_to(&v);
     *u_l_c = u_l;
   }
 
-  u_r = 2;
   if( !get_intersection_with_vector(clip_r, &v, &u_r) || // no intersection?
       (u_r < 0.0) || // or, intersection to left of left vertex?
       (u_r > 1.0) )  // or, intersection to right of right vertex?
   {
-    // just copy the left vertex
-    v_r_c->set_x(vertex_r->get_x());
-    v_r_c->set_y(vertex_r->get_y());
+    v_r_c->set_to(vertex_r);
     *u_r_c = 1.0;
   }
   else
   {
-    v_r_c->set_x(v.get_x());
-    v_r_c->set_y(v.get_y());
+    v_r_c->set_to(&v);
     *u_r_c = u_r;
   }
   printf("    u: [%.3f, %.3f] clipped to [%.3f, %.3f]\n", u_l, u_r, *u_l_c, *u_r_c);
@@ -184,39 +176,29 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
 
   // step 1: translate it into player-centric coordinates
   vertex _pvl, _pvr;
-  _pvl.set_x(vertex_l->get_x() - _player->get_map_position()->get_x());
-  _pvl.set_y(vertex_l->get_y() - _player->get_map_position()->get_y());
-  _pvr.set_x(vertex_r->get_x() - _player->get_map_position()->get_x());
-  _pvr.set_y(vertex_r->get_y() - _player->get_map_position()->get_y());
+  _pvl.set_to_a_minus_b(vertex_l, _player->get_map_position());
+  _pvr.set_to_a_minus_b(vertex_r, _player->get_map_position());
   _pvl.rotate(-_player->get_facing_angle());
   _pvr.rotate(-_player->get_facing_angle());
-  segment seg;
-  seg.set_vertex_l(&_pvl);
-  seg.set_vertex_r(&_pvr);
-  printf("    pv: (%.1f,%.1f)->(%.1f,%.1f)\n",
-         _pvl.get_x(), _pvl.get_y(),
-         _pvr.get_x(), _pvr.get_y() ); 
+  segment seg(&_pvl, &_pvr);
+  printf("    pv: (%.1f,%.1f)->(%.1f,%.1f)\n", _pvl.get_x(), _pvl.get_y(), _pvr.get_x(), _pvr.get_y()); 
 
+  #if 1
   float _ang_l_c = -1 * origin.angle_to_point(&_pvl);
   float _ang_r_c = -1 * origin.angle_to_point(&_pvr);
-  float _x_l_c = _projector->project_horiz_angle_to_x(_ang_l_c);
-  float _x_r_c = _projector->project_horiz_angle_to_x(_ang_r_c);
   printf("    angles: [%.1f,%.1f]\n", _ang_l_c, _ang_r_c);
-  printf("    x: [%.1f,%.1f]\n", _x_l_c, _x_r_c);
+  #endif
 
   // Step 2: clip it
-  vertex clip_l1, clip_l2, clip_r1, clip_r2;
-  vector clip_l, clip_r;
-  clip_l.set_vertex_1(&clip_l1); clip_l.set_vertex_2(&clip_l2);
-  clip_r.set_vertex_1(&clip_r1); clip_r.set_vertex_2(&clip_r2);
+  vertex clip_l1, clip_l2, clip_r1, clip_r2, v_l_c, v_r_c;
+  vector clip_l(&clip_l1, &clip_l2), clip_r(&clip_r1, &clip_r2);
   _projector->set_left_clipping_vector( &clip_l1, &clip_l2);
   _projector->set_right_clipping_vector(&clip_r1, &clip_r2);
-  vertex v_l_c, v_r_c;
   float u_l_c, u_r_c;
   seg.clip_to_lines(&clip_l, &clip_r, &v_l_c, &v_r_c, &u_l_c, &u_r_c);
 
-  float ang_l_c = origin.angle_to_point(&v_l_c);
-  float ang_r_c = origin.angle_to_point(&v_r_c);
+  float ang_l_c = -1 * origin.angle_to_point(&v_l_c);
+  float ang_r_c = -1 * origin.angle_to_point(&v_r_c);
   float x_l_c = _projector->project_horiz_angle_to_x(ang_l_c);
   float x_r_c = _projector->project_horiz_angle_to_x(ang_r_c);
   printf("    clipped angles: [%.1f,%.1f]\n", ang_l_c, ang_r_c);

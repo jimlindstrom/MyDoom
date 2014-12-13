@@ -21,6 +21,8 @@ public:
   void set_x(float _x) { x=_x; }
   void set_y(float _y) { y=_y; }
 
+  void set_to_a_minus_b(vertex const *a, vertex const *b);
+
   void translate(vertex const *v) { x += v->get_x(); y += v->get_y(); }
   void rotate(float angle);
 
