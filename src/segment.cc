@@ -45,6 +45,7 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
   {
     if(!vec->is_vertical())
     {
+      printf("    intersection case 1\n");
       float m1,b1, m2,b2;
       get_slope_and_y_intercept(&m1, &b1);
       vec->get_slope_and_y_intercept(&m2, &b2);
@@ -58,6 +59,7 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
     }
     else
     {
+      printf("    intersection case 2\n");
       float m1,b1;
       get_slope_and_y_intercept(&m1, &b1);
       float x = vec->get_vertex_1()->get_x();
@@ -73,6 +75,7 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
   {
     if(!vec->is_vertical())
     {
+      printf("    intersection case 3\n");
       float x = vertex_l->get_x();
       float m2,b2;
       vec->get_slope_and_y_intercept(&m2, &b2);
@@ -95,30 +98,35 @@ void segment::clip_to_lines(vector const *clip_l, vector const *clip_r,
                             float *u_l_c, float *u_r_c) const
 {
   vertex v;
+  bool did_clip;
   float u_l, u_r;
 
-  if( !get_intersection_with_vector(clip_l, &v, &u_l) || // no intersection?
+  if( !(did_clip = get_intersection_with_vector(clip_l, &v, &u_l)) || // no intersection?
       (u_l < 0.0) || // or, intersection to left of left vertex?
       (u_l > 1.0) )  // or, intersection to right of the right vertex?
   {
+    if(!did_clip) { printf("    did not clip on left\n"); } else { printf("    did clip1 on left\n"); }
     v_l_c->set_to(vertex_l);
     *u_l_c = 0.0;
   }
   else
   {
+    printf("    did clip2 on left\n");
     v_l_c->set_to(&v);
     *u_l_c = u_l;
   }
 
-  if( !get_intersection_with_vector(clip_r, &v, &u_r) || // no intersection?
+  if( !(did_clip = get_intersection_with_vector(clip_r, &v, &u_r)) || // no intersection?
       (u_r < 0.0) || // or, intersection to left of left vertex?
       (u_r > 1.0) )  // or, intersection to right of right vertex?
   {
+    if(!did_clip) { printf("    did not clip on right\n"); } else { printf("    did clip1 on right\n"); }
     v_r_c->set_to(vertex_r);
     *u_r_c = 1.0;
   }
   else
   {
+    printf("    did clip2 on right\n");
     v_r_c->set_to(&v);
     *u_r_c = u_r;
   }
@@ -137,8 +145,8 @@ wad_segment::~wad_segment()
 
 bool wad_segment::read_from_lump_data(uint8_t const *lump_data)
 {
-  vertex_r_num = *((uint16_t*)lump_data); lump_data += 2;
   vertex_l_num = *((uint16_t*)lump_data); lump_data += 2;
+  vertex_r_num = *((uint16_t*)lump_data); lump_data += 2;
   angle        = *(( int16_t*)lump_data); lump_data += 2;
   linedef_num  = *((uint16_t*)lump_data); lump_data += 2;
   direction    = *((uint16_t*)lump_data); lump_data += 2;
@@ -183,9 +191,9 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   segment seg(&_pvl, &_pvr);
   printf("    pv: (%.1f,%.1f)->(%.1f,%.1f)\n", _pvl.get_x(), _pvl.get_y(), _pvr.get_x(), _pvr.get_y()); 
 
-  #if 1
-  float _ang_l_c = -1 * origin.angle_to_point(&_pvl);
-  float _ang_r_c = -1 * origin.angle_to_point(&_pvr);
+  #if 1 // just for debugging purposes
+  float _ang_l_c = origin.angle_to_point(&_pvl);
+  float _ang_r_c = origin.angle_to_point(&_pvr);
   printf("    angles: [%.1f,%.1f]\n", _ang_l_c, _ang_r_c);
   #endif
 
@@ -194,11 +202,14 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   vector clip_l(&clip_l1, &clip_l2), clip_r(&clip_r1, &clip_r2);
   _projector->set_left_clipping_vector( &clip_l1, &clip_l2);
   _projector->set_right_clipping_vector(&clip_r1, &clip_r2);
+  //printf("    clip_l: (%.1f, %.1f)->(%.1f, %.1f)\n", clip_l1.get_x(), clip_l1.get_y(), clip_l2.get_x(), clip_l2.get_y());
+  //printf("    clip_r: (%.1f, %.1f)->(%.1f, %.1f)\n", clip_r1.get_x(), clip_r1.get_y(), clip_r2.get_x(), clip_r2.get_y());
   float u_l_c, u_r_c;
   seg.clip_to_lines(&clip_l, &clip_r, &v_l_c, &v_r_c, &u_l_c, &u_r_c);
+  printf("    v: (%.1f, %.1f)->(%.1f,%.1f)\n", v_l_c.get_x(), v_l_c.get_y(), v_r_c.get_x(), v_r_c.get_y());
 
-  float ang_l_c = -1 * origin.angle_to_point(&v_l_c);
-  float ang_r_c = -1 * origin.angle_to_point(&v_r_c);
+  float ang_l_c = origin.angle_to_point(&v_l_c);
+  float ang_r_c = origin.angle_to_point(&v_r_c);
   float x_l_c = _projector->project_horiz_angle_to_x(ang_l_c);
   float x_r_c = _projector->project_horiz_angle_to_x(ang_r_c);
   printf("    clipped angles: [%.1f,%.1f]\n", ang_l_c, ang_r_c);
@@ -240,9 +251,6 @@ void wad_segment::calculate_angles_from_player(player const *_player, float *ang
   else if(*angle_l < -180) { *angle_l += 360; }
   if     (*angle_r >  180) { *angle_r -= 360; }
   else if(*angle_r < -180) { *angle_r += 360; }
-
-  *angle_l *= -1; // FIXME: ...
-  *angle_r *= -1; // FIXME: ...
 }
 
 bool wad_segment::is_viewer_behind(projector const *_projector, float angle_l, float angle_r) const
@@ -373,6 +381,45 @@ void segment_simple_clip_test(void)
   // expect that the parameter goes 0 to 1
   TEST_ASSERT_WITHIN(u_l_c, -0.01,0.01);
   TEST_ASSERT_WITHIN(u_r_c,  0.99,1.01);
+}
+
+void segment_complex_clip_test(void)
+{
+  // segment: two points down the x axis, just above/below it.
+  vertex v_l, v_r, v_l_c, v_r_c;
+  v_l.set_x(10); v_l.set_y( 50); // NOTE: it's assumed these are translated and scaled to player POV
+  v_r.set_x(10); v_r.set_y(-50); // i.e., assume player is at (0,), looking along the positive x vector
+
+  // setup the segment
+  wad_segment s;
+  s.set_vertex_l(&v_l);
+  s.set_vertex_r(&v_r);
+
+  // set up clipping lines at +/-45 degrees
+  vector clip_l, clip_r;
+  vertex o(0,0), clip_l_vertex, clip_r_vertex;
+  clip_l_vertex.set_from_angle_and_radius( 45.0, 1.0);
+  clip_r_vertex.set_from_angle_and_radius(-45.0, 1.0);
+  clip_l.set_vertex_1(&o);
+  clip_l.set_vertex_2(&clip_l_vertex);
+  clip_r.set_vertex_1(&o);
+  clip_r.set_vertex_2(&clip_r_vertex);
+
+  // clip the segment
+  float u_l_c, u_r_c;
+  s.clip_to_lines(&clip_l, &clip_r, &v_l_c, &v_r_c, &u_l_c, &u_r_c);
+
+  // expect that the left edge is clipped 
+  TEST_ASSERT_WITHIN(v_l_c.get_x(), v_l.get_x()-0.01, v_l.get_x()+0.01);
+  TEST_ASSERT_WITHIN(v_l_c.get_y(), 9.99,10.01);
+
+  // expect that the right edge is clipped
+  TEST_ASSERT_WITHIN(v_r_c.get_x(), v_r.get_x()-0.01, v_r.get_x()+0.01);
+  TEST_ASSERT_WITHIN(v_r_c.get_y(), -10.01,-9.99);
+
+  // expect that the parameter goes 0 to 1
+  TEST_ASSERT_WITHIN(u_l_c, 0.39,0.41);
+  TEST_ASSERT_WITHIN(u_r_c, 0.59,0.61);
 }
 
 void segment_clip_wall_on_right_test(void)
@@ -578,6 +625,7 @@ void segment_tests(void)
   segment_test_line_intersect2();
   segment_test_line_eq();
   segment_simple_clip_test();
+  segment_complex_clip_test();
   segment_clip_wall_on_right_test();
   segment_clip_wall_on_left_test();
 }
