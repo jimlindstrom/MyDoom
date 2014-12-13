@@ -67,7 +67,8 @@ void node::render_player_view(column_range_list *col_ranges, projector const *_p
   else                             { leftmost_child ->_subsector->render_player_view(col_ranges, _projector, _player, omap); }
   
   // render the rightmost_child, only if bbox overlaps or if open space in between
-  if(rightmost_child->_bbox.includes(v) || undrawn_columns_toward_bbox(&(rightmost_child->_bbox), col_ranges, _projector, _player))
+  if(rightmost_child->_bbox.includes(v) || 
+     undrawn_columns_toward_bbox(&(rightmost_child->_bbox), col_ranges, _projector, _player))
   {
     if(rightmost_child->is_node()) { rightmost_child->_node     ->render_player_view(col_ranges, _projector, _player, omap); }
     else                           { rightmost_child->_subsector->render_player_view(col_ranges, _projector, _player, omap); }
