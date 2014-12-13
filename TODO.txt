@@ -1,10 +1,10 @@
 In Progress
 ---
+- BUG: Figure out why not all visible line segs are rendering
+- CHORE: Refactor the segment class
 
 Queued up
 ---
-- CHORE: Refactor the segment class
-- BUG: Figure out why not all visible line segs are rendering
 - FEATURE: don't occlude visibility behind "open" line segs (windows, half-height walls, etc)
 
 - FEATURE: start rendering player view (walls-only)

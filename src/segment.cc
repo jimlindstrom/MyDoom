@@ -7,7 +7,7 @@
 #include "vector.h"
 #include "tests.h"
 
-//#define DEBUG_PRINTING
+#define DEBUG_PRINTING
 #include "debug.h"
 
 #define FLATNESS_EPSILON 0.00001
@@ -96,9 +96,9 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
   }
 }
 
-void segment::clip_to_lines(vector const *clip_l, vector const *clip_r,
-                            vertex *v_l_c, vertex *v_r_c,
-                            float *u_l_c, float *u_r_c) const
+void segment::clip_to_vectors(vector const *clip_l, vector const *clip_r,
+                              vertex *v_l_c, vertex *v_r_c,
+                              float *u_l_c, float *u_r_c) const
 {
   vertex v;
   bool did_set;
@@ -212,28 +212,25 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   segment seg(&_pvl, &_pvr);
   debug_printf("    pv: (%.1f,%.1f)->(%.1f,%.1f)\n", _pvl.get_x(), _pvl.get_y(), _pvr.get_x(), _pvr.get_y()); 
 
-  #if 1 // just for debugging purposes
+  #if 0 // just for debugging purposes
   float _ang_l_c = origin.angle_to_point(&_pvl);
   float _ang_r_c = origin.angle_to_point(&_pvr);
   debug_printf("    angles: [%.1f,%.1f]\n", _ang_l_c, _ang_r_c);
   #endif
 
   // Step 2: clip it
-  vertex clip_l1, clip_l2, clip_r1, clip_r2, v_l_c, v_r_c;
-  vector clip_l(&clip_l1, &clip_l2), clip_r(&clip_r1, &clip_r2);
-  _projector->set_left_clipping_vector( &clip_l1, &clip_l2);
-  _projector->set_right_clipping_vector(&clip_r1, &clip_r2);
-  //debug_printf("    clip_l: (%.1f, %.1f)->(%.1f, %.1f)\n", clip_l1.get_x(), clip_l1.get_y(), clip_l2.get_x(), clip_l2.get_y());
-  //debug_printf("    clip_r: (%.1f, %.1f)->(%.1f, %.1f)\n", clip_r1.get_x(), clip_r1.get_y(), clip_r2.get_x(), clip_r2.get_y());
+  vector const *clip_l = _projector->get_left_clipping_vector();
+  vector const *clip_r = _projector->get_right_clipping_vector();
+  vertex v_l_c, v_r_c;
   float u_l_c, u_r_c;
-  seg.clip_to_lines(&clip_l, &clip_r, &v_l_c, &v_r_c, &u_l_c, &u_r_c);
+  seg.clip_to_vectors(clip_l, clip_r, &v_l_c, &v_r_c, &u_l_c, &u_r_c);
   debug_printf("    v: (%.1f, %.1f)->(%.1f,%.1f)\n", v_l_c.get_x(), v_l_c.get_y(), v_r_c.get_x(), v_r_c.get_y());
 
   float ang_l_c = origin.angle_to_point(&v_l_c);
   float ang_r_c = origin.angle_to_point(&v_r_c);
+  debug_printf("    clipped angles: [%.1f,%.1f]\n", ang_l_c, ang_r_c);
   float x_l_c = _projector->project_horiz_angle_to_x(ang_l_c);
   float x_r_c = _projector->project_horiz_angle_to_x(ang_r_c);
-  debug_printf("    clipped angles: [%.1f,%.1f]\n", ang_l_c, ang_r_c);
   debug_printf("    clipped x: [%.1f,%.1f]\n", x_l_c, x_r_c);
 
   // This is the state in which we're simulating actually rendering the wall in the player's view
@@ -391,7 +388,7 @@ void segment_simple_clip_test(void)
 
   // clip the segment
   float u_l_c, u_r_c;
-  s.clip_to_lines(&clip_l, &clip_r, &v_l_c, &v_r_c, &u_l_c, &u_r_c);
+  s.clip_to_vectors(&clip_l, &clip_r, &v_l_c, &v_r_c, &u_l_c, &u_r_c);
 
   // expect that the left edge is unclipped
   TEST_ASSERT_WITHIN(v_l_c.get_x(), v_l.get_x()-0.01, v_l.get_x()+0.01);
@@ -430,7 +427,7 @@ void segment_complex_clip_test(void)
 
   // clip the segment
   float u_l_c, u_r_c;
-  s.clip_to_lines(&clip_l, &clip_r, &v_l_c, &v_r_c, &u_l_c, &u_r_c);
+  s.clip_to_vectors(&clip_l, &clip_r, &v_l_c, &v_r_c, &u_l_c, &u_r_c);
 
   // expect that the left edge is clipped 
   TEST_ASSERT_WITHIN(v_l_c.get_x(), v_l.get_x()-0.01, v_l.get_x()+0.01);

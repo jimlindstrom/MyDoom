@@ -7,6 +7,8 @@
 #define MIN(x,y) ((x)<(y) ? (x) : (y))
 
 projector::projector()
+: clip_l(&clip_l1, &clip_l2),
+  clip_r(&clip_r1, &clip_r2)
 {
 }
 

@@ -20,10 +20,18 @@ public:
   void set_left_clipping_vector( vertex *clip_l1, vertex *clip_l2) const;
   void set_right_clipping_vector(vertex *clip_r1, vertex *clip_r2) const;
 
+  vector const *get_left_clipping_vector( void) const { return &clip_l; }
+  vector const *get_right_clipping_vector(void) const { return &clip_r; }
+
 private:
   uint16_t screen_width;
   uint16_t screen_height;
   float x_proj_scale;
+
+  vertex clip_l1, clip_l2, 
+         clip_r1, clip_r2;
+  vector clip_l,
+         clip_r;
 };
 
 void projector_tests(void);

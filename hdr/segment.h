@@ -31,9 +31,9 @@ public:
 
   bool get_intersection_with_vector(vector const *vec, vertex *ver, float *u) const; // u=0 -> left vertex, u=1 -> right vertex
 
-  void clip_to_lines(vector const *l_l_delta, vector const *l_r_delta,
-                     vertex *v_l_c, vertex *v_r_c,
-                     float *u_l_c, float *u_r_c) const;
+  void clip_to_vectors(vector const *l_l_delta, vector const *l_r_delta,
+                       vertex *v_l_c, vertex *v_r_c,
+                       float *u_l_c, float *u_r_c) const;
 
 protected:
   vertex const *vertex_r;
