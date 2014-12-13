@@ -7,6 +7,9 @@
 #include "vector.h"
 #include "tests.h"
 
+//#define DEBUG_PRINTING
+#include "debug.h"
+
 #define FLATNESS_EPSILON 0.00001
 
 bool segment::is_vertical(void) const
@@ -45,7 +48,7 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
   {
     if(!vec->is_vertical())
     {
-      printf("    intersection case 1\n");
+      debug_printf("    intersection case 1\n");
       float m1,b1, m2,b2;
       get_slope_and_y_intercept(&m1, &b1);
       vec->get_slope_and_y_intercept(&m2, &b2);
@@ -59,7 +62,7 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
     }
     else
     {
-      printf("    intersection case 2\n");
+      debug_printf("    intersection case 2\n");
       float m1,b1;
       get_slope_and_y_intercept(&m1, &b1);
       float x = vec->get_vertex_1()->get_x();
@@ -75,7 +78,7 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
   {
     if(!vec->is_vertical())
     {
-      printf("    intersection case 3\n");
+      debug_printf("    intersection case 3\n");
       float x = vertex_l->get_x();
       float m2,b2;
       vec->get_slope_and_y_intercept(&m2, &b2);
@@ -108,16 +111,16 @@ void segment::clip_to_lines(vector const *clip_l, vector const *clip_r,
     {
       if((v.get_x() >= 0.0) && (v.get_y() >= 0))
       {
-        printf("    clip left at %.3f\n", u_l);
+        debug_printf("    clip left at %.3f\n", u_l);
         v_l_c->set_to(&v);
         *u_l_c = u_l;
         did_set = true;
       }
-      else { printf("    no clip left: in wrong quadrant\n"); }
+      else { debug_printf("    no clip left: in wrong quadrant\n"); }
     }
-    else { printf("    no clip left: outside [0, 1]\n"); }
+    else { debug_printf("    no clip left: outside [0, 1]\n"); }
   }
-  else { printf("    no clip left: non-intersecting\n"); }
+  else { debug_printf("    no clip left: non-intersecting\n"); }
   if(!did_set)
   {
     v_l_c->set_to(vertex_l);
@@ -131,23 +134,23 @@ void segment::clip_to_lines(vector const *clip_l, vector const *clip_r,
     {
       if((v.get_x() >= 0.0) && (v.get_y() <= 0))
       {
-        printf("    clip right at %.3f\n", u_r);
+        debug_printf("    clip right at %.3f\n", u_r);
         v_r_c->set_to(&v);
         *u_r_c = u_r;
         did_set = true;
       }
-      else { printf("    no clip right: in wrong quadrant\n"); }
+      else { debug_printf("    no clip right: in wrong quadrant\n"); }
     }
-    else { printf("    no clip right: outside [0, 1]\n"); }
+    else { debug_printf("    no clip right: outside [0, 1]\n"); }
   }
-  else { printf("    no clip right: non-intersecting\n"); }
+  else { debug_printf("    no clip right: non-intersecting\n"); }
   if(!did_set)
   {
     v_r_c->set_to(vertex_r);
     *u_r_c = 1.0;
   }
 
-  printf("    u: [%.3f, %.3f] clipped to [%.3f, %.3f]\n", u_l, u_r, *u_l_c, *u_r_c);
+  debug_printf("    u: [%.3f, %.3f] clipped to [%.3f, %.3f]\n", u_l, u_r, *u_l_c, *u_r_c);
 }
 
 /*********************************************************************************************/
@@ -184,14 +187,14 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
 {
   vertex origin(0,0);
 
-  printf("  segment 0x%08x: (%.1f,%.1f)->(%.1f,%.1f)\n",
+  debug_printf("  segment 0x%08x: (%.1f,%.1f)->(%.1f,%.1f)\n",
          (unsigned int)this, 
          vertex_l->get_x(), vertex_l->get_y(),
          vertex_r->get_x(), vertex_r->get_y() ); 
 
   float angle_r, angle_l;
   calculate_angles_from_player(_player, &angle_l, &angle_r);
-  printf("    angles: [%.1f,%.1f]\n", angle_l, angle_r);
+  debug_printf("    angles: [%.1f,%.1f]\n", angle_l, angle_r);
   if(is_viewer_behind(_projector, angle_l, angle_r))
   {
     // This is the state in which we're just rendering the map view
@@ -207,12 +210,12 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   _pvl.rotate(-_player->get_facing_angle());
   _pvr.rotate(-_player->get_facing_angle());
   segment seg(&_pvl, &_pvr);
-  printf("    pv: (%.1f,%.1f)->(%.1f,%.1f)\n", _pvl.get_x(), _pvl.get_y(), _pvr.get_x(), _pvr.get_y()); 
+  debug_printf("    pv: (%.1f,%.1f)->(%.1f,%.1f)\n", _pvl.get_x(), _pvl.get_y(), _pvr.get_x(), _pvr.get_y()); 
 
   #if 1 // just for debugging purposes
   float _ang_l_c = origin.angle_to_point(&_pvl);
   float _ang_r_c = origin.angle_to_point(&_pvr);
-  printf("    angles: [%.1f,%.1f]\n", _ang_l_c, _ang_r_c);
+  debug_printf("    angles: [%.1f,%.1f]\n", _ang_l_c, _ang_r_c);
   #endif
 
   // Step 2: clip it
@@ -220,24 +223,24 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   vector clip_l(&clip_l1, &clip_l2), clip_r(&clip_r1, &clip_r2);
   _projector->set_left_clipping_vector( &clip_l1, &clip_l2);
   _projector->set_right_clipping_vector(&clip_r1, &clip_r2);
-  //printf("    clip_l: (%.1f, %.1f)->(%.1f, %.1f)\n", clip_l1.get_x(), clip_l1.get_y(), clip_l2.get_x(), clip_l2.get_y());
-  //printf("    clip_r: (%.1f, %.1f)->(%.1f, %.1f)\n", clip_r1.get_x(), clip_r1.get_y(), clip_r2.get_x(), clip_r2.get_y());
+  //debug_printf("    clip_l: (%.1f, %.1f)->(%.1f, %.1f)\n", clip_l1.get_x(), clip_l1.get_y(), clip_l2.get_x(), clip_l2.get_y());
+  //debug_printf("    clip_r: (%.1f, %.1f)->(%.1f, %.1f)\n", clip_r1.get_x(), clip_r1.get_y(), clip_r2.get_x(), clip_r2.get_y());
   float u_l_c, u_r_c;
   seg.clip_to_lines(&clip_l, &clip_r, &v_l_c, &v_r_c, &u_l_c, &u_r_c);
-  printf("    v: (%.1f, %.1f)->(%.1f,%.1f)\n", v_l_c.get_x(), v_l_c.get_y(), v_r_c.get_x(), v_r_c.get_y());
+  debug_printf("    v: (%.1f, %.1f)->(%.1f,%.1f)\n", v_l_c.get_x(), v_l_c.get_y(), v_r_c.get_x(), v_r_c.get_y());
 
   float ang_l_c = origin.angle_to_point(&v_l_c);
   float ang_r_c = origin.angle_to_point(&v_r_c);
   float x_l_c = _projector->project_horiz_angle_to_x(ang_l_c);
   float x_r_c = _projector->project_horiz_angle_to_x(ang_r_c);
-  printf("    clipped angles: [%.1f,%.1f]\n", ang_l_c, ang_r_c);
-  printf("    clipped x: [%.1f,%.1f]\n", x_l_c, x_r_c);
+  debug_printf("    clipped angles: [%.1f,%.1f]\n", ang_l_c, ang_r_c);
+  debug_printf("    clipped x: [%.1f,%.1f]\n", x_l_c, x_r_c);
 
   // This is the state in which we're simulating actually rendering the wall in the player's view
   column_range **clipped_ranges;
   int num_clipped_crs;
   clipped_ranges = col_ranges->insert_with_clipping(x_l_c, x_r_c, &num_clipped_crs);
-  printf("    %d clipped ranges\n", num_clipped_crs);
+  debug_printf("    %d clipped ranges\n", num_clipped_crs);
   color_rgba grn(0, 255, 0, 255);
 
   vertex v1, v2, d;
@@ -253,8 +256,8 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
     t2 = (t2*(u_r_c - u_l_c)) + u_l_c;
     v2.set_x(vertex_l->get_x() + t2*d.get_x());
     v2.set_y(vertex_l->get_y() + t2*d.get_y());
-    printf("      clipped range %d: [%d,%d], t:[%.2f,%.2f]\n", i, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, t1, t2);
-    printf("        drawing (%.1f,%.1f)->(%.1f,%.1f)\n", v1.get_x(), v1.get_y(), v2.get_x(), v2.get_y());
+    debug_printf("      clipped range %d: [%d,%d], t:[%.2f,%.2f]\n", i, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, t1, t2);
+    debug_printf("        drawing (%.1f,%.1f)->(%.1f,%.1f)\n", v1.get_x(), v1.get_y(), v2.get_x(), v2.get_y());
     omap->draw_line(&v1, &v2, &grn);
   }
   delete[] clipped_ranges;
