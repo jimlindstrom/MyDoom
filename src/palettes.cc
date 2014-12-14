@@ -30,7 +30,7 @@ bool palettes_init(wad_file const *wad)
     palettes[i].from_linear_256_array(palette_ptr);
   }
 
-  palettes[0].print_html_file("/tmp/palettes.html");
+  //palettes[0].print_html_file("/tmp/palettes.html");
 
   return true;
 }

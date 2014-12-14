@@ -113,8 +113,8 @@ void wall_texture::pre_render(void)
           }
           else
           {
-            uint8_t color_idx = cur_patch->_patch->get_pixel(u, v);
-            pixels[(y*width)+x].set_to(cur_pal->get_color(color_idx));
+            uint8_t color_idx = cur_patch->_patch->get_pixel(u, v);    // {u,v} over patch {width,height}
+            pixels[(y*width)+x].set_to(cur_pal->get_color(color_idx)); // {x,y} over wall {width,height}
           }
         }
       }
@@ -129,7 +129,7 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
   printf("        texture::render(%dx%d)\n", width, height);
   for(int x=x_l; x<=x_r; x++)
   {
-    int ldx = (ldx_r-ldx_l)*(x-x_l)/(x_r-x_l);
+    int ldx = ldx_l + (ldx_r-ldx_l)*(x-x_l)/(x_r-x_l);
     int tx = ldx % width;
 
     float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
@@ -137,14 +137,14 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
 
     for(int y=yb; y<=yt; y++)
     {
-      if( (y>=0) && (y<640) ) // FIXME: magic #
+      if( (y>=0) && (y<480) ) // FIXME: magic #
       {
         int ldy = ld_h*(y-yb)/(yt-yb);
         int ty = ldy % height;
   
-        int pix_offset = (ty * width) +tx;
+        int pix_offset = (ty * width) + tx;
         c.set_to(&pixels[pix_offset]);
-        frame_buf_draw_point(x, 640-y, &c);
+        frame_buf_draw_point(x, y, &c);
       }
     }
   }

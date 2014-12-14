@@ -69,14 +69,25 @@ bool picture_data::set_from_lump_data(uint8_t const *data)
     }
   }
 
+  #define ROTATE_AFTER_LOADING
+  #ifdef ROTATE_AFTER_LOADING
+  // now, finally, rotate the thing 90deg
+  uint16_t t = width;
+  width = height;
+  height = t;
+  #endif
+
   delete[] column_offsets;
   return true;
 }
 
 uint8_t const picture_data::get_pixel(int x, int y) const
 {
-  // FIXME: assert x,y are sane
+  #ifdef ROTATE_AFTER_LOADING
+  return pixel_columns[x][height-y];
+  #else
   return pixel_columns[y][x];
+  #endif
 }
 
 void picture_data::print_html_file(char const *filename, palette const *pal)

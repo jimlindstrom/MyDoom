@@ -38,7 +38,7 @@ bool flats_init(wad_file const *wad)
     }
   }
 
-  flats[0].print_html_file("/tmp/flat0.html", palettes_get(0));
+  //flats[0].print_html_file("/tmp/flat0.html", palettes_get(0));
 
   return true;
 }

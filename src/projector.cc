@@ -24,7 +24,7 @@ void projector::set_screen_size(uint16_t _screen_width, uint16_t _screen_height)
 
 float projector::get_horiz_fov_radius() const
 {
-  return DEG_TO_RAD(60.0);
+  return DEG_TO_RAD(30.0);
 } 
 
 int16_t projector::project_horiz_angle_to_x(float angle) const

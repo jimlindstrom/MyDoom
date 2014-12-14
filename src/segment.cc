@@ -200,8 +200,8 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
          vertex_l->get_x(), vertex_l->get_y(),
          vertex_r->get_x(), vertex_r->get_y() ); 
 
-  float dist_l = _player->get_map_position()->distance_to_point(vertex_l);
-  float dist_r = _player->get_map_position()->distance_to_point(vertex_r);
+  //float dist_l = _player->get_map_position()->distance_to_point(vertex_l);
+  //float dist_r = _player->get_map_position()->distance_to_point(vertex_r);
   //debug_printf("    dist: [%.1f,%.1f]\n", dist_l, dist_r);
 
   float angle_r, angle_l;
@@ -266,6 +266,8 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
       //omap->draw_line(&v1, &v2, &grn);
 
       float y0_l, dy_l, y0_r, dy_r; // FIXME: just a first-order approximation
+      float dist_l = _player->get_map_position()->distance_to_point(&v1); // FIXME: this should be the clipped point.
+      float dist_r = _player->get_map_position()->distance_to_point(&v2); // ...
       debug_printf("      dists: [%.1f,%.1f]\n", dist_l, dist_r);
       _projector->project_y(-_player->get_view_height(), dist_l, &y0_l, &dy_l);
       _projector->project_y(-_player->get_view_height(), dist_r, &y0_r, &dy_r);

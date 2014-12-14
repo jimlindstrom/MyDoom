@@ -41,7 +41,7 @@ bool patches_init(wad_file const *wad)
     }
   }
 
-  patches[0].print_html_file("/tmp/patch0.html", palettes_get(0));
+  //patches[0].print_html_file("/tmp/patch0.html", palettes_get(0));
 
   return true;
 }

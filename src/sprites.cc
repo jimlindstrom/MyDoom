@@ -55,7 +55,7 @@ bool sprites_init(wad_file const *wad)
     }
   }
 
-  sprites[0].print_html_file("/tmp/sprite0.html", palettes_get(0));
+  //sprites[0].print_html_file("/tmp/sprite0.html", palettes_get(0));
 
   return true;
 }

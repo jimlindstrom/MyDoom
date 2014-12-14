@@ -20,7 +20,7 @@ bool thing::read_from_lump_data(uint8_t const *lump_data)
   flags            = *((uint16_t*)lump_data) ; lump_data += 2;
 
   // convert angle from degrees to radians
-  facing_angle = DEG_TO_RAD(facing_angle);
+  facing_angle = DEG_TO_RAD(facing_angle+90);
 
   return true;
 }

@@ -30,7 +30,7 @@ bool colormaps_init(wad_file const *wad)
     colormaps[i].set_data(colormap_ptr, BRIGHTNESSES_PER_MAP);
   }
 
-  colormaps[0].print_html_file("/tmp/colormaps.html");
+  //colormaps[0].print_html_file("/tmp/colormaps.html");
 
   return true;
 }

@@ -14,7 +14,7 @@ player::player()
   is_strafing_right = false;
   is_strafing_left = false;
 
-  view_height = 10;
+  view_height = 35;
 }
 
 player::~player()
