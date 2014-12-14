@@ -42,6 +42,14 @@ float projector::clip_horiz_angle_to_fov(float angle) const
   return MAX(-get_horiz_fov_radius(), MIN(get_horiz_fov_radius(), angle));
 }
 
+void projector::project_y(float y_3d, float dist_3d, float *y0, float *dy) const
+{
+  dist_3d /= 1000; // FIXME....
+  *y0 = y_3d / dist_3d;
+  *dy = *y0 / y_3d;
+  *y0 += (screen_height/2);
+}
+
 void projector::set_left_clipping_vector(vertex *clip_l1, vertex *clip_l2) const
 {
   clip_l1->set_x(0.0);

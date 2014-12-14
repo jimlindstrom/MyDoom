@@ -17,6 +17,8 @@ public:
   int16_t project_horiz_angle_to_x(float angle) const;
   float unproject_x_to_horiz_angle(int16_t x) const;
 
+  void project_y(float y_3d, float dist_3d, float *y0, float *dy) const;
+
   void set_left_clipping_vector( vertex *clip_l1, vertex *clip_l2) const;
   void set_right_clipping_vector(vertex *clip_r1, vertex *clip_r2) const;
 

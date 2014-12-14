@@ -1,8 +1,18 @@
 In Progress
 ---
+- FEATURE: rendering one-sided linedefs
+- FEATURE: support y-scaling and offsetting (2D perspective) in rendering one-sided walls
 
 Queued up
 ---
-- FEATURE: don't (entirely?) occlude visibility behind "open" line segs (windows, half-height walls, etc)
-- FEATURE: start rendering player view (walls-only)
-- 
+- FEATURE: support pegging & x/y-offsets in rendering one-sided walls
+- FEATURE: rendering two-sided linedefs
+- FEATURE: don't (entirely?) occlude visibility through two-sided linedefs
+
+- FEATURE: collision detection
+
+- FEATURE: animate wall textures
+
+- FEATURE: trigger walkover actions on linedefs
+- FEATURE: trigger use/push actions on linedefs
+- FEATURE: trigger shoot actions on linedefs

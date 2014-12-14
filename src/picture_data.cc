@@ -73,7 +73,7 @@ bool picture_data::set_from_lump_data(uint8_t const *data)
   return true;
 }
 
-uint8_t const picture_data::get_pixel(int x, int y)
+uint8_t const picture_data::get_pixel(int x, int y) const
 {
   // FIXME: assert x,y are sane
   return pixel_columns[y][x];

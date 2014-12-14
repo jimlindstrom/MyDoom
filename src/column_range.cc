@@ -3,7 +3,7 @@
 #include "column_range.h"
 #include "tests.h"
 
-#define MAX(x,y) ((x)>(y) ? (x) : (y))
+#include "common.h"
 
 column_range_list::column_range_list()
 {

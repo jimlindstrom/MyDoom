@@ -20,7 +20,7 @@ public:
   uint16_t get_left(void) const { return left; } 
   uint16_t get_top(void) const { return top; } 
 
-  uint8_t const get_pixel(int x, int y);
+  uint8_t const get_pixel(int x, int y) const;
 
 private:
   uint16_t width, height, left, top;

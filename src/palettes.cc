@@ -41,5 +41,10 @@ void palettes_destroy(void)
 
 palette const *palettes_get(int idx)
 {
+  if(idx >= NUM_PALETTES)
+  {
+    printf("ERROR: palette %d requested. >= NUM PALETTES (%d).\n", idx, NUM_PALETTES);
+    exit(0);
+  }
   return &palettes[idx];
 }

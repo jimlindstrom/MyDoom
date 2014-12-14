@@ -222,6 +222,9 @@ bool episode_map::read_sectors(wad_lump const *lump)
   {
     sector_ptr = lump->get_data() + (i*SECTOR_NUM_BYTES);
     sectors[i].read_from_lump_data(sector_ptr);
+    /*printf("sector %d: floor height: %d, ceil height: %d, clearance: %d\n",
+           i, sectors[i].get_floor_height(), sectors[i].get_ceiling_height(),
+           sectors[i].get_clearance());*/
   }
 
   return true;
@@ -403,7 +406,7 @@ void episode_map::draw_overhead_map(overhead_map *omap) const
   for(int i=0; i<num_linedefs; i++)
   {
     linedef const *l = &linedefs[i];
-    if(l->get_flags() & LINEDEF_FLAGS_MASK_NEVER_ON_AUTOMAP)
+    if(l->never_on_automap())
     {
       // don't draw these
     }

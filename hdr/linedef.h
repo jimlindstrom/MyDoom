@@ -37,8 +37,20 @@ public:
   uint16_t get_right_sidedef_num(void) const { return right_sidedef_num; }
   uint16_t get_left_sidedef_num(void) const { return left_sidedef_num; }
 
-  bool has_left_sidedef(void) const { return (left_sidedef_num != LINEDEF_HAS_NO_SIDEDEF); }
+  bool has_left_sidedef(void)  const { return (left_sidedef_num  != LINEDEF_HAS_NO_SIDEDEF); }
   bool has_right_sidedef(void) const { return (right_sidedef_num != LINEDEF_HAS_NO_SIDEDEF); }
+
+  bool blocks_players(void)    const { return (flags & LINEDEF_FLAGS_MASK_BLOCKS_PLAYERS_AND_MONSTERS); }
+  bool blocks_monsters(void)   const { return (flags & LINEDEF_FLAGS_MASK_BLOCKS_PLAYERS_AND_MONSTERS) || 
+                                            (flags & LINEDEF_FLAGS_MASK_BLOCKS_MONSTERS); }
+  bool is_two_sided(void)      const { return (flags & LINEDEF_FLAGS_MASK_TWO_SIDED); }
+  bool is_one_sided(void)      const { return !is_two_sided(); }
+  bool upper_is_unpegged(void) const { return (flags & LINEDEF_FLAGS_MASK_UPPER_TEXTURE_IS_UNPEGGED); } 
+  bool lower_is_unpegged(void) const { return (flags & LINEDEF_FLAGS_MASK_LOWER_TEXTURE_IS_UNPEGGED); }
+  bool is_secret(void)         const { return (flags & LINEDEF_FLAGS_MASK_SECRET); }
+  bool blocks_sound(void)      const { return (flags & LINEDEF_FLAGS_MASK_BLOCKS_SOUND); }
+  bool never_on_automap(void)  const { return (flags & LINEDEF_FLAGS_MASK_NEVER_ON_AUTOMAP); }
+  bool always_on_automap(void) const { return (flags & LINEDEF_FLAGS_MASK_ALWAYS_ON_AUTOMAP); }
 
   void set_left_sidedef(sidedef const *_sidedef);
   void set_right_sidedef(sidedef const *_sidedef);
@@ -46,6 +58,10 @@ public:
   void set_end_vertex(vertex const *v);
   vertex const *get_start_vertex(void) const { return start_vertex; }
   vertex const *get_end_vertex(void) const { return end_vertex; }
+
+  float get_length(void) const { return start_vertex->distance_to_point(end_vertex); }
+
+  void render(float ldx_l, float ldx_r, int x_l, int x_r, float y0_l, float dy_l, float y0_r, float dy_r) const;
 
 private:
   uint16_t start_vertex_num;
@@ -60,6 +76,11 @@ private:
   sidedef const *right_sidedef;
   vertex const *start_vertex;
   vertex const *end_vertex;
+
+  int16_t get_highest_ceiling(void) const;
+  int16_t get_lowest_ceiling(void) const;
+  int16_t get_highest_floor(void) const;
+  int16_t get_lowest_floor(void) const;
 };
 
 #endif
