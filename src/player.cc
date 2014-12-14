@@ -27,16 +27,16 @@ void player::draw_overhead_map(overhead_map *omap) const
   vertex v1, v2;
 
   v1.set_to(&map_position);
-  v2.set_x(map_position.get_x() + 40*cos(facing_angle));
-  v2.set_y(map_position.get_y() + 40*sin(facing_angle));
+  v2.set_x(map_position.get_x() + 75*cos(facing_angle));
+  v2.set_y(map_position.get_y() + 75*sin(facing_angle));
   omap->draw_line(&v1, &v2, &red);
 
-  v2.set_x(map_position.get_x() + 10*cos(facing_angle-(M_PI/2.0)));
-  v2.set_y(map_position.get_y() + 10*sin(facing_angle-(M_PI/2.0)));
+  v2.set_x(map_position.get_x() + 20*cos(facing_angle-(M_PI/2.0)));
+  v2.set_y(map_position.get_y() + 20*sin(facing_angle-(M_PI/2.0)));
   omap->draw_line(&v1, &v2, &red);
 
-  v2.set_x(map_position.get_x() + 10*cos(facing_angle+(M_PI/2.0)));
-  v2.set_y(map_position.get_y() + 10*sin(facing_angle+(M_PI/2.0)));
+  v2.set_x(map_position.get_x() + 20*cos(facing_angle+(M_PI/2.0)));
+  v2.set_y(map_position.get_y() + 20*sin(facing_angle+(M_PI/2.0)));
   omap->draw_line(&v1, &v2, &red);
 }
 
