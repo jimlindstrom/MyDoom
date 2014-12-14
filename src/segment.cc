@@ -213,6 +213,8 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
     return;
   }
 
+  if(_linedef->is_two_sided()) { return; } // FIXME: for now, I'm not rendering two-sided linedefs at all.
+
   // step 1: translate it into player-centric coordinates
   vertex _pvl, _pvr;
   _pvl.set_to_a_minus_b(vertex_l, _player->get_map_position());

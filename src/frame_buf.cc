@@ -51,6 +51,21 @@ void frame_buf_flush_to_ui(void)
 }
 
 /* NOTE: this flips y from bottom-up to top-down */
+void frame_buf_overlay_pixel(int x, int y, color_rgba const *color)
+{
+  int buf_y = frame_height - y - 1;
+  if(x>=0 && x<frame_width && buf_y>=0 && buf_y<frame_height)
+  {
+    uint8_t *ptr;
+    ptr = frame + (buf_y*frame_width*BYTES_PER_PIXEL) + (x*BYTES_PER_PIXEL);
+    *(ptr+0) = (color->r * color->a/255.0) + (*(ptr+0) * (255.0-color->a)/255.0);
+    *(ptr+1) = (color->g * color->a/255.0) + (*(ptr+1) * (255.0-color->a)/255.0);
+    *(ptr+2) = (color->b * color->a/255.0) + (*(ptr+2) * (255.0-color->a)/255.0);
+    *(ptr+3) = 255.0; // ?
+  }
+}
+
+/* NOTE: this flips y from bottom-up to top-down */
 void frame_buf_draw_point(int x, int y, color_rgba const *color)
 {
   int buf_y = frame_height - y - 1;

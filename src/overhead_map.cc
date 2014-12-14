@@ -27,6 +27,19 @@ void overhead_map::translate_origin(int dx, int dy)
   map_dy = dy;
 }
 
+void overhead_map::darken_background(void)
+{
+  color_rgba bg; bg.r = 40; bg.g = 40; bg.b = 40; bg.a = 187;
+
+  for(int x=map_bbox->x_left; x<=map_bbox->x_right; x++)
+  {
+    for(int y=map_bbox->y_top; y<=map_bbox->y_bottom; y++)
+    {
+      frame_buf_overlay_pixel(x, y, &bg);
+    }
+  }
+}
+
 void overhead_map::draw_bbox(void)
 {
   color_rgba white; white.r = 255; white.g = 255; white.b = 255; white.a = 255;

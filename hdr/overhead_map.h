@@ -15,6 +15,7 @@ public:
   void set_scale(float scale);
   void translate_origin(int dx, int dy);
 
+  void darken_background(void);
   void draw_bbox(void);
   void draw_line(vertex const *v1, vertex const *v2, color_rgba const *c);
 
