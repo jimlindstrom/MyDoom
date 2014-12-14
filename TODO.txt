@@ -14,8 +14,10 @@ Queued up
 
 - FEATURE: collision detection
 
+- FEATURE: lighting
 - FEATURE: animate wall textures
 
 - FEATURE: trigger walkover actions on linedefs
 - FEATURE: trigger use/push actions on linedefs
 - FEATURE: trigger shoot actions on linedefs
+
