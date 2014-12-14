@@ -53,6 +53,8 @@ public:
 
   bool undrawn_columns_toward_bbox(bbox const *_bbox, column_range_list *col_ranges, projector const *_projector, player const *_player) const;
 
+  subsector const *get_subsector_containing(vertex const *v) const;
+
   uint16_t node_num; // for debug printing
 
 private:

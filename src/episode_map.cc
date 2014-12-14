@@ -423,3 +423,24 @@ void episode_map::render_player_view(column_range_list *col_ranges, projector co
 {
   nodes[num_nodes-1].render_player_view(col_ranges, _projector, _player, omap);
 }
+
+bool episode_map::can_move(vertex const *old_position, vertex const *new_position, float *floor_height) const
+{
+  subsector const *old_ss;
+  subsector const *new_ss;
+
+  old_ss = nodes[num_nodes-1].get_subsector_containing(old_position);
+  new_ss = nodes[num_nodes-1].get_subsector_containing(new_position);
+
+  if(old_ss != new_ss) // FIXME: do collision detection...
+  {
+    // check all linedefs in new/old SS. 
+    // see if they're crossed by this vector
+    // if so, check whether they block players
+  }
+
+  *floor_height = new_ss->get_nth_segment(0)->get_linedef()->get_highest_floor(); // FIXME: this is wrong...
+
+  return true;
+}
+

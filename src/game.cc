@@ -60,7 +60,7 @@ void game::do_frame(void)
   column_range_list col_ranges;
   printf("frame\n");
 
-  _player.move();
+  _player.move(_map);
 
   printf("  player at (%.1f,%.1f) facing %.1f\n", 
          _player.get_map_position()->get_x(), 
@@ -98,8 +98,8 @@ void game::track_frames_per_sec(void)
   delta_sec = t_cur - t_prev;
   if(delta_sec>0.0000001 && delta_sec<1.0)
   {
-  fps = (double)num_frames / delta_sec;
-  printf("%.2f frames/sec (%d frames in %.6fsec)\n", fps, (FRAME_TIMES_COUNT-1), delta_sec);
+    fps = (double)num_frames / delta_sec;
+    printf("%.2f frames/sec (%d frames in %.6fsec)\n", fps, (FRAME_TIMES_COUNT-1), delta_sec);
   }
 
   frame_time_idx = ((frame_time_idx+1) % FRAME_TIMES_COUNT);

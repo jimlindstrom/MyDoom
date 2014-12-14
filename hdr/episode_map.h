@@ -34,6 +34,8 @@ public:
 
   void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const;
 
+  bool can_move(vertex const *old_position, vertex const *new_position, float *floor_height) const;
+
 private:
   char *name;
 

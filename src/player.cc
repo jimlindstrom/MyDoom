@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "player.h"
+#include "episode_map.h"
 
 player::player()
 {
@@ -14,7 +15,8 @@ player::player()
   is_strafing_right = false;
   is_strafing_left = false;
 
-  view_height = 35;
+  floor_height = 0;
+  rel_view_height = 35; // height above floor
 }
 
 player::~player()
@@ -40,48 +42,45 @@ void player::draw_overhead_map(overhead_map *omap) const
   omap->draw_line(&v1, &v2, &red);
 }
 
-void player::move(void)
+void player::move(episode_map const *_map)
 {
-  vertex n;
+  vertex new_position;
+
+  new_position.set_to(&map_position);
 
   if(is_turning_right)
   {
     facing_angle -= DEG_TO_RAD(5);
-    if(facing_angle < -M_PI)
-    {
-      facing_angle += 2.0*M_PI;
-    }
+    if(facing_angle < -M_PI) { facing_angle += 2.0*M_PI; }
   }
   if(is_turning_left)
   {
     facing_angle += DEG_TO_RAD(5);
-    if(facing_angle > M_PI)
-    {
-      facing_angle -= 2.0*M_PI;
-    }
+    if(facing_angle > M_PI) { facing_angle -= 2.0*M_PI; }
   }
   if(is_moving_forward)
   {
-    n.set_x(5*cos(facing_angle));
-    n.set_y(5*sin(facing_angle));
-    map_position.translate(&n);
+    new_position.set_x(new_position.get_x() + (5*cos(facing_angle)));
+    new_position.set_y(new_position.get_y() + (5*sin(facing_angle)));
   }
   if(is_moving_backward)
   {
-    n.set_x(-5*cos(facing_angle));
-    n.set_y(-5*sin(facing_angle));
-    map_position.translate(&n);
+    new_position.set_x(new_position.get_x() + (-5*cos(facing_angle)));
+    new_position.set_y(new_position.get_y() + (-5*sin(facing_angle)));
   }
   if(is_strafing_right)
   {
-    n.set_x(5*cos(facing_angle-(M_PI/2.0)));
-    n.set_y(5*sin(facing_angle-(M_PI/2.0)));
-    map_position.translate(&n);
+    new_position.set_x(new_position.get_x() + (5*cos(facing_angle-(M_PI/2.0))));
+    new_position.set_y(new_position.get_y() + (5*sin(facing_angle-(M_PI/2.0))));
   }
   if(is_strafing_left)
   {
-    n.set_x(5*cos(facing_angle+(M_PI/2.0)));
-    n.set_y(5*sin(facing_angle+(M_PI/2.0)));
-    map_position.translate(&n);
+    new_position.set_x(new_position.get_x() + (5*cos(facing_angle+(M_PI/2.0))));
+    new_position.set_y(new_position.get_y() + (5*sin(facing_angle+(M_PI/2.0))));
+  }
+
+  if(_map->can_move(&map_position, &new_position, &floor_height))
+  {
+    map_position.set_to(&new_position);
   }
 }

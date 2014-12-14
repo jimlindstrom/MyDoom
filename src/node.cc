@@ -51,8 +51,9 @@ bool node::read_from_lump_data(uint8_t const *lump_data)
 
 void node::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const
 {
-  node_child_link const *leftmost_child;
-  node_child_link const *rightmost_child;
+
+  node_child_link const *closer_child;
+  node_child_link const *farther_child;
   vertex const *v;
 
   debug_printf("node %d\n", node_num);
@@ -66,38 +67,38 @@ void node::render_player_view(column_range_list *col_ranges, projector const *_p
   if(partition.is_point_on_left(v))
   {
     debug_printf("  player is on left\n");
-    leftmost_child  = &left;
-    rightmost_child = &right;
+    closer_child  = &left;
+    farther_child = &right;
   }
   else
   {
     debug_printf("  player is on right\n");
-    leftmost_child  = &right;
-    rightmost_child = &left;
+    closer_child  = &right;
+    farther_child = &left;
   }
 
-  // render the leftmost_child
-  if(leftmost_child->is_node())    { leftmost_child ->_node     ->render_player_view(col_ranges, _projector, _player, omap); }
-  else                             { leftmost_child ->_subsector->render_player_view(col_ranges, _projector, _player, omap); }
+  // render the closer_child
+  if(closer_child->is_node())    { closer_child ->_node     ->render_player_view(col_ranges, _projector, _player, omap); }
+  else                           { closer_child ->_subsector->render_player_view(col_ranges, _projector, _player, omap); }
   
-  // render the rightmost_child, only if bbox overlaps or if open space in between
+  // render the farther_child, only if bbox overlaps or if open space in between
   debug_printf("node %d (far side)\n", node_num);
-  bool right_bbox_includes_v = rightmost_child->_bbox.includes(v);
-  bool undrawn_cols_toward_right_bbox = undrawn_columns_toward_bbox(&(rightmost_child->_bbox), col_ranges, _projector, _player);
+  bool right_bbox_includes_v = farther_child->_bbox.includes(v);
+  bool undrawn_cols_toward_right_bbox = undrawn_columns_toward_bbox(&(farther_child->_bbox), col_ranges, _projector, _player);
   if(right_bbox_includes_v || undrawn_cols_toward_right_bbox) // FIXME: by doing these inline, we could skip the 2nd test
   {
     if(right_bbox_includes_v)
     { 
       debug_printf("  far bbox [%.1f..%.1f, %.1f..%.1f] includes v\n", 
-             rightmost_child->_bbox.x_left, rightmost_child->_bbox.x_right,
-             rightmost_child->_bbox.y_top, rightmost_child->_bbox.y_bottom); 
+             farther_child->_bbox.x_left, farther_child->_bbox.x_right,
+             farther_child->_bbox.y_top,  farther_child->_bbox.y_bottom); 
     }
     if(undrawn_cols_toward_right_bbox)
     { 
       debug_printf("  undrawn cols toward far bbox\n"); 
     }
-    if(rightmost_child->is_node()) { rightmost_child->_node     ->render_player_view(col_ranges, _projector, _player, omap); }
-    else                           { rightmost_child->_subsector->render_player_view(col_ranges, _projector, _player, omap); }
+    if(farther_child->is_node()) { farther_child->_node     ->render_player_view(col_ranges, _projector, _player, omap); }
+    else                         { farther_child->_subsector->render_player_view(col_ranges, _projector, _player, omap); }
   }
   else { debug_printf("  skipping.\n"); }
 }
@@ -130,4 +131,27 @@ bool node::undrawn_columns_toward_bbox(bbox const *_bbox, column_range_list *col
   debug_printf("  testing holes in x: [%d, %d]\n", x_left, x_right);
 
   return col_ranges->any_unclipped_columns_in_range(x_left, x_right);
+}
+
+subsector const *node::get_subsector_containing(vertex const *v) const
+{
+  node_child_link const *closer_child;
+
+  if(partition.is_point_on_left(v))
+  {
+    closer_child  = &left;
+  }
+  else
+  {
+    closer_child  = &right;
+  }
+
+  if(closer_child->is_node())
+  {
+    return closer_child->_node->get_subsector_containing(v);
+  }
+  else
+  {
+    return closer_child ->_subsector; 
+  }
 }

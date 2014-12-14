@@ -56,6 +56,7 @@ public:
   uint16_t get_linedef_num(void) const { return linedef_num; }
   uint16_t get_direction(void) const { return direction; }
   uint16_t get_offset(void) const { return offset; }
+  linedef const *get_linedef(void) const { return _linedef; }
 
   void set_linedef(linedef const *ld);
   void set_start_vertex(vertex const *v) { set_vertex_r(v); }

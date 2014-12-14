@@ -5,6 +5,8 @@
 
 #include "overhead_map.h"
 
+class episode_map; // forward declaration
+
 class player
 {
 public:
@@ -13,11 +15,10 @@ public:
 
   void set_map_position(vertex const *v) { map_position.set_to(v); }
   void set_facing_angle(float _facing_angle) { facing_angle = _facing_angle; }
-  void set_view_height(float h) { view_height = h; }
 
   vertex const *get_map_position(void) const { return &map_position; }
   float get_facing_angle(void) const { return facing_angle; }
-  float get_view_height(void) const { return view_height; } 
+  float get_view_height(void) const { return floor_height + rel_view_height; }
 
   void draw_overhead_map(overhead_map *omap) const;
 
@@ -28,11 +29,14 @@ public:
   void set_is_strafing_right(bool val) { is_strafing_right = val; }
   void set_is_strafing_left(bool val) { is_strafing_left = val; }
 
-  void move(void);
+  void move(episode_map const *_map);
 
 private:
   vertex map_position;
-  float  view_height; // map z
+
+  float  floor_height;    // floor height in cur sector
+  float  rel_view_height; // head height (above floor)
+
   float  facing_angle;
 
   bool   is_turning_right;

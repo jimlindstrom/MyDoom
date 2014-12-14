@@ -63,6 +63,11 @@ public:
 
   void render(float ldx_l, float ldx_r, int x_l, int x_r, float y0_l, float dy_l, float y0_r, float dy_r) const;
 
+  int16_t get_highest_ceiling(void) const;
+  int16_t get_lowest_ceiling(void) const;
+  int16_t get_highest_floor(void) const;
+  int16_t get_lowest_floor(void) const;
+
 private:
   uint16_t start_vertex_num;
   uint16_t end_vertex_num;
@@ -76,11 +81,6 @@ private:
   sidedef const *right_sidedef;
   vertex const *start_vertex;
   vertex const *end_vertex;
-
-  int16_t get_highest_ceiling(void) const;
-  int16_t get_lowest_ceiling(void) const;
-  int16_t get_highest_floor(void) const;
-  int16_t get_lowest_floor(void) const;
 };
 
 #endif
