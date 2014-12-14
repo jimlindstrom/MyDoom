@@ -263,7 +263,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
       v2.set_y(vertex_l->get_y() + t2*d.get_y());
       debug_printf("      clipped range %d: [%d,%d], t:[%.2f,%.2f]\n", i, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, t1, t2);
       //debug_printf("        drawing (%.1f,%.1f)->(%.1f,%.1f)\n", v1.get_x(), v1.get_y(), v2.get_x(), v2.get_y());
-      omap->draw_line(&v1, &v2, &grn);
+      //omap->draw_line(&v1, &v2, &grn);
 
       float y0_l, dy_l, y0_r, dy_r; // FIXME: just a first-order approximation
       debug_printf("      dists: [%.1f,%.1f]\n", dist_l, dist_r);
