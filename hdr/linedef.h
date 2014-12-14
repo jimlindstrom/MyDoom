@@ -59,9 +59,12 @@ public:
   vertex const *get_start_vertex(void) const { return start_vertex; }
   vertex const *get_end_vertex(void) const { return end_vertex; }
 
+  //vertex  const *get_vertex( int direction) const { return (direction ? start_vertex  : end_vertex   ); } // unused so far...
+  sidedef const *get_sidedef(int direction) const { return (direction ? left_sidedef : right_sidedef ); } // dir is from segment
+
   float get_length(void) const { return start_vertex->distance_to_point(end_vertex); }
 
-  void render(float ldx_l, float ldx_r, int x_l, int x_r, float y0_l, float dy_l, float y0_r, float dy_r) const;
+  void render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, float y0_l, float dy_l, float y0_r, float dy_r) const;
 
   int16_t get_highest_ceiling(void) const;
   int16_t get_lowest_ceiling(void) const;

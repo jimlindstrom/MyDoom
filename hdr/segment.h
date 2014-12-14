@@ -15,7 +15,7 @@
 class segment
 {
 public:
-  segment() { }
+  segment() { vertex_r = vertex_l = NULL; }
   segment(vertex const *vl, vertex const *vr) { vertex_l = vl; vertex_r = vr; }
   ~segment() { }
 
@@ -57,10 +57,14 @@ public:
   uint16_t get_direction(void) const { return direction; }
   uint16_t get_offset(void) const { return offset; }
   linedef const *get_linedef(void) const { return _linedef; }
+  sector const *get_front_sector(void) const { return front_sector; }
+  sector const *get_back_sector(void) const { return back_sector; }
 
   void set_linedef(linedef const *ld);
   void set_start_vertex(vertex const *v) { set_vertex_r(v); }
   void set_end_vertex(vertex const *v) { set_vertex_l(v); }
+  void set_front_sector(sector const *s) { front_sector = s; }
+  void set_back_sector(sector const *s) { back_sector = s; }
 
   void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const;
 
@@ -71,10 +75,11 @@ private:
   uint16_t vertex_l_num;
   float    angle; 
   uint16_t linedef_num;
-  uint16_t direction;        // 0 (same as linedef) or 1 (opposite of linedef)
+  uint16_t direction;        // 0 (same as linedef) or 1 (opposite of linedef) -- called 'side' in doom code
   uint16_t offset;           // distance along linedef to start of seg
 
   linedef const *_linedef;
+  sector const *front_sector, *back_sector;
 
   void calculate_angles_from_player(player const *_player, float *angle_l, float *angle_r) const;
 

@@ -3,8 +3,13 @@ In Progress
 
 Queued up
 ---
+
+- BUG: door width is too narrow
+- BUG: flip-switch on final wall is too high
+- BUG: top of wall is rounded in final room
+
 - FEATURE: render visplanes http://www.johnromero.com/lee_killough/editing/visplane.shtml
-- FEATURE: support pegging & x/y-offsets in rendering one-sided walls: http://www.doomworld.com/drsleep/textures.txt
+- FEATURE: support pegging & x/y-offsets in rendering walls: http://www.doomworld.com/drsleep/textures.txt
 - FEATURE: rendering two-sided linedefs
 
 - FEATURE: collision detection

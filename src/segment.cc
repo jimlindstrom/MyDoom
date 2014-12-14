@@ -163,6 +163,8 @@ void segment::clip_to_vectors(vector const *clip_l, vector const *clip_r,
 
 wad_segment::wad_segment()
 {
+  _linedef = NULL;
+  front_sector = back_sector = NULL;
 }
 
 wad_segment::~wad_segment()
@@ -280,7 +282,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
       float ldx_r = seg_off + (t2*seg_len);
       debug_printf("        dir:%d, offset:%d, seg_len:%.1f, ld_len:%.1f, seg_off:%.1f\n", direction, offset, seg_len, ld_len, seg_off);
   
-      _linedef->render(ldx_l, ldx_r, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, y0_l, dy_l, y0_r, dy_r);
+      _linedef->render(direction, ldx_l, ldx_r, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, y0_l, dy_l, y0_r, dy_r);
     }
   }
   delete[] clipped_ranges;

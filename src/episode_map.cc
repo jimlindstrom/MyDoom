@@ -90,9 +90,9 @@ bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
 
   link_nodes_to_children();
   link_subsectors_to_segments();
-  link_segments_to_children();
-  link_linedefs_to_children();
   link_sidedefs_to_children();
+  link_linedefs_to_children();
+  link_segments_to_children();
 
   return true;
 }
@@ -302,10 +302,12 @@ void episode_map::link_segments_to_children(void)
 
   for(i=0; i<num_segments; i++)
   {
+    // wire the segment up to its linedef
     linedef_num = segments[i].get_linedef_num();
     ld = &linedefs[linedef_num];
     segments[i].set_linedef(ld);
 
+    // wire the segment up to its start vertex
     v_num = segments[i].get_start_vertex_num();
     if(v_num >= num_vertexes)
     {
@@ -314,6 +316,7 @@ void episode_map::link_segments_to_children(void)
     v = &vertexes[v_num];
     segments[i].set_start_vertex(v);
 
+    // wire the segment up to its end vertex
     v_num = segments[i].get_end_vertex_num();
     if(v_num >= num_vertexes)
     {
@@ -321,6 +324,20 @@ void episode_map::link_segments_to_children(void)
     }
     v = &vertexes[v_num];
     segments[i].set_end_vertex(v);
+
+    // wire the segment up to its front and back sectors
+    int seg_dir = segments[i].get_direction();
+    sidedef const *front_sidedef = segments[i].get_linedef()->get_sidedef(seg_dir);
+    sector const *front_sector = front_sidedef->get_sector();
+    segments[i].set_front_sector(front_sector);
+
+    if(segments[i].get_linedef()->is_two_sided())
+    {
+      seg_dir = 1-seg_dir; // FIXME: make clearer
+      sidedef const *back_sidedef = segments[i].get_linedef()->get_sidedef(seg_dir);
+      sector const *back_sector = back_sidedef->get_sector();
+      segments[i].set_back_sector(back_sector);
+    }
   }
 }
 
@@ -439,7 +456,7 @@ bool episode_map::can_move(vertex const *old_position, vertex const *new_positio
     // if so, check whether they block players
   }
 
-  *floor_height = new_ss->get_nth_segment(0)->get_linedef()->get_highest_floor(); // FIXME: this is wrong...
+  *floor_height = new_ss->get_sector()->get_floor_height(); // FIXME: this is wrong...
 
   return true;
 }

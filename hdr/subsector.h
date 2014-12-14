@@ -5,6 +5,7 @@
 
 #include "projector.h"
 #include "segment.h"
+#include "sector.h"
 #include "player.h"
 #include "column_range.h"
 
@@ -21,6 +22,7 @@ public:
   uint16_t get_num_segments(void) const { return num_segments; }
   uint16_t get_first_segment_num(void) const { return first_segment_num; }
   wad_segment const *get_nth_segment(int n) const { return segments[n]; }
+  sector const *get_sector(void) const { return get_nth_segment(0)->get_front_sector(); }
 
   void allocate_segments(void);
   void set_nth_segment(int n, wad_segment const *_segment);
