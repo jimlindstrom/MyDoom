@@ -86,12 +86,12 @@ void projector_clip_vectors_test(void)
   TEST_ASSERT_WITHIN(clip_l1.get_x(), 0.0,0.0);
   TEST_ASSERT_WITHIN(clip_l1.get_y(), 0.0,0.0);
   TEST_ASSERT_WITHIN(clip_l2.get_x(), 0.99,1.01);
-  TEST_ASSERT_WITHIN(clip_l2.get_y(), 1.50,1.70);
+  TEST_ASSERT_WITHIN(clip_l2.get_y(), 0.50,0.70);
 
   TEST_ASSERT_WITHIN(clip_r1.get_x(), 0.0,0.0);
   TEST_ASSERT_WITHIN(clip_r1.get_y(), 0.0,0.0);
   TEST_ASSERT_WITHIN(clip_r2.get_x(), 0.99,1.01);
-  TEST_ASSERT_WITHIN(clip_r2.get_y(), -1.70,-1.50);
+  TEST_ASSERT_WITHIN(clip_r2.get_y(), -0.70,-0.50);
 }
 
 void unprojector_test(void)

@@ -20,7 +20,7 @@ public:
   float get_facing_angle(void) const { return facing_angle; }
   float get_view_height(void) const { return floor_height + rel_view_height; }
 
-  void draw_overhead_map(overhead_map *omap) const;
+  void draw_overhead_map_marker(overhead_map *omap) const;
 
   void set_is_turning_right(bool val) { is_turning_right = val; }
   void set_is_turning_left(bool val) { is_turning_left = val; }

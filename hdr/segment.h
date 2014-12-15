@@ -9,6 +9,7 @@
 #include "vector.h"
 #include "linedef.h"
 #include "column_range.h"
+#include "vis_planes.h"
 
 #define SEGMENT_NUM_BYTES 12 // size on disk (in the lump)
 
@@ -66,7 +67,8 @@ public:
   void set_front_sector(sector const *s) { front_sector = s; }
   void set_back_sector(sector const *s) { back_sector = s; }
 
-  void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const;
+  void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, 
+                          vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const;
 
   uint16_t segment_num; // for debug printing
 

@@ -3,12 +3,15 @@ In Progress
 
 Queued up
 ---
+- CHORE: refactor seg::render
 
 - BUG: door width is too narrow
 - BUG: flip-switch on final wall is too high
 - BUG: top of wall is rounded in final room
+- BUG: gaps (vertical lines) between textures
 
-- FEATURE: render visplanes http://www.johnromero.com/lee_killough/editing/visplane.shtml
+- FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
+- FEATURE: render closed doors as walls [r_bsp.c:532]
 - FEATURE: support pegging & x/y-offsets in rendering walls: http://www.doomworld.com/drsleep/textures.txt
 - FEATURE: rendering two-sided linedefs
 
@@ -21,3 +24,4 @@ Queued up
 - FEATURE: trigger use/push actions on linedefs
 - FEATURE: trigger shoot actions on linedefs
 
+- FEATURE: head bobbing

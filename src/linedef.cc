@@ -106,7 +106,8 @@ int16_t linedef::get_lowest_floor(void) const
   return h;
 }
 
-void linedef::render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, float y0_l, float dy_l, float y0_r, float dy_r) const
+void linedef::render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, float y0_l, float dy_l, float y0_r, float dy_r,
+                     vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
 {
   // if one-sided -> it's a solid wall
   if(is_one_sided())
@@ -139,5 +140,6 @@ void linedef::render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, 
 
   printf("        LDx:[%.2f,%.2f], x:[%d,%d], h:[%d,%d], y_t:[%.1f,%.1f], y_b:[%.1f,%.1f]\n",
          ldx_l, ldx_r, x_l, x_r, get_highest_floor(), get_lowest_ceiling(), yt_l, yt_r, yb_l, yb_r);
-  get_sidedef(direction)->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r);
+  get_sidedef(direction)->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r,
+                                 vp, floor, ceiling);
 }

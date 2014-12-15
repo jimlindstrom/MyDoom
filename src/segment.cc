@@ -193,7 +193,8 @@ void wad_segment::set_linedef(linedef const *ld)
   _linedef = ld;
 }
 
-void wad_segment::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const
+void wad_segment::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player,
+                                     vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
 {
   vertex origin(0,0);
 
@@ -201,10 +202,6 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
          segment_num,
          vertex_l->get_x(), vertex_l->get_y(),
          vertex_r->get_x(), vertex_r->get_y() ); 
-
-  //float dist_l = _player->get_map_position()->distance_to_point(vertex_l);
-  //float dist_r = _player->get_map_position()->distance_to_point(vertex_r);
-  //debug_printf("    dist: [%.1f,%.1f]\n", dist_l, dist_r);
 
   float angle_r, angle_l;
   calculate_angles_from_player(_player, &angle_l, &angle_r);
@@ -264,8 +261,6 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
       v2.set_x(vertex_l->get_x() + t2*d.get_x());
       v2.set_y(vertex_l->get_y() + t2*d.get_y());
       debug_printf("      clipped range %d: [%d,%d], t:[%.2f,%.2f]\n", i, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, t1, t2);
-      //debug_printf("        drawing (%.1f,%.1f)->(%.1f,%.1f)\n", v1.get_x(), v1.get_y(), v2.get_x(), v2.get_y());
-      //omap->draw_line(&v1, &v2, &grn);
 
       float y0_l, dy_l, y0_r, dy_r; // FIXME: just a first-order approximation
       float dist_l = _player->get_map_position()->distance_to_point(&v1); // FIXME: this should be the clipped point.
@@ -281,8 +276,14 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
       float ldx_l = seg_off + (t1*seg_len);
       float ldx_r = seg_off + (t2*seg_len);
       debug_printf("        dir:%d, offset:%d, seg_len:%.1f, ld_len:%.1f, seg_off:%.1f\n", direction, offset, seg_len, ld_len, seg_off);
+ 
+      // FIXME: need to set this for other segs in same sector, too?
+      if(floor)   { floor   = vp->adjust_or_create(floor,   clipped_ranges[i]->x_left, clipped_ranges[i]->x_right); }
+      if(ceiling) { ceiling = vp->adjust_or_create(ceiling, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right); }
+      if(floor)   { floor  ->set_plane_type(VIS_PLANE_FLOOR_TYPE); }
+      if(ceiling) { ceiling->set_plane_type(VIS_PLANE_CEILING_TYPE); }
   
-      _linedef->render(direction, ldx_l, ldx_r, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, y0_l, dy_l, y0_r, dy_r);
+      _linedef->render(direction, ldx_l, ldx_r, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, y0_l, dy_l, y0_r, dy_r, vp, floor, ceiling);
     }
   }
   delete[] clipped_ranges;

@@ -5,6 +5,7 @@
 #include "color.h"
 #include "overhead_map.h"
 #include "wall_textures.h"
+#include "flats.h"
 
 episode_map::episode_map()
 {
@@ -89,6 +90,7 @@ bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
   }
 
   link_nodes_to_children();
+  link_sectors_to_flats();
   link_subsectors_to_segments();
   link_sidedefs_to_children();
   link_linedefs_to_children();
@@ -273,6 +275,31 @@ void episode_map::link_nodes_to_children(void)
   }
 }
 
+void episode_map::link_sectors_to_flats(void)
+{
+  for(int i=0; i<num_sectors; i++)
+  {
+    flat const *f;
+    char const *name;
+
+    name = sectors[i].get_ceiling_texture_name();
+    f = flats_find_by_name(name);
+    if(f)
+    {
+      sectors[i].set_ceiling_texture(f);
+    }
+    else { printf("WARNING: could not find sector %d's ceiling texture named \"%s\"\n", i, name); }
+
+    name = sectors[i].get_floor_texture_name();
+    f = flats_find_by_name(name);
+    if(f)
+    {
+      sectors[i].set_floor_texture(f);
+    }
+    else { printf("WARNING: could not find sector %d's ceiling texture named \"%s\"\n", i, name); }
+  }
+}
+
 void episode_map::link_subsectors_to_segments(void)
 {
   wad_segment *seg;
@@ -436,9 +463,9 @@ void episode_map::draw_overhead_map(overhead_map *omap) const
   }
 }
 
-void episode_map::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const
+void episode_map::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, vis_planes *vp) const
 {
-  nodes[num_nodes-1].render_player_view(col_ranges, _projector, _player, omap);
+  root_node()->render_player_view(col_ranges, _projector, _player, vp);
 }
 
 bool episode_map::can_move(vertex const *old_position, vertex const *new_position, float *floor_height) const

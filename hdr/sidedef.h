@@ -30,7 +30,8 @@ public:
 
   sector const *get_sector(void) const { return _sector; }
 
-  void render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, float yt_l, float yb_l, float yt_r, float yb_r) const;
+  void render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, float yt_l, float yb_l, float yt_r, float yb_r, 
+              vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const;
 
 private:
   int16_t  x_offset;

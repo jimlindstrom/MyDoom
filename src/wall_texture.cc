@@ -122,7 +122,8 @@ void wall_texture::pre_render(void)
   }
 }
 
-void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, float yt_l, float yb_l, float yt_r, float yb_r) const
+void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, float yt_l, float yb_l, float yt_r, float yb_r,
+                          vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
 {
   color_rgba c;
 
@@ -134,18 +135,36 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
 
     float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
     float yt = yt_l + (yt_r-yt_l)*(x-x_l)/(x_r-x_l);
+    int clipped_yb = MAX(0, MIN(479, yb));
+    int clipped_yt = MAX(0, MIN(479, yt));
 
-    for(int y=yb; y<=yt; y++)
+    if(ceiling)
     {
-      if( (y>=0) && (y<480) ) // FIXME: magic #
-      {
-        int ldy = ld_h*(y-yb)/(yt-yb);
-        int ty = ldy % height;
+      // top of ceiling = one pixel lower than the [bottom of the lowest ceiling]
+      // bot of ceiling = one pixel above the wall (or [ceil], if lower) (or [floor], if higher)
+      int16_t ceil_yt = vp->get_ceiling_clip(x)+1;
+      int16_t ceil_yb = yb-1;
+      ceiling->update_clip(x, ceil_yb, ceil_yt);
+    }
+    if(floor)
+    {
+      // top of floor be: one pixel below the wall (or [floor], if higher) (or [ceil], if lower)
+      // bot of floor be: one pixel higher than the [top of the tallest floor]
+      int16_t floor_yt = yt+1;
+      int16_t floor_yb = vp->get_floor_clip(x)-1;
+      floor  ->update_clip(x, floor_yb, floor_yt);
+    }
+    vp->update_ceiling_clip(x, yb);
+    vp->update_floor_clip(  x, yt);
+
+    for(int y=clipped_yb; y<=clipped_yt; y++)
+    {
+      int ldy = ld_h*(y-yb)/(yt-yb);
+      int ty = ldy % height;
   
-        int pix_offset = (ty * width) + tx;
-        c.set_to(&pixels[pix_offset]);
-        frame_buf_draw_point(x, y, &c);
-      }
+      int pix_offset = (ty * width) + tx;
+      c.set_to(&pixels[pix_offset]);
+      frame_buf_draw_point(x, y, &c);
     }
   }
 }

@@ -5,6 +5,7 @@
 
 #include "vertex.h"
 #include "sidedef.h"
+#include "vis_planes.h"
 
 #define LINEDEF_NUM_BYTES 14 // size on disk (in the lump)
 
@@ -64,7 +65,8 @@ public:
 
   float get_length(void) const { return start_vertex->distance_to_point(end_vertex); }
 
-  void render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, float y0_l, float dy_l, float y0_r, float dy_r) const;
+  void render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, float y0_l, float dy_l, float y0_r, float dy_r,
+              vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const;
 
   int16_t get_highest_ceiling(void) const;
   int16_t get_lowest_ceiling(void) const;

@@ -6,6 +6,7 @@
 #include "color.h"
 #include "patch.h"
 #include "patch_names_lump.h"
+#include "vis_planes.h"
 
 class wall_patch
 {
@@ -30,7 +31,8 @@ public:
 
   bool is_valid(void);
 
-  void render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, float yt_l, float yb_l, float yt_r, float yb_r) const;
+  void render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, float yt_l, float yb_l, float yt_r, float yb_r,
+              vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const;
 
 private:
   char name[9]; // An ASCII string defining the name of the map texture. Only the characters A-Z (uppercase), 

@@ -37,11 +37,23 @@ void subsector::set_nth_segment(int n, wad_segment const *_segment)
   segments[n] = _segment;
 }
 
-void subsector::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const
+void subsector::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, vis_planes *vp) const
 {
   debug_printf(" subsector %d\n", subsector_num);
+
+  vis_plane *floor = NULL, *ceiling = NULL;
+  sector const *sec = get_sector();
+  if(sec->get_floor_height() < _player->get_view_height())
+  {
+    floor   = vp->find_or_create(sec->get_floor_height(),   sec->get_floor_texture(),   sec->get_light_level());
+  }
+  if(sec->get_ceiling_height() > _player->get_view_height())
+  {
+    ceiling = vp->find_or_create(sec->get_ceiling_height(), sec->get_ceiling_texture(), sec->get_light_level());
+  }
+
   for(int i=0; i<num_segments; i++)
   {
-    segments[i]->render_player_view(col_ranges, _projector, _player, omap);
+    segments[i]->render_player_view(col_ranges, _projector, _player, vp, floor, ceiling);
   }
 }

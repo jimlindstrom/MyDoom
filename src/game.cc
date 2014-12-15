@@ -6,6 +6,7 @@
 #include "frame_buf.h"
 #include "key_codes.h"
 #include "column_range.h"
+#include "vis_planes.h"
 
 game::game()
 {
@@ -49,16 +50,18 @@ void game::init_things(void)
   }
 
   #if 0
-  vertex v(882.8,-3497.3);//facing 175.4
+  vertex v(1032.9,-3428.6);
   _player.set_map_position(&v);
-  _player.set_facing_angle(DEG_TO_RAD(175.4));
+  _player.set_facing_angle(DEG_TO_RAD(-104.6));
   #endif
 }
 
 void game::do_frame(void)
 {
-  column_range_list col_ranges;
   printf("frame\n");
+
+  column_range_list col_ranges;
+  vis_planes _vis_planes;
 
   _player.move(_map);
 
@@ -74,11 +77,14 @@ void game::do_frame(void)
   omap.translate_origin(-60,145);
 
   frame_buf_clear();
-  _map->render_player_view(&col_ranges, &_projector, &_player, &omap);
+  _map->render_player_view(&col_ranges, &_projector, &_player, &_vis_planes);
+  _vis_planes.draw_planes();
+
   omap.darken_background();
-  _map->draw_overhead_map(&omap);
   omap.draw_bbox();
-  _player.draw_overhead_map(&omap);
+  _map->draw_overhead_map(&omap); 
+  _player.draw_overhead_map_marker(&omap);
+
   frame_buf_flush_to_ui();
 
   track_frames_per_sec();
@@ -86,17 +92,15 @@ void game::do_frame(void)
 
 void game::track_frames_per_sec(void)
 {
-  double t_cur, t_prev, delta_sec, fps;
+  double delta_sec, fps;
   int idx_prev = (frame_time_idx+1)%FRAME_TIMES_COUNT;
   int num_frames = FRAME_TIMES_COUNT - 1;
 
   gettimeofday(&frame_times[frame_time_idx], NULL);
 
-  t_cur  = frame_times[frame_time_idx].tv_sec + (frame_times[frame_time_idx].tv_usec/1000000.0);
-  t_prev = frame_times[idx_prev      ].tv_sec + (frame_times[idx_prev      ].tv_usec/1000000.0);
-
-  delta_sec = t_cur - t_prev;
-  if(delta_sec>0.0000001 && delta_sec<1.0)
+  delta_sec =  (frame_times[frame_time_idx].tv_sec - frame_times[idx_prev      ].tv_sec) +
+              ((frame_times[frame_time_idx].tv_usec- frame_times[idx_prev      ].tv_usec)/1000000.0);
+  if(delta_sec>0.00001 && delta_sec<10.0)
   {
     fps = (double)num_frames / delta_sec;
     printf("%.2f frames/sec (%d frames in %.6fsec)\n", fps, (FRAME_TIMES_COUNT-1), delta_sec);

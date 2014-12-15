@@ -49,9 +49,8 @@ bool node::read_from_lump_data(uint8_t const *lump_data)
   return true;
 }
 
-void node::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, overhead_map *omap) const
+void node::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, vis_planes *vp) const
 {
-
   node_child_link const *closer_child;
   node_child_link const *farther_child;
   vertex const *v;
@@ -78,8 +77,8 @@ void node::render_player_view(column_range_list *col_ranges, projector const *_p
   }
 
   // render the closer_child
-  if(closer_child->is_node())    { closer_child ->_node     ->render_player_view(col_ranges, _projector, _player, omap); }
-  else                           { closer_child ->_subsector->render_player_view(col_ranges, _projector, _player, omap); }
+  if(closer_child->is_node())    { closer_child ->_node     ->render_player_view(col_ranges, _projector, _player, vp); }
+  else                           { closer_child ->_subsector->render_player_view(col_ranges, _projector, _player, vp); }
   
   // render the farther_child, only if bbox overlaps or if open space in between
   debug_printf("node %d (far side)\n", node_num);
@@ -97,8 +96,8 @@ void node::render_player_view(column_range_list *col_ranges, projector const *_p
     { 
       debug_printf("  undrawn cols toward far bbox\n"); 
     }
-    if(farther_child->is_node()) { farther_child->_node     ->render_player_view(col_ranges, _projector, _player, omap); }
-    else                         { farther_child->_subsector->render_player_view(col_ranges, _projector, _player, omap); }
+    if(farther_child->is_node()) { farther_child->_node     ->render_player_view(col_ranges, _projector, _player, vp); }
+    else                         { farther_child->_subsector->render_player_view(col_ranges, _projector, _player, vp); }
   }
   else { debug_printf("  skipping.\n"); }
 }

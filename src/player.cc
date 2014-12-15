@@ -23,7 +23,7 @@ player::~player()
 {
 }
 
-void player::draw_overhead_map(overhead_map *omap) const
+void player::draw_overhead_map_marker(overhead_map *omap) const
 {
   color_rgba red(255, 0, 0, 255);
   vertex v1, v2;
