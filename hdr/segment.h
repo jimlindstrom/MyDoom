@@ -67,6 +67,15 @@ public:
   void set_front_sector(sector const *s) { front_sector = s; }
   void set_back_sector(sector const *s) { back_sector = s; }
 
+  bool is_singled_sided_line(void) const;
+  bool is_closed_door(void) const;
+  bool is_window(void) const;
+  bool is_empty_line(void) const;
+  bool is_other_single_sided_line(void) const;
+
+  bool is_same_floor_plane_on_both_sides(void) const;
+  bool is_same_ceiling_plane_on_both_sides(void) const;
+
   void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, 
                           vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const;
 

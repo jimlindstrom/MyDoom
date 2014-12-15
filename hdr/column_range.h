@@ -18,7 +18,7 @@ public:
 
   bool insert(column_range *col_range);
 
-  column_range **insert_with_clipping(int16_t x_left, int16_t x_right, int *num_clipped_crs);
+  column_range **clip_segment(bool store_clipping, int16_t x_left, int16_t x_right, int *num_clipped_crs);
   bool any_unclipped_columns_in_range(int16_t x_left, int16_t x_right) const;
 
   column_range const *get_left_range() const;

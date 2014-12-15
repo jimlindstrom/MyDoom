@@ -6,6 +6,9 @@
 
 #define SCREEN_HEIGHT 480 // FIXME...
 
+//#define DEBUG_PRINTING
+#include "debug.h"
+
 vis_planes::vis_planes()
 {
   num_vis_planes = 0;
@@ -22,7 +25,7 @@ vis_planes::~vis_planes()
 
 void vis_planes::draw_planes(void)
 {
-  printf("  drawing visplanes\n");
+  debug_printf("  drawing visplanes\n");
   for(int i=0; i<num_vis_planes; i++)
   {
     _vis_planes[i].draw();
@@ -52,7 +55,7 @@ vis_plane *vis_planes::create(int16_t height, flat const *tex, uint16_t light_le
   }
   vp = &_vis_planes[num_vis_planes-1];
   vp->init(height, tex, light_level);
-  printf("    created vis_plane 0x%08x\n", (uint32_t)vp);
+  debug_printf("    created vis_plane 0x%08x\n", (uint32_t)vp);
   return vp;
 }
 
@@ -77,7 +80,7 @@ vis_plane *vis_planes::adjust_or_create(vis_plane *vp, int16_t x_l, int16_t x_r)
   }
   else
   {
-    printf("    cannot extend 0x%08x to [%d,%d]\n", (uint32_t)vp, x_l, x_r);
+    debug_printf("    cannot extend 0x%08x to [%d,%d]\n", (uint32_t)vp, x_l, x_r);
     vis_plane *new_vp = create(vp->get_height(), vp->get_tex(), vp->get_light_level());
     new_vp->extend_to(x_l, x_r);
     return new_vp;

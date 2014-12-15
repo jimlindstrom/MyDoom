@@ -9,6 +9,9 @@
 
 #define SCREEN_HEIGHT 480 // FIXME...
 
+//#define DEBUG_PRINTING
+#include "debug.h"
+
 vis_plane::vis_plane()
 {
   x_l = MAX_SCREEN_WIDTH;
@@ -76,29 +79,30 @@ void vis_plane::draw(void)
   color_rgba border_color( 0,  0,255,128);
   color_rgba inner_color(  0,  0,255, 64);
 
-  printf("    visplane (0x%08x) x:[%d,%d]", (uint32_t)this, x_l, x_r);
+  debug_printf("    visplane (0x%08x) x:[%d,%d]", (uint32_t)this, x_l, x_r);
   if(plane_type==VIS_PLANE_FLOOR_TYPE)
   {
-    printf(" (floor)\n");
+    debug_printf(" (floor)\n");
     border_color.set_to(&light_red);
     inner_color.set_to(&dark_red);
   }
   else if(plane_type==VIS_PLANE_CEILING_TYPE)
   {
-    printf(" (ceiling)\n");
+    debug_printf(" (ceiling)\n");
     border_color.set_to(&light_green);
     inner_color.set_to(&dark_green);
   }
   else
   {
-    printf(" (unknown)\n"); return;
+    debug_printf(" (unknown)\n"); 
+    return;
   }
 
   for(int16_t x=x_l; x<=x_r; x++)
   {
     if(y_t[x]>=0 && y_b[x]<=SCREEN_HEIGHT)
     {
-      //printf("  x=%d, y:[%d,%d]\n", x, y_t[x], y_b[x]);
+      //debug_printf("  x=%d, y:[%d,%d]\n", x, y_t[x], y_b[x]);
       frame_buf_overlay_pixel(x, y_t[x], &border_color);
       for(int16_t y=y_t[x]+1; y<y_b[x]; y++)
       {

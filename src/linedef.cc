@@ -7,6 +7,9 @@
 #define TOP_PEGGED    1
 #define BOTTOM_PEGGED 2
 
+//#define DEBUG_PRINTING
+#include "debug.h"
+
 linedef::linedef()
 {
   left_sidedef = NULL;
@@ -138,8 +141,8 @@ void linedef::render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, 
   float yb_r = y0_r + (get_highest_floor()  * dy_r);
   int16_t ld_h = get_lowest_ceiling() - get_highest_floor();
 
-  printf("        LDx:[%.2f,%.2f], x:[%d,%d], h:[%d,%d], y_t:[%.1f,%.1f], y_b:[%.1f,%.1f]\n",
-         ldx_l, ldx_r, x_l, x_r, get_highest_floor(), get_lowest_ceiling(), yt_l, yt_r, yb_l, yb_r);
+  debug_printf("        LDx:[%.2f,%.2f], x:[%d,%d], h:[%d,%d], y_t:[%.1f,%.1f], y_b:[%.1f,%.1f]\n",
+               ldx_l, ldx_r, x_l, x_r, get_highest_floor(), get_lowest_ceiling(), yt_l, yt_r, yb_l, yb_r);
   get_sidedef(direction)->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r,
                                  vp, floor, ceiling);
 }

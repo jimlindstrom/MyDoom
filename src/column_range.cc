@@ -55,7 +55,7 @@ bool column_range_list::insert(column_range *new_range)
   return false;
 }
 
-column_range **column_range_list::insert_with_clipping(int16_t x_left, int16_t x_right, int *num_clipped_crs)
+column_range **column_range_list::clip_segment(bool store_clipping, int16_t x_left, int16_t x_right, int *num_clipped_crs)
 {
   int max_ranges = 2;
   column_range **cr_ptrs = new column_range *[max_ranges];
@@ -84,7 +84,7 @@ column_range **column_range_list::insert_with_clipping(int16_t x_left, int16_t x
       cr_ptrs[(*num_clipped_crs)-1] = new column_range;
       cr_ptrs[(*num_clipped_crs)-1]->x_left  = x_left;
       cr_ptrs[(*num_clipped_crs)-1]->x_right = x_right;
-      insert(cr_ptrs[(*num_clipped_crs)-1]);
+      if(store_clipping) { insert(cr_ptrs[(*num_clipped_crs)-1]); }
       x_left = x_right + 1; // DONE
     }
     // okay, well is there *any* gap?
@@ -95,7 +95,7 @@ column_range **column_range_list::insert_with_clipping(int16_t x_left, int16_t x
       cr_ptrs[(*num_clipped_crs)-1] = new column_range;
       cr_ptrs[(*num_clipped_crs)-1]->x_left  = x_left;
       cr_ptrs[(*num_clipped_crs)-1]->x_right = cur_range->x_left-1;
-      insert(cr_ptrs[(*num_clipped_crs)-1]);
+      if(store_clipping) { insert(cr_ptrs[(*num_clipped_crs)-1]); }
       x_left = cur_range->x_right + 1;
     }
     // no? then just advance the left past this range
@@ -116,7 +116,7 @@ column_range **column_range_list::insert_with_clipping(int16_t x_left, int16_t x
     cr_ptrs[(*num_clipped_crs)-1] = new column_range;
     cr_ptrs[(*num_clipped_crs)-1]->x_left  = x_left;
     cr_ptrs[(*num_clipped_crs)-1]->x_right = x_right;
-    insert(cr_ptrs[(*num_clipped_crs)-1]);
+    if(store_clipping) { insert(cr_ptrs[(*num_clipped_crs)-1]); }
   }
 
   return cr_ptrs;
@@ -250,7 +250,7 @@ void column_range_list_clip_test1(void)
   cr_list.insert(cr3);
 
   x_left = -40; x_right = -31;
-  clipped_crs = cr_list.insert_with_clipping(x_left, x_right, &num_clipped_crs);
+  clipped_crs = cr_list.clip_segment(true, x_left, x_right, &num_clipped_crs);
   TEST_ASSERT(clipped_crs != NULL);
   TEST_ASSERT_EQUAL(num_clipped_crs, 1);
   TEST_ASSERT_EQUAL(clipped_crs[0]->x_left , x_left);
@@ -279,7 +279,7 @@ void column_range_list_clip_test2(void)
   cr_list.insert(cr3);
 
   x_left = 26; x_right = 30;
-  clipped_crs = cr_list.insert_with_clipping(x_left, x_right, &num_clipped_crs);
+  clipped_crs = cr_list.clip_segment(true, x_left, x_right, &num_clipped_crs);
   TEST_ASSERT(clipped_crs != NULL);
   TEST_ASSERT_EQUAL(num_clipped_crs, 1);
   TEST_ASSERT_EQUAL(clipped_crs[0]->x_left , x_left);
@@ -308,7 +308,7 @@ void column_range_list_clip_test3(void)
   cr_list.insert(cr3);
 
   x_left = -12; x_right = 10;
-  clipped_crs = cr_list.insert_with_clipping(x_left, x_right, &num_clipped_crs);
+  clipped_crs = cr_list.clip_segment(true, x_left, x_right, &num_clipped_crs);
   TEST_ASSERT(clipped_crs != NULL);
   TEST_ASSERT_EQUAL(num_clipped_crs, 1);
   TEST_ASSERT_EQUAL(clipped_crs[0]->x_left , -9);
@@ -337,7 +337,7 @@ void column_range_list_clip_test4(void)
   cr_list.insert(cr3);
 
   x_left = -32; x_right = 30;
-  clipped_crs = cr_list.insert_with_clipping(x_left, x_right, &num_clipped_crs);
+  clipped_crs = cr_list.clip_segment(true, x_left, x_right, &num_clipped_crs);
   TEST_ASSERT(clipped_crs != NULL);
   TEST_ASSERT_EQUAL(num_clipped_crs, 3);
   TEST_ASSERT_EQUAL(clipped_crs[0]->x_left , -32);

@@ -3,6 +3,9 @@
 
 #include "sidedef.h"
 
+//#define DEBUG_PRINTING
+#include "debug.h"
+
 sidedef::sidedef()
 {
 }
@@ -38,17 +41,17 @@ void sidedef::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, float
 {
   if(mid_texture)
   {
-    printf("        SD rendering mid: \"%s\"\n", mid_texture_name);
+    debug_printf("        SD rendering mid: \"%s\"\n", mid_texture_name);
     mid_texture->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, vp, floor, ceiling);
   }
-  else if(upper_texture)
+  if(upper_texture)
   {
-    printf("        SD rendering upper: \"%s\"\n", upper_texture_name);
+    debug_printf("        SD rendering upper: \"%s\"\n", upper_texture_name);
     upper_texture->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, vp, floor, ceiling);
   }
-  else if(lower_texture)
+  if(lower_texture)
   {
-    printf("        SD rendering lower: \"%s\"\n", lower_texture_name);
+    debug_printf("        SD rendering lower: \"%s\"\n", lower_texture_name);
     lower_texture->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, vp, floor, ceiling);
   }
 }

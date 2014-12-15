@@ -8,7 +8,7 @@
 #include "tests.h"
 #include "common.h"
 
-#define DEBUG_PRINTING
+//#define DEBUG_PRINTING
 #include "debug.h"
 
 static uint16_t next_segment_num = 0; // for debug printing
@@ -51,7 +51,6 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
   {
     if(!vec->is_vertical())
     {
-      //debug_printf("    intersection case 1\n");
       float m1,b1, m2,b2;
       get_slope_and_y_intercept(&m1, &b1);
       vec->get_slope_and_y_intercept(&m2, &b2);
@@ -65,10 +64,6 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
     }
     else
     {
-      //debug_printf("    intersection case 2\n");
-      /*debug_printf("    vec: (%.1f,%.1f)->(%.1f,%.1f)\n",
-                   vec->get_vertex_1()->get_x(), vec->get_vertex_1()->get_y(),
-                   vec->get_vertex_2()->get_x(), vec->get_vertex_2()->get_y());*/
       float m1,b1;
       get_slope_and_y_intercept(&m1, &b1);
       float x = vec->get_vertex_1()->get_x();
@@ -84,7 +79,6 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
   {
     if(!vec->is_vertical())
     {
-      //debug_printf("    intersection case 3\n");
       float x = vertex_l->get_x();
       float m2,b2;
       vec->get_slope_and_y_intercept(&m2, &b2);
@@ -117,16 +111,12 @@ void segment::clip_to_vectors(vector const *clip_l, vector const *clip_r,
     {
       if((v.get_x() >= 0.0) && (v.get_y() >= 0))
       {
-        //debug_printf("    clip left at %.3f\n", u_l);
         v_l_c->set_to(&v);
         *u_l_c = u_l;
         did_set = true;
       }
-      //else { debug_printf("    no clip left: in wrong quadrant\n"); }
     }
-    //else { debug_printf("    no clip left: outside [0, 1]\n"); }
   }
-  //else { debug_printf("    no clip left: non-intersecting\n"); }
   if(!did_set)
   {
     v_l_c->set_to(vertex_l);
@@ -140,16 +130,12 @@ void segment::clip_to_vectors(vector const *clip_l, vector const *clip_r,
     {
       if((v.get_x() >= 0.0) && (v.get_y() <= 0))
       {
-        //debug_printf("    clip right at %.3f\n", u_r);
         v_r_c->set_to(&v);
         *u_r_c = u_r;
         did_set = true;
       }
-      //else { debug_printf("    no clip right: in wrong quadrant\n"); }
     }
-    //else { debug_printf("    no clip right: outside [0, 1]\n"); }
   }
-  //else { debug_printf("    no clip right: non-intersecting\n"); }
   if(!did_set)
   {
     v_r_c->set_to(vertex_r);
@@ -183,7 +169,7 @@ bool wad_segment::read_from_lump_data(uint8_t const *lump_data)
   offset       = *((uint16_t*)lump_data); lump_data += 2;
 
   // convert angle from degrees to radians
-  angle = DEG_TO_RAD(angle);
+  angle = DEG_TO_RAD(angle); // FIXME: I'm not sure I use this anywhere...
 
   return true;
 }
@@ -192,6 +178,66 @@ void wad_segment::set_linedef(linedef const *ld)
 {
   _linedef = ld;
 }
+
+bool wad_segment::is_singled_sided_line(void) const
+{
+  return (back_sector == NULL);
+}
+
+bool wad_segment::is_closed_door(void) const
+{
+  if(is_singled_sided_line()) { return false; }
+  return (back_sector->get_ceiling_height() <= front_sector->get_floor_height()  ) ||
+         (back_sector->get_floor_height()   >= front_sector->get_ceiling_height());
+}
+
+bool wad_segment::is_window(void) const
+{
+  if(is_singled_sided_line()) { return false; }
+  if(is_closed_door())        { return false; }
+
+  return (back_sector->get_ceiling_height() != front_sector->get_ceiling_height()) ||
+         (back_sector->get_floor_height()   != front_sector->get_floor_height()  );
+}
+
+bool wad_segment::is_empty_line(void) const
+{
+  if(is_singled_sided_line()) { return false; }
+  if(is_closed_door())        { return false; }
+  if(is_window())             { return false; }
+ 
+  return (back_sector->get_ceiling_texture() == front_sector->get_ceiling_texture()) &&
+         (back_sector->get_floor_texture()   == front_sector->get_floor_texture()  ) &&
+         (back_sector->get_light_level()     == front_sector->get_light_level()    ) &&
+         (!_linedef->get_sidedef(direction)->has_mid_texture());
+}
+
+bool wad_segment::is_other_single_sided_line(void) const
+{
+  if(is_singled_sided_line()) { return false; }
+  if(is_closed_door())        { return false; }
+  if(is_window())             { return false; }
+  if(is_empty_line())         { return false; }
+
+  return true;
+}
+
+bool wad_segment::is_same_floor_plane_on_both_sides(void) const
+{
+  if(is_singled_sided_line()) { return false; }
+  return (back_sector->get_floor_height()  == front_sector->get_floor_height()) &&
+         (back_sector->get_floor_texture() == front_sector->get_floor_texture()) &&
+         (back_sector->get_light_level()   == front_sector->get_light_level());
+}
+
+bool wad_segment::is_same_ceiling_plane_on_both_sides(void) const
+{
+  if(is_singled_sided_line()) { return false; }
+  return (back_sector->get_ceiling_height()  == front_sector->get_ceiling_height()) &&
+         (back_sector->get_ceiling_texture() == front_sector->get_ceiling_texture()) &&
+         (back_sector->get_light_level()     == front_sector->get_light_level());
+}
+
 
 void wad_segment::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player,
                                      vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
@@ -212,7 +258,30 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
     return;
   }
 
-  if(_linedef->is_two_sided()) { return; } // FIXME: for now, I'm not rendering two-sided linedefs at all.
+  bool store_clipping = true;
+  if(is_singled_sided_line())
+  {
+    // carry on
+  }
+  else if(is_closed_door())
+  {
+    // carry on
+  }
+  else if(is_window())
+  {
+    store_clipping = false; // pass through...
+  }
+  else if(is_empty_line())
+  {
+    return; // ignore
+  }
+  else if(is_other_single_sided_line())
+  {
+    store_clipping = false; // pass through...
+  }
+
+  if(!is_closed_door() && is_same_floor_plane_on_both_sides()  ) { floor   = NULL; }
+  if(!is_closed_door() && is_same_ceiling_plane_on_both_sides()) { ceiling = NULL; }
 
   // step 1: translate it into player-centric coordinates
   vertex _pvl, _pvr;
@@ -241,7 +310,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   // This is the state in which we're simulating actually rendering the wall in the player's view
   column_range **clipped_ranges;
   int num_clipped_crs;
-  clipped_ranges = col_ranges->insert_with_clipping(x_l_c, x_r_c, &num_clipped_crs);
+  clipped_ranges = col_ranges->clip_segment(store_clipping, x_l_c, x_r_c, &num_clipped_crs);
   //debug_printf("    %d clipped ranges\n", num_clipped_crs);
   color_rgba grn(0, 255, 0, 255);
 
@@ -270,9 +339,9 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
       _projector->project_y(-_player->get_view_height(), dist_r, &y0_r, &dy_r);
   
       float seg_len= get_length(); 
-      float ld_len = _linedef->get_length();
+      //float ld_len = _linedef->get_length(); // No longer used.
       float seg_off= _linedef->get_start_vertex()->distance_to_point(vertex_l);
-      if(direction == 1) { seg_off = seg_len - seg_off; } // FIXME ?
+      if(direction == 1) { seg_off = seg_len - seg_off; } // FIXME: why am I reversing this? seems bad...
       float ldx_l = seg_off + (t1*seg_len);
       float ldx_r = seg_off + (t2*seg_len);
       debug_printf("        dir:%d, offset:%d, seg_len:%.1f, ld_len:%.1f, seg_off:%.1f\n", direction, offset, seg_len, ld_len, seg_off);

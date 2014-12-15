@@ -8,6 +8,9 @@
 #include "common.h"
 #include "frame_buf.h"
 
+//#define DEBUG_PRINTING
+#include "debug.h"
+
 wall_texture::wall_texture()
 {
   name[0] = NULL;
@@ -34,7 +37,7 @@ bool wall_texture::read_from_maptexture_data(uint8_t const *data, patch_names_lu
                                        data += 4; // ignored
   num_patches    = *((uint16_t*)data); data += 2;
 
-  //printf("%dx%d [before]\n", width, height);
+  //debug_printf("%dx%d [before]\n", width, height);
 
   patches = new wall_patch[num_patches];
   for(int i=0; i<num_patches; i++)
@@ -54,11 +57,11 @@ bool wall_texture::read_from_maptexture_data(uint8_t const *data, patch_names_lu
       uint16_t needed_height = patches[i].originy + patches[i]._patch->get_height();
       if(needed_width  > width ) { width  = needed_width;  } 
       if(needed_height > height) { height = needed_height; } 
-      //printf("%dx%d [needed]\n", needed_width, needed_height);
+      //debug_printf("%dx%d [needed]\n", needed_width, needed_height);
     }
   }
 
-  //printf("%dx%d [after]\n", width, height);
+  //debug_printf("%dx%d [after]\n", width, height);
 
   if(!is_valid())
   {
@@ -91,15 +94,15 @@ void wall_texture::pre_render(void)
 {
   pixels = new color_rgb[width*height];
 
-  printf("Pre-rendering \"%s\". size: %dx%d\n", name, width, height);
+  debug_printf("Pre-rendering \"%s\". size: %dx%d\n", name, width, height);
   for(int p=0; p<num_patches; p++)
   {
     wall_patch *cur_patch = &patches[p];
     if(cur_patch->_patch) // this link can fail, for some reason....
     {
-      printf("  patch %d. origin:(%d,%d) step:%d, colormap:%d, size: %dx%d\n", 
-             p, cur_patch->originx, cur_patch->originy, cur_patch->stepdir, cur_patch->colormap,
-             cur_patch->_patch->get_width(), cur_patch->_patch->get_height());
+      debug_printf("  patch %d. origin:(%d,%d) step:%d, colormap:%d, size: %dx%d\n", 
+                   p, cur_patch->originx, cur_patch->originy, cur_patch->stepdir, cur_patch->colormap,
+                   cur_patch->_patch->get_width(), cur_patch->_patch->get_height());
       palette const *cur_pal = palettes_get(cur_patch->colormap);
       int16_t y = cur_patch->originy;
       for(int16_t v=0; v<cur_patch->_patch->get_height(); v++, y++)
@@ -127,7 +130,7 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
 {
   color_rgba c;
 
-  printf("        texture::render(%dx%d)\n", width, height);
+  debug_printf("        texture::render(%dx%d)\n", width, height);
   for(int x=x_l; x<=x_r; x++)
   {
     int ldx = ldx_l + (ldx_r-ldx_l)*(x-x_l)/(x_r-x_l);

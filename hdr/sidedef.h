@@ -28,6 +28,10 @@ public:
   void set_lower_texture(wall_texture const *t) { lower_texture = t; }
   void set_mid_texture(wall_texture const *t) { mid_texture = t; }
 
+  bool has_upper_texture(void) const { return (upper_texture != NULL); }
+  bool has_mid_texture(  void) const { return (mid_texture   != NULL); }
+  bool has_lower_texture(void) const { return (lower_texture != NULL); }
+
   sector const *get_sector(void) const { return _sector; }
 
   void render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, float yt_l, float yb_l, float yt_r, float yb_r, 
