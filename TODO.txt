@@ -1,5 +1,6 @@
 In Progress
 ---
+- FEATURE: rendering two-sided linedefs
 
 Queued up
 ---
@@ -13,7 +14,6 @@ Queued up
 - FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
 - FEATURE: render closed doors as walls [r_bsp.c:532]
 - FEATURE: support pegging & x/y-offsets in rendering walls: http://www.doomworld.com/drsleep/textures.txt
-- FEATURE: rendering two-sided linedefs
 
 - FEATURE: collision detection
 
