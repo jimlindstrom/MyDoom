@@ -98,6 +98,24 @@ private:
   bool is_outside_fov(float angle_l, float angle_r, float horiz_fov_radius) const;
 };
 
+#if 0
+class p_c_segment
+{
+  // subclass of wad_segment
+  // initializes itself from a segment plus some params
+  // has its own vertices that are can be modified on initialization
+
+private:
+  // stores this stuff as state
+  column_range_list *col_ranges;
+  projector const *_projector;
+  player const *_player;
+  vis_planes *vp;
+  vis_plane *floor;
+  vis_plane *ceiling;
+};
+#endif
+
 void segment_tests(void);
 
 #endif

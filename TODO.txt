@@ -8,22 +8,23 @@ In Progress
   - Bug: [player at (416.4,-3125.4) facing -129.6]: nearby stairs should be clipping further back solid walls
   - Bug: [player at (1056.0,-3616.0) facing 90.4]: not seeing spaceship-ey texture ringing initial ceiling. Why?
 
-- CHORE: consider refactoring “player-centric segment” a class (then forgetting about player)
-- CHORE: consider refactoring “clipped, player-centric segment” another class
+- CHORE: refactor seg::render
+  - CHORE: consider refactoring “player-centric segment” a class (then forgetting about player)
+  - CHORE: consider refactoring “clipped, player-centric segment” another class
 - CHORE: refactor height (z) into 3d vertex class
 
 
 Queued up
 ---
-- CHORE: refactor seg::render
 
 - FEATURE: render the transparent walls back-to-front AFTER the solid walls (and visplanes).
   See: http://fabiensanglard.net/doomIphone/doomClassicRenderer.php ("The big picture of runtime"
   and "Things and transparent walls.")
 
 - BUG: door width is too narrow
+- FEATURE: match the aspect ratio
 - BUG: flip-switch on final wall is too high
-- BUG: top of wall is rounded in final room
+- BUG: top of wall is rounded in final room (z projection is wrong)
 - BUG: gaps (vertical lines) between textures
 
 - FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
