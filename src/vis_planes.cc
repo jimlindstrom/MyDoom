@@ -4,18 +4,17 @@
 #include "vis_planes.h"
 #include "common.h"
 
-#define SCREEN_HEIGHT 480 // FIXME...
-
 //#define DEBUG_PRINTING
 #include "debug.h"
 
 vis_planes::vis_planes()
 {
+  int16_t w=games_get_screen_width(), h=games_get_screen_height();
   num_vis_planes = 0;
-  for(int16_t x=0; x<MAX_SCREEN_WIDTH; x++)
+  for(int16_t x=0; x<w; x++)
   {
     ceiling_clip[x] = -1;
-    floor_clip[x]   = SCREEN_HEIGHT;
+    floor_clip[x]   = h;
   }
 }
 

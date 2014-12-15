@@ -15,10 +15,11 @@
 
 #include "game.h"
 
-static int screen_width  = 640;
-static int screen_height = 480;
+static int16_t screen_width  = 640;
+static int16_t screen_height = 480;
 static game *cur_game = NULL;
 static episode_map const *cur_map = NULL;
+
 
 void game_init(void)
 {
@@ -97,5 +98,15 @@ void game_post_event_key_down(int key_code)
   {
     cur_game->handle_key_down(key_code);
   }
+}
+
+int16_t games_get_screen_width(void)
+{
+  return screen_width;
+}
+
+int16_t games_get_screen_height(void)
+{
+  return screen_height;
 }
 

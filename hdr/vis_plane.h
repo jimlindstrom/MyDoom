@@ -4,8 +4,7 @@
 #include <stdint.h>
 
 #include "flat.h"
-
-#define MAX_SCREEN_WIDTH (640) // FIXME...
+#include "games.h"
 
 #define VIS_PLANE_FLOOR_TYPE	1
 #define VIS_PLANE_CEILING_TYPE	2

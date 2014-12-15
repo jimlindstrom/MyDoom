@@ -8,6 +8,10 @@
 
 sidedef::sidedef()
 {
+  _sector = NULL;
+  upper_texture = NULL;
+  lower_texture = NULL;
+  mid_texture = NULL;
 }
 
 sidedef::~sidedef()

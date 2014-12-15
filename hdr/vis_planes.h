@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "vis_plane.h"
+#include "games.h"
 
 #define MAX_VIS_PLANES (128)
 

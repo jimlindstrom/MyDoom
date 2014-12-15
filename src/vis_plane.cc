@@ -7,19 +7,19 @@
 
 #define UNINITIALIZED -1
 
-#define SCREEN_HEIGHT 480 // FIXME...
-
 //#define DEBUG_PRINTING
 #include "debug.h"
 
 vis_plane::vis_plane()
 {
-  x_l = MAX_SCREEN_WIDTH;
+  int16_t w=games_get_screen_width(), h=games_get_screen_height();
+
+  x_l = w;
   x_r = -1;
-  for(int i=0; i<MAX_SCREEN_WIDTH; i++)
+  for(int i=0; i<w; i++)
   {
      y_t[i] = UNINITIALIZED; 
-     y_b[i] = SCREEN_HEIGHT; 
+     y_b[i] = h; 
   }
 }
 
@@ -72,6 +72,8 @@ void vis_plane::update_clip(int16_t x, int16_t yb, int16_t yt)
 
 void vis_plane::draw(void)
 {
+  int16_t h=games_get_screen_height();
+
   color_rgba light_red(  255,  0,  0,128);
   color_rgba dark_red(   255,  0,  0, 64);
   color_rgba light_green(  0,255,  0,128);
@@ -100,7 +102,7 @@ void vis_plane::draw(void)
 
   for(int16_t x=x_l; x<=x_r; x++)
   {
-    if(y_t[x]>=0 && y_b[x]<=SCREEN_HEIGHT)
+    if(y_t[x]>=0 && y_b[x]<=h)
     {
       //debug_printf("  x=%d, y:[%d,%d]\n", x, y_t[x], y_b[x]);
       frame_buf_overlay_pixel(x, y_t[x], &border_color);
