@@ -4,15 +4,16 @@ In Progress
 Queued up
 ---
 - BUG: Ceilings cover upper and lower textures in two-sided linedefs
+- FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
+
+- FEATURE: support pegging in rendering walls: 
+  http://www.doomworld.com/drsleep/textures.txt
+  http://www.starfighter.acornarcade.com/mysite/articles/dooma.html
 
 - CHORE: refactor seg::render
   - CHORE: consider refactoring “player-centric segment” a class (then forgetting about player)
   - CHORE: consider refactoring “clipped, player-centric segment” another class
 - CHORE: refactor height (z) into 3d vertex class
-
-- FEATURE: render the transparent walls back-to-front AFTER the solid walls (and visplanes).
-  See: http://fabiensanglard.net/doomIphone/doomClassicRenderer.php ("The big picture of runtime"
-  and "Things and transparent walls.")
 
 - BUG: door width is too narrow
 - FEATURE: match the aspect ratio
@@ -20,19 +21,22 @@ Queued up
 - BUG: top of wall is rounded in final room (z projection is wrong)
 - BUG: gaps (vertical lines) between textures
 
-- FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
-- FEATURE: render closed doors as walls [r_bsp.c:532]
-- FEATURE: support pegging in rendering walls: 
-  http://www.doomworld.com/drsleep/textures.txt
-  http://www.starfighter.acornarcade.com/mysite/articles/dooma.html
+- FEATURE: show things
 
-- FEATURE: collision detection: http://doom.wikia.com/wiki/Blockmap
+- FEATURE: render the transparent walls back-to-front AFTER the solid walls (and visplanes).
+  See: http://fabiensanglard.net/doomIphone/doomClassicRenderer.php ("The big picture of runtime"
+  and "Things and transparent walls.")
 
 - FEATURE: lighting
+  - FEATURE: user darker color palettes for further-away objects
+  - FEATURE: increase lighting where wall lights are
 - FEATURE: animate wall textures
+
+- FEATURE: head bobbing
+
+- FEATURE: collision detection: http://doom.wikia.com/wiki/Blockmap
 
 - FEATURE: trigger walkover actions on linedefs
 - FEATURE: trigger use/push actions on linedefs
 - FEATURE: trigger shoot actions on linedefs
 
-- FEATURE: head bobbing
