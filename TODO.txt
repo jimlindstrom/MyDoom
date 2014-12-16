@@ -1,6 +1,5 @@
 In Progress
 ---
-- FEATURE: rendering two-sided linedefs
 
 Queued up
 ---
