@@ -55,6 +55,7 @@ flat const *flats_find_by_name(char const *name)
       return &flats[i];
     }
   }
+
   return NULL;
 }
 

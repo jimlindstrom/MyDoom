@@ -288,7 +288,7 @@ void episode_map::link_sectors_to_flats(void)
     {
       sectors[i].set_ceiling_texture(f);
     }
-    else { printf("WARNING: could not find sector %d's ceiling texture named \"%s\"\n", i, name); }
+    else { printf("ERROR: could not find sector %d's ceiling texture named \"%s\"\n", i, name); exit(0); }
 
     name = sectors[i].get_floor_texture_name();
     f = flats_find_by_name(name);
@@ -296,7 +296,7 @@ void episode_map::link_sectors_to_flats(void)
     {
       sectors[i].set_floor_texture(f);
     }
-    else { printf("WARNING: could not find sector %d's ceiling texture named \"%s\"\n", i, name); }
+    else { printf("ERROR: could not find sector %d's ceiling texture named \"%s\"\n", i, name); exit(0); }
   }
 }
 
@@ -424,21 +424,24 @@ void episode_map::link_sidedefs_to_children(void)
     if(tex) { sidedefs[i].set_upper_texture(tex); }
     else if(strlen(sidedefs[i].get_upper_texture_name())>1)
     {
-      printf("WARNING: couldn't find sidedef %d's upper texture \"%s\"\n", i, sidedefs[i].get_upper_texture_name());
+      printf("ERROR: couldn't find sidedef %d's upper texture \"%s\"\n", i, sidedefs[i].get_upper_texture_name());
+      exit(0);
     }
 
     tex = wall_textures_get_by_name(sidedefs[i].get_lower_texture_name());
     if(tex) { sidedefs[i].set_lower_texture(tex); }
     else if(strlen(sidedefs[i].get_lower_texture_name())>1)
     {
-      printf("WARNING: couldn't find sidedef %d's lower texture \"%s\"\n", i, sidedefs[i].get_lower_texture_name());
+      printf("ERROR: couldn't find sidedef %d's lower texture \"%s\"\n", i, sidedefs[i].get_lower_texture_name());
+      exit(0);
     }
 
     tex = wall_textures_get_by_name(sidedefs[i].get_mid_texture_name());
     if(tex) { sidedefs[i].set_mid_texture(tex); }
     else if(strlen(sidedefs[i].get_mid_texture_name())>1)
     {
-      printf("WARNING: couldn't find sidedef %d's mid texture \"%s\"\n", i, sidedefs[i].get_mid_texture_name());
+      printf("ERROR: couldn't find sidedef %d's mid texture \"%s\"\n", i, sidedefs[i].get_mid_texture_name());
+      exit(0);
     }
   }
 }

@@ -21,7 +21,7 @@ public:
 
   uint8_t const *get_pixel(int x, int y) const;
 
-  void set_name(char const *_name) { strcpy(name, _name); name[8] = ' '; }
+  void set_name(char const *_name) { strcpy(name, _name); name[8] = 0; }
   char const *get_name(void) const { return name; }
 
 private:

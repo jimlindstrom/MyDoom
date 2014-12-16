@@ -35,7 +35,7 @@ Queued up
   http://www.doomworld.com/drsleep/textures.txt
   http://www.starfighter.acornarcade.com/mysite/articles/dooma.html
 
-- FEATURE: collision detection
+- FEATURE: collision detection: http://doom.wikia.com/wiki/Blockmap
 
 - FEATURE: lighting
 - FEATURE: animate wall textures
