@@ -32,10 +32,11 @@ public:
   bool has_mid_texture(  void) const { return (mid_texture   != NULL); }
   bool has_lower_texture(void) const { return (lower_texture != NULL); }
 
-  sector const *get_sector(void) const { return _sector; }
+  wall_texture const *get_upper_texture(void) const { return upper_texture; }
+  wall_texture const *get_lower_texture(void) const { return lower_texture; }
+  wall_texture const *get_mid_texture(  void) const { return mid_texture;   }
 
-  void render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, float yt_l, float yb_l, float yt_r, float yb_r, 
-              vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const;
+  sector const *get_sector(void) const { return _sector; }
 
 private:
   int16_t  x_offset;

@@ -127,9 +127,10 @@ void wall_texture::pre_render(void)
 
 void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, float yt_l, float yb_l, float yt_r, float yb_r,
                           int16_t x_offset, int16_t y_offset,
-                          vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
+                          vis_planes *vp, vis_plane *floor, vis_plane *ceiling, bool clip_ceil, bool clip_floor) const
 {
   color_rgba c;
+  int16_t w=games_get_screen_width(), h=games_get_screen_height();
 
   debug_printf("        texture::render(%dx%d)\n", width, height);
 
@@ -141,29 +142,32 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
     int ldx = ldx_l + (ldx_r-ldx_l)*(x-x_l)/(x_r-x_l);
     int tx = (x_offset+ldx) % width;
 
-    float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
     float yt = yt_l + (yt_r-yt_l)*(x-x_l)/(x_r-x_l);
-    int clipped_yb = MAX(0, MIN(479, yb));
-    int clipped_yt = MAX(0, MIN(479, yt));
+    float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
+    int clip_t = MAX(0,   vp->get_ceiling_clip(x));
+    int clip_b = MIN(h-1, vp->get_floor_clip(  x));
+    int clipped_yt = MAX(clip_t, MIN(clip_b, yt));
+    int clipped_yb = MAX(clip_t, MIN(clip_b, yb));
+    debug_printf("          y:[%.1f,%.1f] cy:[%d,%d]\n", yt,yb,clipped_yt,clipped_yb);
 
     if(ceiling)
     {
       // top of ceiling = one pixel lower than the [bottom of the lowest ceiling]
       // bot of ceiling = one pixel above the wall (or [ceil], if lower) (or [floor], if higher)
       int16_t ceil_yt = vp->get_ceiling_clip(x)+1;
-      int16_t ceil_yb = yb-1;
-      ceiling->update_clip(x, ceil_yb, ceil_yt);
+      int16_t ceil_yb = MIN(vp->get_floor_clip(x)-1, yt-1);
+      if(ceil_yt <= ceil_yb) { ceiling->update_clip(x, ceil_yb, ceil_yt); }
     }
     if(floor)
     {
       // top of floor be: one pixel below the wall (or [floor], if higher) (or [ceil], if lower)
       // bot of floor be: one pixel higher than the [top of the tallest floor]
-      int16_t floor_yt = yt+1;
+      int16_t floor_yt = MAX(vp->get_ceiling_clip(x)+1, yb+1);
       int16_t floor_yb = vp->get_floor_clip(x)-1;
-      floor  ->update_clip(x, floor_yb, floor_yt);
+      if(floor_yt <= floor_yb) { floor  ->update_clip(x, floor_yb, floor_yt); };
     }
-    vp->update_ceiling_clip(x, yb);
-    vp->update_floor_clip(  x, yt);
+    if(clip_ceil) { vp->update_ceiling_clip(x, yt); }
+    if(clip_floor){ vp->update_floor_clip(  x, yb); }
 
     for(int y=clipped_yt; y<=clipped_yb; y++)
     {

@@ -7,7 +7,7 @@
 #define TOP_PEGGED    1
 #define BOTTOM_PEGGED 2
 
-#define DEBUG_PRINTING
+//#define DEBUG_PRINTING
 #include "debug.h"
 
 linedef::linedef()
@@ -112,6 +112,9 @@ int16_t linedef::get_lowest_floor(void) const
 void linedef::render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, float y0_l, float dy_l, float y0_r, float dy_r,
                      vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
 {
+  wall_texture const *tex;
+  sidedef const *_sd = get_sidedef(direction);
+
   // if one-sided -> it's a solid wall
   if(is_one_sided())
   {
@@ -121,28 +124,73 @@ void linedef::render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, 
       // if lower-unpegged -> it's bottom-pegged (bottom of texture sits on the floor)
       alignment = BOTTOM_PEGGED;
     }
+
+    if((tex = _sd->get_mid_texture()))
+    {
+      float yt_l = y0_l + (get_lowest_ceiling() * dy_l);
+      float yb_l = y0_l + (get_highest_floor()  * dy_l);
+      float yt_r = y0_r + (get_lowest_ceiling() * dy_r);
+      float yb_r = y0_r + (get_highest_floor()  * dy_r);
+      int16_t ld_h = get_lowest_ceiling() - get_highest_floor();
+
+      debug_printf("        LD-M:[%.2f,%.2f], x:[%d,%d], h:[%d,%d], y_t:[%.1f,%.1f], y_b:[%.1f,%.1f]\n",
+                   ldx_l, ldx_r, x_l, x_r, get_highest_floor(), get_lowest_ceiling(), yt_l, yt_r, yb_l, yb_r);
+      tex->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, _sd->get_x_offset(), _sd->get_y_offset(), vp, floor, ceiling, true, true);
+    }
+
+
   }
   // if two-sided, it's a bridge between two sectors
   else if(is_two_sided())
   {
     //   -> upper texture is pegged to the lowest ceiling
-    //   -> lower texture is pegged to the highest floor
     // if upper-unpegged -> upper texture pegged to the highest ceiling
+
+    //   -> lower texture is pegged to the highest floor
     // if lower-unpegged -> lower texture pegged to the lowest floor
+
     // x,y offsets are applied next, after pegging
     // if middle texture is set
     //   -> it is clipped by the lowest ceiling and the highest floor
     //   -> it follows same alignment logi as single-sided linedef, but does not repeat vertically
+
+    if((tex = get_sidedef(direction)->get_upper_texture()))
+    {
+      float yt_l = y0_l + (get_highest_ceiling() * dy_l);
+      float yb_l = y0_l + (get_lowest_ceiling()  * dy_l);
+      float yt_r = y0_r + (get_highest_ceiling() * dy_r);
+      float yb_r = y0_r + (get_lowest_ceiling()  * dy_r);
+      int16_t ld_h = get_highest_ceiling() - get_lowest_ceiling();
+
+      debug_printf("        LD-U:[%.2f,%.2f], x:[%d,%d], h:[%d,%d], y_t:[%.1f,%.1f], y_b:[%.1f,%.1f]\n",
+                   ldx_l, ldx_r, x_l, x_r, get_highest_ceiling(), get_lowest_ceiling(), yt_l, yt_r, yb_l, yb_r);
+      tex->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, _sd->get_x_offset(), _sd->get_y_offset(), vp, NULL, ceiling, true, false);
+    }
+
+    if((tex = get_sidedef(direction)->get_lower_texture()))
+    {
+      float yt_l = y0_l + (get_highest_floor() * dy_l);
+      float yb_l = y0_l + (get_lowest_floor()  * dy_l);
+      float yt_r = y0_r + (get_highest_floor() * dy_r);
+      float yb_r = y0_r + (get_lowest_floor()  * dy_r);
+      int16_t ld_h = get_highest_floor() - get_lowest_floor();
+
+      debug_printf("        LD-L:[%.2f,%.2f], x:[%d,%d], h:[%d,%d], y_t:[%.1f,%.1f], y_b:[%.1f,%.1f]\n",
+                   ldx_l, ldx_r, x_l, x_r, get_highest_floor(), get_lowest_floor(), yt_l, yt_r, yb_l, yb_r);
+      tex->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, _sd->get_x_offset(), _sd->get_y_offset(), vp, floor, NULL, false, true);
+    }
+
+    if((tex = get_sidedef(direction)->get_mid_texture()))
+    {
+      float yt_l = y0_l + (get_lowest_ceiling() * dy_l);
+      float yb_l = y0_l + (get_highest_floor()  * dy_l);
+      float yt_r = y0_r + (get_lowest_ceiling() * dy_r);
+      float yb_r = y0_r + (get_highest_floor()  * dy_r);
+      int16_t ld_h = get_lowest_ceiling() - get_highest_floor();
+
+      debug_printf("        LD-L:[%.2f,%.2f], x:[%d,%d], h:[%d,%d], y_t:[%.1f,%.1f], y_b:[%.1f,%.1f]\n",
+                   ldx_l, ldx_r, x_l, x_r, get_highest_floor(), get_lowest_floor(), yt_l, yt_r, yb_l, yb_r);
+      tex->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, _sd->get_x_offset(), _sd->get_y_offset(), vp, floor, NULL, false, true);
+    }
   }
-
-  float yt_l = y0_l + (get_lowest_ceiling() * dy_l);
-  float yb_l = y0_l + (get_highest_floor()  * dy_l);
-  float yt_r = y0_r + (get_lowest_ceiling() * dy_r);
-  float yb_r = y0_r + (get_highest_floor()  * dy_r);
-  int16_t ld_h = get_lowest_ceiling() - get_highest_floor();
-
-  debug_printf("        LDx:[%.2f,%.2f], x:[%d,%d], h:[%d,%d], y_t:[%.1f,%.1f], y_b:[%.1f,%.1f]\n",
-               ldx_l, ldx_r, x_l, x_r, get_highest_floor(), get_lowest_ceiling(), yt_l, yt_r, yb_l, yb_r);
-  get_sidedef(direction)->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r,
-                                 vp, floor, ceiling);
 }

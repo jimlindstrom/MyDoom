@@ -19,7 +19,7 @@ vis_plane::vis_plane()
   for(int i=0; i<w; i++)
   {
      y_t[i] = UNINITIALIZED; 
-     y_b[i] = h; 
+     y_b[i] = h+1; 
   }
 }
 

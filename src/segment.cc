@@ -238,7 +238,6 @@ bool wad_segment::is_same_ceiling_plane_on_both_sides(void) const
          (back_sector->get_light_level()     == front_sector->get_light_level());
 }
 
-
 void wad_segment::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player,
                                      vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
 {
@@ -258,7 +257,10 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
     return;
   }
 
+  //#define DISABLE_VISPLANES
+  #ifdef  DISABLE_VISPLANES
   floor = ceiling = NULL; // FXIME: temporarily disable visplanes
+  #endif
   bool store_clipping = true;
   if(is_singled_sided_line())
   {
@@ -268,6 +270,10 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   {
     // carry on
   }
+  //#define ONLY_DRAW_ONE_SIDED_LINES
+  #ifdef  ONLY_DRAW_ONE_SIDED_LINES
+  else { return; }
+  #else
   else if(is_window())
   {
     store_clipping = false; // pass through...
@@ -280,6 +286,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   {
     store_clipping = false; // pass through...
   }
+  #endif
 
   if(!is_closed_door() && is_same_floor_plane_on_both_sides()  ) { floor   = NULL; }
   if(!is_closed_door() && is_same_ceiling_plane_on_both_sides()) { ceiling = NULL; }
@@ -293,7 +300,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   segment seg(&_pvl, &_pvr);
   //debug_printf("    pv: (%.1f,%.1f)->(%.1f,%.1f)\n", _pvl.get_x(), _pvl.get_y(), _pvr.get_x(), _pvr.get_y()); 
 
-  // Step 2: clip it
+  // Step 2: clip it 
   vector const *clip_l = _projector->get_left_clipping_vector();
   vector const *clip_r = _projector->get_right_clipping_vector();
   vertex v_l_c, v_r_c;
@@ -349,10 +356,15 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
       // FIXME: need to set this for other segs in same sector, too?
       if(floor)   { floor   = vp->adjust_or_create(floor,   clipped_ranges[i]->x_left, clipped_ranges[i]->x_right); }
       if(ceiling) { ceiling = vp->adjust_or_create(ceiling, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right); }
-      if(floor)   { floor  ->set_plane_type(VIS_PLANE_FLOOR_TYPE); }
+      if(floor)   { floor  ->set_plane_type(VIS_PLANE_FLOOR_TYPE  ); }
       if(ceiling) { ceiling->set_plane_type(VIS_PLANE_CEILING_TYPE); }
   
-      _linedef->render(direction, ldx_l, ldx_r, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, y0_l, dy_l, y0_r, dy_r, vp, floor, ceiling);
+      _linedef->render(direction, 
+                       ldx_l, ldx_r, 
+                       clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, 
+                       y0_l, dy_l, 
+                       y0_r, dy_r, 
+                       vp, floor, ceiling);
     }
   }
   delete[] clipped_ranges;

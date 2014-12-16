@@ -32,7 +32,7 @@ public:
   bool is_valid(void);
 
   void render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, float yt_l, float yb_l, float yt_r, float yb_r,
-              int16_t x_offset, int16_t y_offset, vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const;
+              int16_t x_offset, int16_t y_offset, vis_planes *vp, vis_plane *floor, vis_plane *ceiling, bool clip_ceil, bool clip_floor) const;
 
 private:
   char name[9]; // An ASCII string defining the name of the map texture. Only the characters A-Z (uppercase), 
