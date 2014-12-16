@@ -1,21 +1,23 @@
 In Progress
 ---
 - FEATURE: rendering two-sided linedefs
-  - Bug: [player at (1002.2,-3345.6) facing 85.4]: bottom floor not being drawn
-  - Bug: [player at (640.5,-3202.7) facing 50.4]: when looking through see-thru space, weird brick tiling happens instead of floor/ceiling
-  - Bug: [player at (1065.9,-3310.4) facing -89.6]: ceiling/floor not being drawn above/below door
   - Bug: [player at (797.1,-3261.3) facing 35.4]: nearby ceilings (and textures?) should be clipping further back solid walls
   - Bug: [player at (416.4,-3125.4) facing -129.6]: nearby stairs should be clipping further back solid walls
+
+  - Bug: [player at (640.5,-3202.7) facing 50.4]: when looking through see-thru space, weird brick tiling happens instead of floor/ceiling
+
+  - Bug: [player at (1002.2,-3345.6) facing 85.4]: bottom floor not being drawn
+  - Bug: [player at (1065.9,-3310.4) facing -89.6]: ceiling/floor not being drawn above/below door
+
   - Bug: [player at (1056.0,-3616.0) facing 90.4]: not seeing spaceship-ey texture ringing initial ceiling. Why?
+
+Queued up
+---
 
 - CHORE: refactor seg::render
   - CHORE: consider refactoring “player-centric segment” a class (then forgetting about player)
   - CHORE: consider refactoring “clipped, player-centric segment” another class
 - CHORE: refactor height (z) into 3d vertex class
-
-
-Queued up
----
 
 - FEATURE: render the transparent walls back-to-front AFTER the solid walls (and visplanes).
   See: http://fabiensanglard.net/doomIphone/doomClassicRenderer.php ("The big picture of runtime"
@@ -29,7 +31,7 @@ Queued up
 
 - FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
 - FEATURE: render closed doors as walls [r_bsp.c:532]
-- FEATURE: support pegging & x/y-offsets in rendering walls: 
+- FEATURE: support pegging in rendering walls: 
   http://www.doomworld.com/drsleep/textures.txt
   http://www.starfighter.acornarcade.com/mysite/articles/dooma.html
 

@@ -46,17 +46,17 @@ void sidedef::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, float
   if(mid_texture)
   {
     debug_printf("        SD rendering mid: \"%s\"\n", mid_texture_name);
-    mid_texture->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, vp, floor, ceiling);
+    mid_texture->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, x_offset, y_offset, vp, floor, ceiling);
   }
   if(upper_texture)
   {
     debug_printf("        SD rendering upper: \"%s\"\n", upper_texture_name);
-    upper_texture->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, vp, floor, ceiling);
+    upper_texture->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, x_offset, y_offset, vp, floor, ceiling);
   }
   if(lower_texture)
   {
     debug_printf("        SD rendering lower: \"%s\"\n", lower_texture_name);
-    lower_texture->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, vp, floor, ceiling);
+    lower_texture->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, x_offset, y_offset, vp, floor, ceiling);
   }
 }
 

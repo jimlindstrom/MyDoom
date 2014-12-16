@@ -126,15 +126,20 @@ void wall_texture::pre_render(void)
 }
 
 void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, float yt_l, float yb_l, float yt_r, float yb_r,
+                          int16_t x_offset, int16_t y_offset,
                           vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
 {
   color_rgba c;
 
   debug_printf("        texture::render(%dx%d)\n", width, height);
+
+  if(x_offset<0) { x_offset += width;  }
+  if(y_offset<0) { y_offset == height; }
+
   for(int x=x_l; x<=x_r; x++)
   {
     int ldx = ldx_l + (ldx_r-ldx_l)*(x-x_l)/(x_r-x_l);
-    int tx = ldx % width;
+    int tx = (x_offset+ldx) % width;
 
     float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
     float yt = yt_l + (yt_r-yt_l)*(x-x_l)/(x_r-x_l);
@@ -163,7 +168,7 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
     for(int y=clipped_yb; y<=clipped_yt; y++)
     {
       int ldy = ld_h*(y-yb)/(yt-yb);
-      int ty = ldy % height;
+      int ty = (y_offset+ldy) % height;
   
       int pix_offset = (ty * width) + tx;
       c.set_to(&pixels[pix_offset]);
