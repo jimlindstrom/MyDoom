@@ -31,28 +31,28 @@ bool picture_data::set_from_lump_data(uint8_t const *data)
   uint8_t const *_data = data;
   uint32_t *column_offsets;
   uint8_t const *col_ptr;
-  int y, j;
+  int x, y, j;
   uint8_t rowstart, pixel_count, dummy_value;
 
   // read metadata
-  height = *((uint16_t*)_data); _data += 2; // This reads h,w in reverse order from http://doom.wikia.com/wiki/Picture_format
-  width  = *((uint16_t*)_data); _data += 2; // but it corresponds to the unrotated, original w/h
+  width  = *((uint16_t*)_data); _data += 2; // See: http://doom.wikia.com/wiki/Picture_format
+  height = *((uint16_t*)_data); _data += 2;
   left   = *((uint16_t*)_data); _data += 2;
   top    = *((uint16_t*)_data); _data += 2;
 
   // read column offsets
-  column_offsets = new uint32_t[height];
-  for(y=0; y<height; y++)
+  column_offsets = new uint32_t[width];
+  for(y=0; y<width; y++)
   {
     column_offsets[y] = *((uint32_t*)(_data)); _data += 4;
   }
 
   // read pixels
-  pixel_columns = new uint8_t*[height];
-  for(y=0; y<height; y++)
+  pixel_columns = new uint8_t*[width];
+  for(x=0; x<width; x++)
   {
-    pixel_columns[y] = new uint8_t[width];
-    col_ptr = data + column_offsets[y];
+    pixel_columns[x] = new uint8_t[height];
+    col_ptr = data + column_offsets[x];
 
     rowstart = 0;
     while(rowstart != 255)
@@ -63,24 +63,17 @@ bool picture_data::set_from_lump_data(uint8_t const *data)
       dummy_value = *(col_ptr++);
       for(j=0; j<pixel_count; j++)
       {
-        int x = rowstart+j;
-        if(x<0 || x>=width)
+        int y = rowstart+j;
+        if(y<0 || y>height)
         {
           printf("ERROR: picture_data tried to write to (%d,%d) > (%d,%d)\n", x,y,width,height);
           return false;
         }
-        pixel_columns[y][x] = *(col_ptr++);
+        pixel_columns[x][y] = *(col_ptr++);
       }
       dummy_value = *(col_ptr++);
     }
   }
-
-  #ifdef ROTATE_AFTER_LOADING
-  // now, finally, rotate the thing 90deg
-  uint16_t t = width;
-  width = height;
-  height = t;
-  #endif
 
   delete[] column_offsets;
   return true;
@@ -88,11 +81,7 @@ bool picture_data::set_from_lump_data(uint8_t const *data)
 
 uint8_t const picture_data::get_pixel(int x, int y) const
 {
-  #ifdef ROTATE_AFTER_LOADING
-  return pixel_columns[x][height-y];
-  #else
-  return pixel_columns[y][x];
-  #endif
+  return pixel_columns[x][y];
 }
 
 void picture_data::print_html_file(char const *filename, palette const *pal)

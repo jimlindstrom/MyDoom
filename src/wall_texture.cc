@@ -8,7 +8,7 @@
 #include "common.h"
 #include "frame_buf.h"
 
-//#define DEBUG_PRINTING
+#define DEBUG_PRINTING
 #include "debug.h"
 
 wall_texture::wall_texture()
@@ -37,7 +37,7 @@ bool wall_texture::read_from_maptexture_data(uint8_t const *data, patch_names_lu
                                        data += 4; // ignored
   num_patches    = *((uint16_t*)data); data += 2;
 
-  //debug_printf("%dx%d [before]\n", width, height);
+  int16_t old_width=width, old_height=height;
 
   patches = new wall_patch[num_patches];
   for(int i=0; i<num_patches; i++)
@@ -50,18 +50,19 @@ bool wall_texture::read_from_maptexture_data(uint8_t const *data, patch_names_lu
 
     patch_name = pnames->get_patch_name_by_num(patches[i].patch_num);
     patches[i]._patch = patches_get_by_name(patch_name);
-
-    if(patches[i]._patch) // this link can fail, for some reason....
+    if(!patches[i]._patch)
     {
-      uint16_t needed_width  = patches[i].originx + patches[i]._patch->get_width();
-      uint16_t needed_height = patches[i].originy + patches[i]._patch->get_height();
-      if(needed_width  > width ) { width  = needed_width;  } 
-      if(needed_height > height) { height = needed_height; } 
-      //debug_printf("%dx%d [needed]\n", needed_width, needed_height);
+      printf("ERROR: could not find patch named \"%s\"\n", patch_name);
+      exit(0);
     }
+
+    int16_t needed_width  = patches[i].originx + patches[i]._patch->get_width();
+    int16_t needed_height = patches[i].originy + patches[i]._patch->get_height();
+    width  = MAX(width,  needed_width);
+    height = MAX(height, needed_height);
   }
 
-  //debug_printf("%dx%d [after]\n", width, height);
+  debug_printf("%dx%d [before] -> %dx%d [after]\n", old_width, old_height, width, height);
 
   if(!is_valid())
   {
@@ -94,31 +95,44 @@ void wall_texture::pre_render(void)
 {
   pixels = new color_rgb[width*height];
 
+  // FIXME: first initialize all pixels to transparent. Some just won't get written, and they should be see-thru
+
   debug_printf("Pre-rendering \"%s\". size: %dx%d\n", name, width, height);
   for(int p=0; p<num_patches; p++)
   {
     wall_patch *cur_patch = &patches[p];
-    if(cur_patch->_patch) // this link can fail, for some reason....
+    if(!cur_patch->_patch) // this link can fail, for some reason....
     {
-      debug_printf("  patch %d. origin:(%d,%d) step:%d, colormap:%d, size: %dx%d\n", 
-                   p, cur_patch->originx, cur_patch->originy, cur_patch->stepdir, cur_patch->colormap,
-                   cur_patch->_patch->get_width(), cur_patch->_patch->get_height());
-      palette const *cur_pal = palettes_get(cur_patch->colormap);
-      int16_t y = cur_patch->originy;
-      for(int16_t v=0; v<cur_patch->_patch->get_height(); v++, y++)
+      printf("ERROR: could not find patch!\n");
+      exit(0);
+    }
+
+    debug_printf("  patch %d. origin:(%d,%d) step:%d, colormap:%d, size: %dx%d\n", 
+                 p, cur_patch->originx, cur_patch->originy, cur_patch->stepdir, cur_patch->colormap,
+                 cur_patch->_patch->get_width(), cur_patch->_patch->get_height());
+    palette const *cur_pal = palettes_get(cur_patch->colormap);
+    int16_t y = cur_patch->originy;
+    for(int16_t v=0; v<cur_patch->_patch->get_height(); v++, y++)
+    {
+      int16_t x = cur_patch->originx;
+      for(int16_t u=0; u<cur_patch->_patch->get_width(); u++, x++)
       {
-        int16_t x = cur_patch->originx;
-        for(int16_t u=0; u<cur_patch->_patch->get_width(); u++, x++)
+        if((x < 0) || (x >= width) || (y < 0) || (y >= height))
         {
-          if((x <= 0) || (x >= width) || (y <= 0) || (y >= height))
-          {
-            printf("WARNING: pixel (%d,%d) is out of range [0..%d, 0..%d]\n", x,y, width,height);
-          }
-          else
-          {
-            uint8_t color_idx = cur_patch->_patch->get_pixel(u, v);    // {u,v} over patch {width,height}
-            pixels[(y*width)+x].set_to(cur_pal->get_color(color_idx)); // {x,y} over wall {width,height}
-          }
+          #if 0 /* real doom just clips these and silently ignores */
+          printf("ERROR: wall texture \"%s\", patch %d (W: %d, H: %d), pixel (%d+%d=%d,%d+%d=%d) "
+                 "is out of range [0..%d, 0..%d]\n",
+                 name, p, cur_patch->_patch->get_width(),cur_patch->_patch->get_height(), 
+                 cur_patch->originx,u,x, 
+                 cur_patch->originy,v,y, 
+                 width,height);
+          exit(0);
+          #endif
+        }
+        else
+        {
+          uint8_t color_idx = cur_patch->_patch->get_pixel(u, v);    // {u,v} over patch {width,height}
+          pixels[(y*width)+x].set_to(cur_pal->get_color(color_idx)); // {x,y} over wall {width,height}
         }
       }
     }

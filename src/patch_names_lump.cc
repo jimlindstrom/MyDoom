@@ -52,13 +52,14 @@ uint16_t patch_names_lump::get_patch_num_by_name(char const *name) const
 {
   for(int i=0; i<num_patch_names; i++)
   {
-    if(strcmp(patch_names[i], name) == 0)
+    if(strcasecmp(patch_names[i], name) == 0)
     {
       return i;
     }
   }
 
-  printf("WARNING: patch name \"%s\" not found\n", name);
+  printf("ERROR: patch name \"%s\" not found\n", name);
+  exit(0);
   return 0xffff;
 }
 
