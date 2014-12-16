@@ -58,7 +58,13 @@ uint16_t patch_names_lump::get_patch_num_by_name(char const *name) const
     }
   }
 
-  printf("ERROR: patch name \"%s\" not found\n", name);
+  printf("ERROR: patch name \"%s\" not found in ", name);
+  for(int i=0; i<num_patch_names; i++)
+  {
+    printf(" '%s'", patch_names[i]);
+  }
+  printf("\n");
+
   exit(0);
   return 0xffff;
 }

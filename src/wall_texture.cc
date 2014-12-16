@@ -52,14 +52,15 @@ bool wall_texture::read_from_maptexture_data(uint8_t const *data, patch_names_lu
     patches[i]._patch = patches_get_by_name(patch_name);
     if(!patches[i]._patch)
     {
-      printf("ERROR: could not find patch named \"%s\"\n", patch_name);
+      printf("ERROR(2): could not find patch named \"%s\"\n", patch_name);
       exit(0);
     }
 
-    int16_t needed_width  = patches[i].originx + patches[i]._patch->get_width();
+    /* FIXME: before, I was expanding textures. It looks like Doom just clips things, so I'm gonna do that... */
+    /*int16_t needed_width  = patches[i].originx + patches[i]._patch->get_width();
     int16_t needed_height = patches[i].originy + patches[i]._patch->get_height();
     width  = MAX(width,  needed_width);
-    height = MAX(height, needed_height);
+    height = MAX(height, needed_height);*/
   }
 
   debug_printf("%dx%d [before] -> %dx%d [after]\n", old_width, old_height, width, height);

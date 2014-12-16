@@ -55,11 +55,18 @@ patch const *patches_get_by_name(char const *name)
 {
   for(int i=0; i<num_patches; i++)
   {
-    if(strcmp(patches[i].get_name(), name) == 0)
+    if(strcasecmp(patches[i].get_name(), name) == 0)
     {
       return &patches[i];
     }
   }
+
+  printf("ERROR: couldn't find patch named \"%s\" in ");
+  for(int i=0; i<num_patches; i++)
+  {
+    printf(" '%s'", patches[i].get_name());
+  }
+  printf("\n");
 
   return NULL;
 }
