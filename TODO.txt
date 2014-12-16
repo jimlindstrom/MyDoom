@@ -1,14 +1,16 @@
 In Progress
 ---
+- FEATURE: support pegging in rendering walls: 
+  http://www.doomworld.com/drsleep/textures.txt
+  http://www.starfighter.acornarcade.com/mysite/articles/dooma.html
+
+- BUG: pre-rendering of textures throws a ton of errors
+- BUG: flip-switch on final wall is too high
 
 Queued up
 ---
 - BUG: Ceilings cover upper and lower textures in two-sided linedefs
 - FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
-
-- FEATURE: support pegging in rendering walls: 
-  http://www.doomworld.com/drsleep/textures.txt
-  http://www.starfighter.acornarcade.com/mysite/articles/dooma.html
 
 - CHORE: refactor seg::render
   - CHORE: consider refactoring “player-centric segment” a class (then forgetting about player)
@@ -17,7 +19,6 @@ Queued up
 
 - BUG: door width is too narrow
 - FEATURE: match the aspect ratio
-- BUG: flip-switch on final wall is too high
 - BUG: top of wall is rounded in final room (z projection is wrong)
 - BUG: gaps (vertical lines) between textures
 

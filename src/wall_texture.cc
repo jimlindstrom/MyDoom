@@ -112,7 +112,7 @@ void wall_texture::pre_render(void)
         {
           if((x <= 0) || (x >= width) || (y <= 0) || (y >= height))
           {
-            //printf("WARNING: pixel (%d,%d) is out of range [0..%d, 0..%d]\n", x,y, width,height);
+            printf("WARNING: pixel (%d,%d) is out of range [0..%d, 0..%d]\n", x,y, width,height);
           }
           else
           {

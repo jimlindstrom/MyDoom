@@ -27,7 +27,9 @@ public:
 
   bool read_from_maptexture_data(uint8_t const *data, patch_names_lump const *pnames);
 
-  char const *get_name(void) { return &name[0]; }
+  char const *get_name(void) const { return &name[0]; }
+  uint16_t get_width(void) const { return width; }
+  uint16_t get_height(void) const { return height; }
 
   bool is_valid(void);
 
