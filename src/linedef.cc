@@ -7,7 +7,7 @@
 #define TOP_PEGGED    1
 #define BOTTOM_PEGGED 2
 
-//#define DEBUG_PRINTING
+#define DEBUG_PRINTING
 #include "debug.h"
 
 linedef::linedef()

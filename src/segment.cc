@@ -258,6 +258,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
     return;
   }
 
+  floor = ceiling = NULL; // FXIME: temporarily disable visplanes
   bool store_clipping = true;
   if(is_singled_sided_line())
   {
@@ -335,11 +336,10 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
       float dist_l = _player->get_map_position()->distance_to_point(&v1); // FIXME: this should be the clipped point.
       float dist_r = _player->get_map_position()->distance_to_point(&v2); // ...
       debug_printf("      dists: [%.1f,%.1f]\n", dist_l, dist_r);
-      _projector->project_y(-_player->get_view_height(), dist_l, &y0_l, &dy_l);
-      _projector->project_y(-_player->get_view_height(), dist_r, &y0_r, &dy_r);
+      _projector->project_z_to_y(-_player->get_view_height(), dist_l, &y0_l, &dy_l);
+      _projector->project_z_to_y(-_player->get_view_height(), dist_r, &y0_r, &dy_r);
   
       float seg_len= get_length(); 
-      //float ld_len = _linedef->get_length(); // No longer used.
       float seg_off= _linedef->get_start_vertex()->distance_to_point(vertex_l);
       if(direction == 1) { seg_off = seg_len - seg_off; } // FIXME: why am I reversing this? seems bad...
       float ldx_l = seg_off + (t1*seg_len);

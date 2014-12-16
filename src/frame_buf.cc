@@ -1,20 +1,21 @@
 /******************************************************************************
  * 2D Coordinate system:
  *
- * (0, screen_height) . . . . . . . . . . . . . . (screen_width, screen_height)
- * .                                               .
- * .                                               .
- * .                                               .
- * .                                               .
- * (0, 0)             . . . . . . . . . . . . . . (screen_width, 0)
+ * y=0                -> top    of screen
+ * y=(frame_height-1) -> bottom of screen
+ *
+ * x=0                -> left   of screen
+ * x=(frame_width-1)  -> right  of screen
  *
  ******************************************************************************/
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "frame_buf.h"
 #include "ui.h"
 
+#define DO_RANGE_CHECKING
 #define BYTES_PER_PIXEL 4
 
 static int frame_width, frame_height;
@@ -50,34 +51,40 @@ void frame_buf_flush_to_ui(void)
   ui_draw_image(frame, frame_width, frame_height);
 }
 
-/* NOTE: this flips y from bottom-up to top-down */
 void frame_buf_overlay_pixel(int x, int y, color_rgba const *color)
 {
-  int buf_y = frame_height - y - 1;
-  if(x>=0 && x<frame_width && buf_y>=0 && buf_y<frame_height)
+  #ifdef DO_RANGE_CHECKING
+  if(!(x>=0 && x<frame_width && y>=0 && y<frame_height))
   {
-    uint8_t *ptr;
-    ptr = frame + (buf_y*frame_width*BYTES_PER_PIXEL) + (x*BYTES_PER_PIXEL);
-    *(ptr+0) = (color->r * color->a/255.0) + (*(ptr+0) * (255.0-color->a)/255.0);
-    *(ptr+1) = (color->g * color->a/255.0) + (*(ptr+1) * (255.0-color->a)/255.0);
-    *(ptr+2) = (color->b * color->a/255.0) + (*(ptr+2) * (255.0-color->a)/255.0);
-    *(ptr+3) = 255.0; // ?
+    printf("WARNING: attempted to draw pixel at (%d,%d)\n", x, y);
+    return;
   }
+  #endif
+
+  uint8_t *ptr;
+  ptr = frame + (y*frame_width*BYTES_PER_PIXEL) + (x*BYTES_PER_PIXEL);
+  *(ptr+0) = (color->r * color->a/255.0) + (*(ptr+0) * (255.0-color->a)/255.0);
+  *(ptr+1) = (color->g * color->a/255.0) + (*(ptr+1) * (255.0-color->a)/255.0);
+  *(ptr+2) = (color->b * color->a/255.0) + (*(ptr+2) * (255.0-color->a)/255.0);
+  *(ptr+3) = 255.0; // ?
 }
 
-/* NOTE: this flips y from bottom-up to top-down */
-void frame_buf_draw_point(int x, int y, color_rgba const *color)
+void frame_buf_draw_pixel(int x, int y, color_rgba const *color)
 {
-  int buf_y = frame_height - y - 1;
-  if(x>=0 && x<frame_width && buf_y>=0 && buf_y<frame_height)
+  #ifdef DO_RANGE_CHECKING
+  if(!(x>=0 && x<frame_width && y>=0 && y<frame_height))
   {
-    uint8_t *ptr;
-    ptr = frame + (buf_y*frame_width*BYTES_PER_PIXEL) + (x*BYTES_PER_PIXEL);
-    *(ptr++) = color->r;
-    *(ptr++) = color->g;
-    *(ptr++) = color->b;
-    *(ptr++) = color->a;
+    printf("WARNING: attempted to draw pixel at (%d,%d)\n", x, y);
+    return;
   }
+  #endif
+
+  uint8_t *ptr;
+  ptr = frame + (y*frame_width*BYTES_PER_PIXEL) + (x*BYTES_PER_PIXEL);
+  *(ptr++) = color->r;
+  *(ptr++) = color->g;
+  *(ptr++) = color->b;
+  *(ptr++) = color->a;
 }
 
 void frame_buf_draw_line(int x1, int y1, int x2, int y2, color_rgba const *color)
@@ -92,7 +99,7 @@ void frame_buf_draw_line(int x1, int y1, int x2, int y2, color_rgba const *color
     signed char const iy((delta_y > 0) - (delta_y < 0));
     delta_y = abs(delta_y) << 1;
  
-    frame_buf_draw_point(x1, y1, color);
+    frame_buf_draw_pixel(x1, y1, color);
  
     if (delta_x >= delta_y)
     {
@@ -111,7 +118,7 @@ void frame_buf_draw_line(int x1, int y1, int x2, int y2, color_rgba const *color
             error += delta_y;
             x1 += ix;
  
-            frame_buf_draw_point(x1, y1, color);
+            frame_buf_draw_pixel(x1, y1, color);
         }
     }
     else
@@ -131,7 +138,7 @@ void frame_buf_draw_line(int x1, int y1, int x2, int y2, color_rgba const *color
             error += delta_x;
             y1 += iy;
  
-            frame_buf_draw_point(x1, y1, color);
+            frame_buf_draw_pixel(x1, y1, color);
         }
     }
 }

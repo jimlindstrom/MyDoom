@@ -134,7 +134,7 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
   debug_printf("        texture::render(%dx%d)\n", width, height);
 
   if(x_offset<0) { x_offset += width;  }
-  if(y_offset<0) { y_offset == height; }
+  if(y_offset<0) { y_offset += height; }
 
   for(int x=x_l; x<=x_r; x++)
   {
@@ -165,14 +165,14 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
     vp->update_ceiling_clip(x, yb);
     vp->update_floor_clip(  x, yt);
 
-    for(int y=clipped_yb; y<=clipped_yt; y++)
+    for(int y=clipped_yt; y<=clipped_yb; y++)
     {
       int ldy = ld_h*(y-yb)/(yt-yb);
       int ty = (y_offset+ldy) % height;
   
       int pix_offset = (ty * width) + tx;
       c.set_to(&pixels[pix_offset]);
-      frame_buf_draw_point(x, y, &c);
+      frame_buf_draw_pixel(x, y, &c);
     }
   }
 }

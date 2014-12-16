@@ -52,12 +52,12 @@ void overhead_map::draw_bbox(void)
 
 int overhead_map::scale_and_translate_x(int x)
 {
-  return (map_bbox->x_left + map_bbox->x_right)/2.0 + (x * map_scale) + map_dx;
+  return ((map_bbox->x_left + map_bbox->x_right )/2.0) + ( x * map_scale) + map_dx;
 }
 
 int overhead_map::scale_and_translate_y(int y)
 {
-  return (map_bbox->y_top + map_bbox->y_bottom)/2.0 + (y * map_scale) + map_dy;
+  return ((map_bbox->y_top  + map_bbox->y_bottom)/2.0) + (-y * map_scale) + map_dy;
 }
 
 void overhead_map::draw_line(vertex const *v1, vertex const *v2, color_rgba const *c)

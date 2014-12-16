@@ -71,10 +71,10 @@ void game::do_frame(void)
          RAD_TO_DEG(_player.get_facing_angle()));
 
   overhead_map omap;
-  bbox map_bbox(10, 140, screen_width-200, screen_width-10);
+  bbox map_bbox(screen_height-10, screen_height-140, screen_width-200, screen_width-10);
   omap.set_bbox(&map_bbox);
   omap.set_scale(0.040);
-  omap.translate_origin(-60,145);
+  omap.translate_origin(-60,-145);
 
   frame_buf_clear();
   _map->render_player_view(&col_ranges, &_projector, &_player, &_vis_planes);
