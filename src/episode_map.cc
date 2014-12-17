@@ -95,6 +95,7 @@ bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
   link_sidedefs_to_children();
   link_linedefs_to_children();
   link_segments_to_children();
+  link_things_to_children();
 
   return true;
 }
@@ -446,6 +447,15 @@ void episode_map::link_sidedefs_to_children(void)
   }
 }
 
+void episode_map::link_things_to_children(void)
+{
+  for(int i=0; i<num_things; i++)
+  {
+    things[i].set_subsector(root_node()->get_subsector_containing(things[i].get_map_position())); // FIXME: useful?
+    // for each thing, look up its sprites
+  }
+}
+
 void episode_map::draw_overhead_map(overhead_map *omap) const
 {
   color_rgba blu(  0,   0, 255, 255);
@@ -468,7 +478,7 @@ void episode_map::draw_overhead_map(overhead_map *omap) const
 
 void episode_map::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, vis_planes *vp) const
 {
-  root_node()->render_player_view(col_ranges, _projector, _player, vp);
+  root_node()->render_player_view(col_ranges, _projector, _player, vp, &things[0], num_things);
 }
 
 bool episode_map::can_move(vertex const *old_position, vertex const *new_position, float *floor_height) const
@@ -476,8 +486,8 @@ bool episode_map::can_move(vertex const *old_position, vertex const *new_positio
   subsector const *old_ss;
   subsector const *new_ss;
 
-  old_ss = nodes[num_nodes-1].get_subsector_containing(old_position);
-  new_ss = nodes[num_nodes-1].get_subsector_containing(new_position);
+  old_ss = root_node()->get_subsector_containing(old_position);
+  new_ss = root_node()->get_subsector_containing(new_position);
 
   if(old_ss != new_ss) // FIXME: do collision detection...
   {

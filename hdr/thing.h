@@ -5,6 +5,9 @@
 
 #include "vertex.h"
 #include "thing_definitions.h"
+#include "projector.h"
+#include "player.h"
+#include "column_range.h"
 
 #define THING_NUM_BYTES 10 // size on disk (in the lump)
 
@@ -13,6 +16,8 @@
 #define THING_MASK_LEVELS_4_AND_5	0x0004	// Thing is on skill levels 4 & 5
 #define THING_MASK_DEAF			0x0008	// Thing is deaf
 #define THING_MASK_NOT_SINGLE_PLAYER	0x0010	// Thing is not in single player
+
+class subsector; // forward declaration
 
 class thing
 {
@@ -40,12 +45,20 @@ public:
   bool is_deaf(void) const { return (flags & THING_MASK_DEAF); }
   bool is_not_single_player(void) const { return (flags & THING_MASK_NOT_SINGLE_PLAYER); }
 
+  void set_subsector(subsector const *ss) { _subsector = ss; }
+  subsector const *get_subsector(void) const { return _subsector; }
+  thing_definition const *get_definition(void) const { return defn; }
+
+  void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player) const;
+
 private:
   vertex map_position;
   float facing_angle;
   uint16_t thing_type, flags;
 
   thing_definition const *defn;
+
+  subsector const *_subsector;
 };
 
 #endif

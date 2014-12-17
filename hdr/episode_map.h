@@ -82,6 +82,7 @@ private:
   void link_segments_to_children(void);
   void link_linedefs_to_children(void);
   void link_sidedefs_to_children(void);
+  void link_things_to_children(void);
 
   node *root_node(void) const { return &nodes[num_nodes-1]; }
 };

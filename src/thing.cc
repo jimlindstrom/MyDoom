@@ -1,7 +1,11 @@
+#include <stdio.h>
 #include <math.h>
 
 #include "common.h"
 #include "thing.h"
+
+#define DEBUG_PRINTING
+#include "debug.h"
 
 thing::thing()
 {
@@ -22,8 +26,14 @@ bool thing::read_from_lump_data(uint8_t const *lump_data)
   // convert angle from degrees to radians
   facing_angle = DEG_TO_RAD(facing_angle+90);
 
+  // get the definition (description, etc.)
   defn = thing_definition_lookup(thing_type);
 
   return true;
+}
+
+void thing::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player) const
+{
+  debug_printf("  rendering \"%s\"\n", defn->description);
 }
 

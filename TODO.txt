@@ -1,5 +1,7 @@
 In Progress
 ---
+- FEATURE: pre-link things to their sprites?
+
 - BUG: when there's a short-sector (upper texture, no lower) before a door, the floor plane isn't drawn
 - BUG: looking down over stairs doesn't break the floor like I'd expect it to
 

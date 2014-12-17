@@ -50,7 +50,7 @@ public:
   void set_left_subsector(subsector *_subsector) { left._subsector = _subsector; }
   void set_right_subsector(subsector *_subsector) { right._subsector = _subsector; }
 
-  void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, vis_planes *vp) const;
+  void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, vis_planes *vp, thing *things, int16_t num_things) const;
 
   bool undrawn_columns_toward_bbox(bbox const *_bbox, column_range_list *col_ranges, projector const *_projector, player const *_player) const;
 

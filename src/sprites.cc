@@ -50,6 +50,13 @@ bool sprites_init(wad_file const *wad)
       }
       sprites[i].set_rotation_idx(rotation_idx);
 
+      // FIXME: create a sprite_sequence class to capture this
+      // SPOSA1
+      // SPOSA2A8 <--- FIXME: handle same sprite used for mirror image
+      // SPOSA3A7
+      // SPOSA4A6
+      // SPOSA5
+
       sprites[i].set_from_lump_data(sprite_lump->get_data());
       i++;
     }
