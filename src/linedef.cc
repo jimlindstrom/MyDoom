@@ -50,62 +50,6 @@ void linedef::set_end_vertex(vertex const *v)
   end_vertex = v;
 }
 
-int16_t linedef::get_highest_ceiling(void) const /* Not sure anyone uses these any more... */
-{
-  int16_t h = -32767;
-  if(left_sidedef && left_sidedef->get_sector())
-  {
-    h = MAX(h, left_sidedef->get_sector()->get_ceiling_height());
-  }
-  if(right_sidedef && right_sidedef->get_sector())
-  {
-    h = MAX(h, right_sidedef->get_sector()->get_ceiling_height());
-  }
-  return h;
-}
-
-int16_t linedef::get_lowest_ceiling(void) const
-{
-  int16_t h = 32767;
-  if(left_sidedef && left_sidedef->get_sector())
-  {
-    h = MIN(h, left_sidedef->get_sector()->get_ceiling_height());
-  }
-  if(right_sidedef && right_sidedef->get_sector())
-  {
-    h = MIN(h, right_sidedef->get_sector()->get_ceiling_height());
-  }
-  return h;
-}
-
-int16_t linedef::get_highest_floor(void) const
-{
-  int16_t h = -32767;
-  if(left_sidedef && left_sidedef->get_sector())
-  {
-    h = MAX(h, left_sidedef->get_sector()->get_floor_height());
-  }
-  if(right_sidedef && right_sidedef->get_sector())
-  {
-    h = MAX(h, right_sidedef->get_sector()->get_floor_height());
-  }
-  return h;
-}
-
-int16_t linedef::get_lowest_floor(void) const
-{
-  int16_t h = 32767;
-  if(left_sidedef && left_sidedef->get_sector())
-  {
-    h = MIN(h, left_sidedef->get_sector()->get_floor_height());
-  }
-  if(right_sidedef && right_sidedef->get_sector())
-  {
-    h = MIN(h, right_sidedef->get_sector()->get_floor_height());
-  }
-  return h;
-}
-
 int16_t linedef::get_ceiling(int direction) const
 {
   return get_sidedef(direction)->get_sector()->get_ceiling_height();
@@ -115,7 +59,6 @@ int16_t linedef::get_floor(int direction) const
 {
   return get_sidedef(direction)->get_sector()->get_floor_height();
 }
-
 
 void linedef::render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, float y0_l, float dy_l, float y0_r, float dy_r,
                      vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const

@@ -68,10 +68,6 @@ public:
   void render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, float y0_l, float dy_l, float y0_r, float dy_r,
               vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const;
 
-  int16_t get_highest_ceiling(void) const;
-  int16_t get_lowest_ceiling(void) const;
-  int16_t get_highest_floor(void) const;
-  int16_t get_lowest_floor(void) const;
   int16_t get_ceiling(int direction) const;
   int16_t get_floor(int direction) const;
 
