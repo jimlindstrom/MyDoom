@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include "vertex.h"
-#include "thing_types.h"
+#include "thing_definitions.h"
 
 #define THING_NUM_BYTES 10 // size on disk (in the lump)
 
@@ -45,6 +45,7 @@ private:
   float facing_angle;
   uint16_t thing_type, flags;
 
+  thing_definition const *defn;
 };
 
 #endif

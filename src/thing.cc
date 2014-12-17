@@ -22,6 +22,8 @@ bool thing::read_from_lump_data(uint8_t const *lump_data)
   // convert angle from degrees to radians
   facing_angle = DEG_TO_RAD(facing_angle+90);
 
+  defn = thing_definition_lookup(thing_type);
+
   return true;
 }
 
