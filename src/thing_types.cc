@@ -1,20 +1,34 @@
-#ifndef __THING_TYPES_H
-#define __THING_TYPES_H
+#include <stdint.h>
 
-/*
-Artiacts
+#include "thing_types.h"
 
-Decimal	Hex	Version	Radius	Sprite	Sequence	Class	Description
-2023	7E7	R	20	PSTR	A	AP	Berserk
-2026	7EA	S	20	PMAP	ABCDCB	AP1	Computer map
-2014	7DE	S	20	BON1	ABCDCB	AP	Health potion
-2024	7E8	S	20	PINS	ABCD	AP	Invisibility
-2022	7E6	R	20	PINV	ABCD	AP	Invulnerability
-2045	7FD	S	20	PVIS	AB	AP	Light amplification visor
-83	53	2	20	MEGA	ABCD	AP	Megasphere
-2013	7DD	S	20	SOUL	ABCDCB	AP	Soul sphere
-2015	7DF	S	20	BON2	ABCDCB	AP	Spiritual armor
+typedef struct 
+{
+  uint16_t type_num_dec;
+  char     type_num_hex[5];
+  char     version[3];       // Maybe 1 is enough?
+  uint16_t radius;
+  char     sprite_prefix[5];
+  char     sequence[8];      // FIXME: how long can this be?
+  char     klass[8];         // FIXME: how long can this be?
+  char     description[40];  // FIXME: how long can this be?
+} thing_type;
 
+
+thing_type artifacts[] = 
+{
+  {2023,"7E7","R",20,"PSTR","A","AP","Berserk"},
+  {2026,"7EA","S",20,"PMAP","ABCDCB","AP1","Computer map"},
+  {2014,"7DE","S",20,"BON1","ABCDCB","AP","Health potion"},
+  {2024,"7E8","S",20,"PINS","ABCD","AP","Invisibility"},
+  {2022,"7E6","R",20,"PINV","ABCD","AP","Invulnerability"},
+  {2045,"7FD","S",20,"PVIS","AB","AP","Light amplification visor"},
+  {83,"53","2",20,"MEGA","ABCD","AP","Megasphere"},
+  {2013,"7DD","S",20,"SOUL","ABCDCB","AP","Soul sphere"},
+  {2015,"7DF","S",20,"BON2","ABCDCB","AP","Spiritual armor"},
+};
+
+#if 0
 Powerups
 
 Decimal	Hex	Version	Radius	Sprite	Sequence	Class	Description
@@ -160,9 +174,5 @@ Decimal	Hex	Version	Radius	Sprite	Sequence	Class	Description
 89	59	2	20	none2	-		Spawn shooter
 87	57	2	0	none3	-		Spawn spot
 14	E	S	20	none4	-		Teleport landing
-
- */
-
-#define THING_PLAYER_1_START_TYPE	1
-
 #endif
+

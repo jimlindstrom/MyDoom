@@ -1,9 +1,13 @@
 In Progress
 ---
+- BUG: when there's a short-sector (upper texture, no lower) before a door, the floor plane isn't drawn
+- BUG: looking down over stairs doesn't break the floor like I'd expect it to
 
 Queued up
 ---
 - FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
+
+- BUG: When a lineseg is long or close, and maybe spans both FOV vectors, it gets clipped but shouldn't.
 
 - CHORE: refactor seg::render
   - CHORE: consider refactoring “player-centric segment” a class (then forgetting about player)
@@ -12,6 +16,7 @@ Queued up
 
 - BUG: top of wall is rounded in final room (z projection is wrong)
 
+- FEATURE: use rgba (instead of rgb) for textures, sprites, flats
 - FEATURE: render the transparent (masked) walls back-to-front AFTER the solid walls (and visplanes).
   See: http://fabiensanglard.net/doomIphone/doomClassicRenderer.php ("The big picture of runtime"
   and "Things and transparent walls.")
