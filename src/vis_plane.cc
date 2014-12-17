@@ -74,9 +74,9 @@ void vis_plane::draw(void)
 {
   int16_t h=games_get_screen_height();
 
-  color_rgba light_red(  255,  0,  0,128);
+  color_rgba light_red(  255, 64, 64,255);
   color_rgba dark_red(   255,  0,  0, 64);
-  color_rgba light_green(  0,255,  0,128);
+  color_rgba light_green( 64,255, 64,255);
   color_rgba dark_green(   0,255,  0, 64);
   color_rgba border_color( 0,  0,255,128);
   color_rgba inner_color(  0,  0,255, 64);

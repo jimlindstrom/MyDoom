@@ -257,10 +257,6 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
     return;
   }
 
-  //#define DISABLE_VISPLANES
-  #ifdef  DISABLE_VISPLANES
-  floor = ceiling = NULL; // FXIME: temporarily disable visplanes
-  #endif
   bool store_clipping = true;
   if(is_singled_sided_line())
   {
@@ -270,10 +266,6 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   {
     // carry on
   }
-  //#define ONLY_DRAW_ONE_SIDED_LINES
-  #ifdef  ONLY_DRAW_ONE_SIDED_LINES
-  else { return; }
-  #else
   else if(is_window())
   {
     store_clipping = false; // pass through...
@@ -286,7 +278,6 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   {
     store_clipping = false; // pass through...
   }
-  #endif
 
   if(!is_closed_door() && is_same_floor_plane_on_both_sides()  ) { floor   = NULL; }
   if(!is_closed_door() && is_same_ceiling_plane_on_both_sides()) { ceiling = NULL; }

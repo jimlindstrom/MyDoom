@@ -3,7 +3,6 @@ In Progress
 
 Queued up
 ---
-- BUG: Ceilings cover upper and lower textures in two-sided linedefs
 - FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
 
 - CHORE: refactor seg::render
@@ -11,16 +10,12 @@ Queued up
   - CHORE: consider refactoring “clipped, player-centric segment” another class
 - CHORE: refactor height (z) into 3d vertex class
 
-- BUG: door width is too narrow
-- FEATURE: match the aspect ratio
 - BUG: top of wall is rounded in final room (z projection is wrong)
-- BUG: gaps (vertical lines) between textures
 
-- FEATURE: show things
-
-- FEATURE: render the transparent walls back-to-front AFTER the solid walls (and visplanes).
+- FEATURE: render the transparent (masked) walls back-to-front AFTER the solid walls (and visplanes).
   See: http://fabiensanglard.net/doomIphone/doomClassicRenderer.php ("The big picture of runtime"
   and "Things and transparent walls.")
+- FEATURE: show things
 
 - FEATURE: lighting
   - FEATURE: user darker color palettes for further-away objects

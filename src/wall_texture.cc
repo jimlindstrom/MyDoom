@@ -161,7 +161,7 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
       // bot of ceiling = one pixel above the wall (or [ceil], if lower) (or [floor], if higher)
       int16_t ceil_yt = vp->get_ceiling_clip(x)+1;
       int16_t ceil_yb = MIN(vp->get_floor_clip(x)-1, yt-1);
-      if(ceil_yt <= ceil_yb) { ceiling->update_clip(x, ceil_yb, ceil_yt); }
+      if(ceil_yt  <= ceil_yb ) { ceiling->update_clip(x, ceil_yb,  ceil_yt ); }
     }
     if(floor)
     {
@@ -172,7 +172,9 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
       if(floor_yt <= floor_yb) { floor  ->update_clip(x, floor_yb, floor_yt); };
     }
     if(clip_ceil) { vp->update_ceiling_clip(x, yt); }
+    else          { vp->update_floor_clip(  x, yt); }
     if(clip_floor){ vp->update_floor_clip(  x, yb); }
+    else          { vp->update_ceiling_clip(x, yb); }
 
     for(int y=clipped_yt; y<=clipped_yb; y++)
     {
