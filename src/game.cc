@@ -50,9 +50,9 @@ void game::init_things(void)
   }
 
   #if 0
-  vertex v(1694.6,-2583.5);
+  vertex v(844.3,-3330.5);
   _player.set_map_position(&v);
-  _player.set_facing_angle(DEG_TO_RAD(60.4));
+  _player.set_facing_angle(DEG_TO_RAD(40.4));
   #endif
 }
 

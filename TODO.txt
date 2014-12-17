@@ -1,11 +1,5 @@
 In Progress
 ---
-- FEATURE: support pegging in rendering walls: 
-  http://www.doomworld.com/drsleep/textures.txt
-  http://www.starfighter.acornarcade.com/mysite/articles/dooma.html
-
-- BUG: pre-rendering of textures throws a ton of errors
-- BUG: flip-switch on final wall is too high
 
 Queued up
 ---

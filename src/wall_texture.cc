@@ -8,7 +8,7 @@
 #include "common.h"
 #include "frame_buf.h"
 
-#define DEBUG_PRINTING
+//#define DEBUG_PRINTING
 #include "debug.h"
 
 wall_texture::wall_texture()
@@ -37,8 +37,6 @@ bool wall_texture::read_from_maptexture_data(uint8_t const *data, patch_names_lu
                                        data += 4; // ignored
   num_patches    = *((uint16_t*)data); data += 2;
 
-  int16_t old_width=width, old_height=height;
-
   patches = new wall_patch[num_patches];
   for(int i=0; i<num_patches; i++)
   {
@@ -55,15 +53,7 @@ bool wall_texture::read_from_maptexture_data(uint8_t const *data, patch_names_lu
       printf("ERROR(2): could not find patch named \"%s\"\n", patch_name);
       exit(0);
     }
-
-    /* FIXME: before, I was expanding textures. It looks like Doom just clips things, so I'm gonna do that... */
-    /*int16_t needed_width  = patches[i].originx + patches[i]._patch->get_width();
-    int16_t needed_height = patches[i].originy + patches[i]._patch->get_height();
-    width  = MAX(width,  needed_width);
-    height = MAX(height, needed_height);*/
   }
-
-  debug_printf("%dx%d [before] -> %dx%d [after]\n", old_width, old_height, width, height);
 
   if(!is_valid())
   {
@@ -96,7 +86,15 @@ void wall_texture::pre_render(void)
 {
   pixels = new color_rgb[width*height];
 
-  // FIXME: first initialize all pixels to transparent. Some just won't get written, and they should be see-thru
+  // First initialize all pixels to transparent. Some just won't get written, and they should be see-thru
+  color_rgb black_see_thru(0,0,0); // FIXME: make this rgab
+  for(int x=0; x<width; x++)
+  {
+    for(int y=0; y<height; y++)
+    {
+      pixels[(y*width)+x].set_to(&black_see_thru);
+    }
+  }
 
   debug_printf("Pre-rendering \"%s\". size: %dx%d\n", name, width, height);
   for(int p=0; p<num_patches; p++)
@@ -120,15 +118,7 @@ void wall_texture::pre_render(void)
       {
         if((x < 0) || (x >= width) || (y < 0) || (y >= height))
         {
-          #if 0 /* real doom just clips these and silently ignores */
-          printf("ERROR: wall texture \"%s\", patch %d (W: %d, H: %d), pixel (%d+%d=%d,%d+%d=%d) "
-                 "is out of range [0..%d, 0..%d]\n",
-                 name, p, cur_patch->_patch->get_width(),cur_patch->_patch->get_height(), 
-                 cur_patch->originx,u,x, 
-                 cur_patch->originy,v,y, 
-                 width,height);
-          exit(0);
-          #endif
+          /* real doom just clips these and silently ignores */
         }
         else
         {
@@ -145,12 +135,12 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
                           vis_planes *vp, vis_plane *floor, vis_plane *ceiling, bool clip_ceil, bool clip_floor) const
 {
   color_rgba c;
-  int16_t w=games_get_screen_width(), h=games_get_screen_height();
+  int16_t h=games_get_screen_height();
 
   debug_printf("        texture::render(%dx%d)\n", width, height);
 
-  if(x_offset<0) { x_offset += width;  }
-  if(y_offset<0) { y_offset += height; }
+  while(x_offset<0) { x_offset += width;  }
+  while(y_offset<0) { y_offset += height; }
 
   for(int x=x_l; x<=x_r; x++)
   {
@@ -186,7 +176,7 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
 
     for(int y=clipped_yt; y<=clipped_yb; y++)
     {
-      int ldy = ld_h*(y-yb)/(yt-yb);
+      int ldy = ld_h*(y-yt)/(yb-yt);
       int ty = (y_offset+ldy) % height;
   
       int pix_offset = (ty * width) + tx;

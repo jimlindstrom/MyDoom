@@ -61,7 +61,7 @@ patch const *patches_get_by_name(char const *name)
     }
   }
 
-  printf("ERROR: couldn't find patch named \"%s\" in ");
+  printf("ERROR: couldn't find patch named \"%s\" in ", name);
   for(int i=0; i<num_patches; i++)
   {
     printf(" '%s'", patches[i].get_name());

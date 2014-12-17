@@ -72,6 +72,8 @@ public:
   int16_t get_lowest_ceiling(void) const;
   int16_t get_highest_floor(void) const;
   int16_t get_lowest_floor(void) const;
+  int16_t get_ceiling(int direction) const;
+  int16_t get_floor(int direction) const;
 
 private:
   uint16_t start_vertex_num;

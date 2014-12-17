@@ -15,7 +15,7 @@
 
 #include "game.h"
 
-static int16_t screen_width  = 640;
+static int16_t screen_width  = 768;
 static int16_t screen_height = 480;
 static game *cur_game = NULL;
 static episode_map const *cur_map = NULL;

@@ -50,33 +50,33 @@ void player::move(episode_map const *_map)
 
   if(is_turning_right)
   {
-    facing_angle -= DEG_TO_RAD(5);
+    facing_angle -= DEG_TO_RAD(3);
     if(facing_angle < -M_PI) { facing_angle += 2.0*M_PI; }
   }
   if(is_turning_left)
   {
-    facing_angle += DEG_TO_RAD(5);
+    facing_angle += DEG_TO_RAD(3);
     if(facing_angle > M_PI) { facing_angle -= 2.0*M_PI; }
   }
   if(is_moving_forward)
   {
-    new_position.set_x(new_position.get_x() + (5*cos(facing_angle)));
-    new_position.set_y(new_position.get_y() + (5*sin(facing_angle)));
+    new_position.set_x(new_position.get_x() + (6*cos(facing_angle)));
+    new_position.set_y(new_position.get_y() + (6*sin(facing_angle)));
   }
   if(is_moving_backward)
   {
-    new_position.set_x(new_position.get_x() + (-5*cos(facing_angle)));
-    new_position.set_y(new_position.get_y() + (-5*sin(facing_angle)));
+    new_position.set_x(new_position.get_x() + (-6*cos(facing_angle)));
+    new_position.set_y(new_position.get_y() + (-6*sin(facing_angle)));
   }
   if(is_strafing_right)
   {
-    new_position.set_x(new_position.get_x() + (5*cos(facing_angle-(M_PI/2.0))));
-    new_position.set_y(new_position.get_y() + (5*sin(facing_angle-(M_PI/2.0))));
+    new_position.set_x(new_position.get_x() + (6*cos(facing_angle-(M_PI/2.0))));
+    new_position.set_y(new_position.get_y() + (6*sin(facing_angle-(M_PI/2.0))));
   }
   if(is_strafing_left)
   {
-    new_position.set_x(new_position.get_x() + (5*cos(facing_angle+(M_PI/2.0))));
-    new_position.set_y(new_position.get_y() + (5*sin(facing_angle+(M_PI/2.0))));
+    new_position.set_x(new_position.get_x() + (6*cos(facing_angle+(M_PI/2.0))));
+    new_position.set_y(new_position.get_y() + (6*sin(facing_angle+(M_PI/2.0))));
   }
 
   if(_map->can_move(&map_position, &new_position, &floor_height))
