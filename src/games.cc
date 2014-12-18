@@ -110,3 +110,11 @@ int16_t games_get_screen_height(void)
   return screen_height;
 }
 
+uint32_t games_get_frame_counter(void)
+{
+  if(cur_game)
+  {
+    return cur_game->get_frame_count();
+  }
+  return 0;
+}

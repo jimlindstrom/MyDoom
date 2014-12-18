@@ -12,6 +12,7 @@ game::game()
 {
   level = 1;
   frame_time_idx = 0;
+  frame_count = 0;
 }
 
 game::~game()
@@ -107,6 +108,7 @@ void game::track_frames_per_sec(void)
   }
 
   frame_time_idx = ((frame_time_idx+1) % FRAME_TIMES_COUNT);
+  frame_count++;
 }
 
 void game::handle_key_down(int key_code)

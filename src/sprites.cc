@@ -101,6 +101,7 @@ bool assemble_animations(void)
     {
       uint8_t frame_idx    = cur_sprite->get_frame_idx(j);
       sprite_animation_frame *cur_frame = anim->get_frame(frame_idx);
+      anim->set_num_frames(MAX(frame_idx+1, anim->get_num_frames()));
 
       uint8_t rotation_idx = cur_sprite->get_rotation_idx(j);
       int16_t num_frames = MAX(cur_frame->get_num_angles(), rotation_idx+1);

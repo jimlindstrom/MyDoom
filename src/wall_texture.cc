@@ -182,7 +182,7 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
     if(clip_floor){ vp->update_floor_clip(  x, yb); }
     else          { vp->update_ceiling_clip(x, yb); }
 
-    for(int y=clipped_yt; y<=clipped_yb; y++)
+    for(int y=MAX(0,clipped_yt); y<=MIN(h-1,clipped_yb); y++)
     {
       int ldy = ld_h*(y-yt)/(yb-yt);
       int ty = (y_offset+ldy) % height;

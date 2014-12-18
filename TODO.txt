@@ -1,11 +1,13 @@
 In Progress
 ---
+- FEATURE: show things
 
 Queued up
 ---
 - FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
 
 - BUG: When a lineseg is long or close, and maybe spans both FOV vectors, it gets clipped but shouldn't.
+- BUG: View height seems to height. And player doesn't step up soon enough, on stairs.
 
 - CHORE: refactor seg::render
   - CHORE: consider refactoring “player-centric segment” a class (then forgetting about player)
@@ -18,7 +20,6 @@ Queued up
 - FEATURE: render the transparent (masked) walls back-to-front AFTER the solid walls (and visplanes).
   See: http://fabiensanglard.net/doomIphone/doomClassicRenderer.php ("The big picture of runtime"
   and "Things and transparent walls.")
-- FEATURE: show things
 
 - FEATURE: lighting
   - FEATURE: user darker color palettes for further-away objects

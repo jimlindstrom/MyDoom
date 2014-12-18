@@ -4,7 +4,7 @@
 #include "linedef.h"
 #include "common.h"
 
-#define DEBUG_PRINTING
+//#define DEBUG_PRINTING
 #include "debug.h"
 
 linedef::linedef()

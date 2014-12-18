@@ -25,6 +25,8 @@ public:
 
   bool is_done(void) const { return done; }
 
+  uint32_t get_frame_count(void) const { return frame_count; }
+
 private:
   bool done;
   int screen_width;
@@ -36,6 +38,7 @@ private:
   #define FRAME_TIMES_COUNT 50
   struct timeval frame_times[FRAME_TIMES_COUNT];
   int frame_time_idx;
+  uint32_t frame_count;
 
   void track_frames_per_sec(void);
 };
