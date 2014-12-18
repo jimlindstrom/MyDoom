@@ -73,17 +73,16 @@ void thing::render_player_view(column_range_list *col_ranges, projector const *_
   float x_l = _projector->project_horiz_angle_to_x(angle_l);
   float x_r = _projector->project_horiz_angle_to_x(angle_r);
 
-  if(!animation) { debug_printf("    NULL animation!\n"); return; }
-  if(animation->get_num_frames()==0) { debug_printf("    no frames!\n"); return; }
+  if(!animation) { /*debug_printf("    NULL animation!\n");*/ return; }
+  if(animation->get_num_frames()==0) { /*debug_printf("    no frames!\n");*/ return; }
   sprite_animation_frame const *cur_frame = animation->get_frame(games_get_frame_counter() % animation->get_num_frames());
-  if(!cur_frame) { debug_printf("    NULL frame!\n"); return; }
+  if(!cur_frame) { /*debug_printf("    NULL frame!\n");*/ return; }
   sprite const *cur_sprite = cur_frame->get_sprite(0);
-  if(!cur_sprite) { debug_printf("    NULL sprite!\n"); return; }
+  if(!cur_sprite) /*{ debug_printf("    NULL sprite!\n");*/ return; }
 
   float y0, dy;
   float rel_height = _player->get_view_height() - (cur_sprite->get_height() - get_sector()->get_floor_height());
   _projector->project_z_to_y(-rel_height, dist_c, &y0, &dy);
-  //_projector->project_z_to_y(-_player->get_view_height(), dist_c, &y0, &dy);
 
   float h = (x_r-x_l) * cur_sprite->get_height() / cur_sprite->get_width();
   float y_t = y0;
