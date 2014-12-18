@@ -13,17 +13,20 @@ public:
   ~sprite();
 
   char const *get_name_prefix(void) const { return name_prefix; }
-  uint8_t get_frame_idx(void) const { return frame_idx; }
-  uint8_t get_rotation_idx(void) const { return rotation_idx; }
 
-  void set_name_prefix(char const *_name_prefix) { strcpy(name_prefix, _name_prefix); name_prefix[4]=0; }
-  void set_frame_idx(uint8_t _frame_idx) { frame_idx = _frame_idx; }
-  void set_rotation_idx(uint8_t _rotation_idx) { rotation_idx = _rotation_idx; }
+  void set_name_prefix(char const *_name_prefix);
+  void set_frame_idx(uint8_t orientation, uint8_t _frame_idx);
+  void set_rotation_idx(uint8_t orientation, uint8_t _rotation_idx);
+
+  uint8_t get_num_orientations(void) const { return num_orientations; }
+  uint8_t get_frame_idx(uint8_t orientation) const { return frame_idx[orientation]; }
+  uint8_t get_rotation_idx(uint8_t orientation) const { return rotation_idx[orientation]; }
 
 private:
   char name_prefix[5]; // 4 chars + NULL
-  uint8_t frame_idx;
-  uint8_t rotation_idx;
+  uint8_t frame_idx[2];
+  uint8_t rotation_idx[2];
+  uint8_t num_orientations; // 1 or 2 (if same sprite used in mirror image at different rotation angle
 };
 
 #endif

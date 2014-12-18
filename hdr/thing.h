@@ -8,6 +8,7 @@
 #include "projector.h"
 #include "player.h"
 #include "column_range.h"
+#include "sprites.h"
 
 #define THING_NUM_BYTES 10 // size on disk (in the lump)
 
@@ -57,6 +58,8 @@ private:
   uint16_t thing_type, flags;
 
   thing_definition const *defn;
+
+  sprite_animation *animation;
 
   subsector const *_subsector;
 };

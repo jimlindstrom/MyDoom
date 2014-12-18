@@ -29,6 +29,8 @@ bool thing::read_from_lump_data(uint8_t const *lump_data)
   // get the definition (description, etc.)
   defn = thing_definition_lookup(thing_type);
 
+  animation = sprites_lookup_animation(defn->sprite_prefix);
+
   return true;
 }
 
