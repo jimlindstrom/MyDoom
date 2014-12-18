@@ -1,6 +1,12 @@
 In Progress
 ---
-- FEATURE: show things
+- FEATURE: show things.
+- BUG: not all things should animate all frames. See thing_defn->sequence[].
+- BUG: animation happens too fast.
+- BUG: things don't clip well if they're partially off screen.
+- BUG: things seem to grow taller than they should as you get closer to them.
+- FEATURE: render things at the right angle
+- FEATURE: render things with transparency
 
 Queued up
 ---
@@ -20,6 +26,8 @@ Queued up
 - FEATURE: render the transparent (masked) walls back-to-front AFTER the solid walls (and visplanes).
   See: http://fabiensanglard.net/doomIphone/doomClassicRenderer.php ("The big picture of runtime"
   and "Things and transparent walls.")
+  - Can I NOT do this, and instead rely on alpha transparency? For non-solid walls, I could use 
+    overlay_pixel() instead of draw_pixel()
 
 - FEATURE: lighting
   - FEATURE: user darker color palettes for further-away objects
