@@ -142,6 +142,11 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
   while(x_offset<0) { x_offset += width;  }
   while(y_offset<0) { y_offset += height; }
 
+  if(x_l == x_r)
+  {
+    debug_printf("          aborting because x_l == x_r\n");
+    return;
+  }
   for(int x=x_l; x<=x_r; x++)
   {
     int ldx = ldx_l + (ldx_r-ldx_l)*(x-x_l)/(x_r-x_l);
@@ -153,7 +158,7 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
     int clip_b = MIN(h-1, vp->get_floor_clip(  x));
     int clipped_yt = MAX(clip_t, MIN(clip_b, yt));
     int clipped_yb = MAX(clip_t, MIN(clip_b, yb));
-    debug_printf("          y:[%.1f,%.1f] cy:[%d,%d]\n", yt,yb,clipped_yt,clipped_yb);
+    debug_printf("          x:%d, y:[%.1f,%.1f] cy:[%d,%d]\n", x, yt,yb, clipped_yt,clipped_yb);
 
     if(ceiling)
     {
@@ -167,8 +172,9 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
     {
       // top of floor be: one pixel below the wall (or [floor], if higher) (or [ceil], if lower)
       // bot of floor be: one pixel higher than the [top of the tallest floor]
-      int16_t floor_yt = MAX(vp->get_ceiling_clip(x)+1, yb+1);
+      int16_t floor_yt = MAX(vp->get_ceiling_clip(x)+1, yb-1);
       int16_t floor_yb = vp->get_floor_clip(x)-1;
+      debug_printf("            floor clipping: %d <= %d\n", floor_yt, floor_yb);
       if(floor_yt <= floor_yb) { floor  ->update_clip(x, floor_yb, floor_yt); };
     }
     if(clip_ceil) { vp->update_ceiling_clip(x, yt); }

@@ -102,9 +102,9 @@ void vis_plane::draw(void)
 
   for(int16_t x=x_l; x<=x_r; x++)
   {
-    if(y_t[x]>=0 && y_b[x]<=h)
+    if(y_t[x]>=0 || y_b[x]<=h)
     {
-      //debug_printf("  x=%d, y:[%d,%d]\n", x, y_t[x], y_b[x]);
+      debug_printf("  x=%d, y:[%d,%d]\n", x, y_t[x], y_b[x]);
       frame_buf_overlay_pixel(x, y_t[x], &border_color);
       for(int16_t y=y_t[x]+1; y<y_b[x]; y++)
       {

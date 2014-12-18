@@ -126,9 +126,7 @@ void linedef::render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, 
     else
     {
       debug_printf("        LD-2U: (clip only)\n");
-      // FIXME: this is the outer loop of tex->render. It's needed in order to still do clipping
       int16_t h=games_get_screen_height();
-      bool clip_ceil=true, clip_floor=false;
 
       for(int x=x_l; x<=x_r; x++)
       {
@@ -142,18 +140,6 @@ void linedef::render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, 
           int16_t ceil_yb = MIN(vp->get_floor_clip(x)-1, yt-1);
           if(ceil_yt  <= ceil_yb ) { ceiling->update_clip(x, ceil_yb,  ceil_yt ); }
         }
-        /*if(floor)
-        {
-          // top of floor be: one pixel below the wall (or [floor], if higher) (or [ceil], if lower)
-          // bot of floor be: one pixel higher than the [top of the tallest floor]
-          int16_t floor_yt = MAX(vp->get_ceiling_clip(x)+1, yb+1);
-          int16_t floor_yb = vp->get_floor_clip(x)-1;
-          if(floor_yt <= floor_yb) { floor  ->update_clip(x, floor_yb, floor_yt); };
-        }*/
-        if(clip_ceil) { vp->update_ceiling_clip(x, yt); }
-        else          { vp->update_floor_clip(  x, yt); }
-        if(clip_floor){ vp->update_floor_clip(  x, yb); }
-        else          { vp->update_ceiling_clip(x, yb); }
       }
     }
 
@@ -181,37 +167,24 @@ void linedef::render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, 
                    ldx_l, ldx_r, x_l, x_r, get_floor(1-direction), get_floor(direction), yt_l, yt_r, yb_l, yb_r, x_offset, y_offset);
       tex->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, x_offset, y_offset, vp, floor, NULL, false, true);
     }
-    else // doing this is sometimes good, sometimes bad...
+    else
     {
       debug_printf("        LD-2L: (clip only)\n");
       // FIXME: this is the outer loop of tex->render. It's needed in order to still do clipping
       int16_t h=games_get_screen_height();
-      bool clip_ceil=false, clip_floor=true;
 
       for(int x=x_l; x<=x_r; x++)
       {
         float yt = yt_l + (yt_r-yt_l)*(x-x_l)/(x_r-x_l);
         float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
-        /*if(ceiling)
-        {
-          // top of ceiling = one pixel lower than the [bottom of the lowest ceiling]
-          // bot of ceiling = one pixel above the wall (or [ceil], if lower) (or [floor], if higher)
-          int16_t ceil_yt = vp->get_ceiling_clip(x)+1;
-          int16_t ceil_yb = MIN(vp->get_floor_clip(x)-1, yt-1);
-          if(ceil_yt  <= ceil_yb ) { ceiling->update_clip(x, ceil_yb,  ceil_yt ); }
-        }*/
         if(floor)
         {
           // top of floor be: one pixel below the wall (or [floor], if higher) (or [ceil], if lower)
           // bot of floor be: one pixel higher than the [top of the tallest floor]
-          int16_t floor_yt = MAX(vp->get_ceiling_clip(x)+1, yb+1);
+          int16_t floor_yt = MAX(vp->get_ceiling_clip(x)+1, yb-1);
           int16_t floor_yb = vp->get_floor_clip(x)-1;
           if(floor_yt <= floor_yb) { floor  ->update_clip(x, floor_yb, floor_yt); };
         }
-        if(clip_ceil) { vp->update_ceiling_clip(x, yt); }
-        else          { vp->update_floor_clip(  x, yt); }
-        if(clip_floor){ vp->update_floor_clip(  x, yb); }
-        else          { vp->update_ceiling_clip(x, yb); }
       }
     }
 
