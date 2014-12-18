@@ -41,6 +41,24 @@ bool thing::read_from_lump_data(uint8_t const *lump_data)
   return true;
 }
 
+uint8_t thing::get_frame_idx(void) const
+{
+  uint8_t num_frame_letters = strlen(defn->sequence);
+  uint8_t frame_letter_idx = (games_get_frame_counter()>>2) % num_frame_letters;
+  uint8_t num_attempts = 0;
+  char frame_letter;
+  while((frame_letter = defn->sequence[frame_letter_idx]) == '+')
+  {
+    frame_letter_idx = (frame_letter_idx+1) % num_frame_letters;
+    if((num_attempts++) > num_frame_letters)
+    {
+      debug_printf("    WARNING: couldn't find valid frame index for thing\n");
+      return 0;
+    }
+  }
+  return frame_letter-'A';
+}
+
 void thing::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player) const
 {
   color_rgba c;
@@ -53,8 +71,9 @@ void thing::render_player_view(column_range_list *col_ranges, projector const *_
 
   float dist_c  = _player->get_map_position()->distance_to_point(&map_position);
 
-  float angle_l = angle_c + atan2(defn->radius, dist_c);
-  float angle_r = angle_c - atan2(defn->radius, dist_c);
+  float angle_delta = atan2(defn->radius, dist_c);
+  float angle_l = angle_c + angle_delta;
+  float angle_r = angle_c - angle_delta;
 
   bool is_backface = (angle_r > angle_l);
   if(is_backface) { return; }
@@ -68,27 +87,27 @@ void thing::render_player_view(column_range_list *col_ranges, projector const *_
   debug_printf("    angles: [%1.f, %.1f, %.1f] dist: %.1f\n", 
               RAD_TO_DEG(angle_l), RAD_TO_DEG(angle_c), RAD_TO_DEG(angle_r), dist_c);
 
-  // FIXME: this skips over clipping
-
   float x_l = _projector->project_horiz_angle_to_x(angle_l);
   float x_r = _projector->project_horiz_angle_to_x(angle_r);
 
-  if(!animation) { /*debug_printf("    NULL animation!\n");*/ return; }
-  if(animation->get_num_frames()==0) { /*debug_printf("    no frames!\n");*/ return; }
-  sprite_animation_frame const *cur_frame = animation->get_frame(games_get_frame_counter() % animation->get_num_frames());
-  if(!cur_frame) { /*debug_printf("    NULL frame!\n");*/ return; }
+  if(!animation) { return; }
+  if(animation->get_num_frames()==0) { return; }
+  uint8_t cur_frame_idx = get_frame_idx();
+  sprite_animation_frame const *cur_frame = animation->get_frame(cur_frame_idx);
+  if(!cur_frame) { return; }
   sprite const *cur_sprite = cur_frame->get_sprite(0);
-  if(!cur_sprite) /*{ debug_printf("    NULL sprite!\n");*/ return; }
+  if(!cur_sprite) { return; }
 
   float y0, dy;
-  float rel_height = _player->get_view_height() - (cur_sprite->get_height() - get_sector()->get_floor_height());
+  float rel_height = _player->get_view_height() - get_sector()->get_floor_height(); // FIXME: assumes it sits on floor
   _projector->project_z_to_y(-rel_height, dist_c, &y0, &dy);
 
   float h = (x_r-x_l) * cur_sprite->get_height() / cur_sprite->get_width();
-  float y_t = y0;
-  float y_b = y0 + (h * -dy);
+  float y_t = y0-h;
+  float y_b = y0;
 
-  debug_printf("    x:[%.1f,%.1f] y:[%.1f,%.1f]\n", x_l, x_r, y_t, y_b);
+  debug_printf("    x:[%.1f,%.1f], h:%.1f, y0:%.1f, dy:%.1f, y:[%.1f,%.1f]\n", x_l, x_r, h, y0, dy, y_t, y_b);
+  debug_printf("    aspect ratio: %.3f\n", (x_r-x_l)/(y_b-y_t));
 
   int16_t x_l_c = MAX(0, x_l);
   int16_t x_r_c = MIN(screen_w-1, x_r);
@@ -98,7 +117,7 @@ void thing::render_player_view(column_range_list *col_ranges, projector const *_
   if(x_l_c == x_r_c) { return; } 
   for(int x=x_l_c; x<=x_r_c; x++)
   {
-    int u = (float)(x - x_l_c)/(x_r_c - x_l_c) * (cur_sprite->get_width()-1);
+    int u = (float)(x - x_l)/(x_r - x_l) * (cur_sprite->get_width()-1);
     for(int y=y_t_c; y<=y_b_c; y++)
     {
       int v = (float)(y - y_t)/(y_b - y_t) * (cur_sprite->get_height()-1);

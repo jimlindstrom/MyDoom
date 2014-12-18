@@ -4,7 +4,6 @@ In Progress
 - BUG: not all things should animate all frames. See thing_defn->sequence[].
 - BUG: animation happens too fast.
 - BUG: things don't clip well if they're partially off screen.
-- BUG: things seem to grow taller than they should as you get closer to them.
 - FEATURE: render things at the right angle
 - FEATURE: render things with transparency
 

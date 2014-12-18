@@ -54,6 +54,8 @@ public:
 
   void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player) const;
 
+  uint8_t get_frame_idx(void) const;
+
 private:
   vertex map_position;
   float facing_angle;

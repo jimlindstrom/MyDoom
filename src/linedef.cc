@@ -126,12 +126,12 @@ void linedef::render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, 
     else
     {
       debug_printf("        LD-2U: (clip only)\n");
-      int16_t h=games_get_screen_height();
+      //int16_t h=games_get_screen_height();
 
       for(int x=x_l; x<=x_r; x++)
       {
         float yt = yt_l + (yt_r-yt_l)*(x-x_l)/(x_r-x_l);
-        float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
+        //float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
         if(ceiling)
         {
           // top of ceiling = one pixel lower than the [bottom of the lowest ceiling]
@@ -171,11 +171,11 @@ void linedef::render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, 
     {
       debug_printf("        LD-2L: (clip only)\n");
       // FIXME: this is the outer loop of tex->render. It's needed in order to still do clipping
-      int16_t h=games_get_screen_height();
+      //int16_t h=games_get_screen_height();
 
       for(int x=x_l; x<=x_r; x++)
       {
-        float yt = yt_l + (yt_r-yt_l)*(x-x_l)/(x_r-x_l);
+        //float yt = yt_l + (yt_r-yt_l)*(x-x_l)/(x_r-x_l);
         float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
         if(floor)
         {
