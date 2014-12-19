@@ -8,7 +8,7 @@
 #include "games.h"
 #include "frame_buf.h"
 
-#define DEBUG_PRINTING
+//#define DEBUG_PRINTING
 #include "debug.h"
 
 thing::thing()
@@ -94,7 +94,7 @@ void thing::render_player_view(column_range_list *col_ranges, projector const *_
   if(sprite_angle <      0.0) { sprite_angle += 2.0*M_PI; }
   if(sprite_angle > 2.0*M_PI) { sprite_angle -= 2.0*M_PI; }
   int sprite_angle_idx = 1+MIN(8,MAX(0,(int)(sprite_angle/DEG_TO_RAD(45.0))));
-  printf("    sprite angle: %.1f, idx: %d\n", RAD_TO_DEG(sprite_angle), sprite_angle_idx);
+  debug_printf("    sprite angle: %.1f, idx: %d\n", RAD_TO_DEG(sprite_angle), sprite_angle_idx);
 
   if(!animation) { return; }
   if(animation->get_num_frames()==0) { return; }
