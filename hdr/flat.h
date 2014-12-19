@@ -19,7 +19,7 @@ public:
   bool set_data(uint8_t const *_data);
   void print_html_file(char const *filename, palette const *pal);
 
-  uint8_t const *get_pixel(int x, int y) const;
+  uint8_t get_pixel(int x, int y) const;
 
   void set_name(char const *_name) { strcpy(name, _name); name[8] = 0; }
   char const *get_name(void) const { return name; }

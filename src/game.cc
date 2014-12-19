@@ -79,7 +79,7 @@ void game::do_frame(void)
 
   frame_buf_clear();
   _map->render_player_view(&col_ranges, &_projector, &_player, &_vis_planes);
-  _vis_planes.draw_planes();
+  _vis_planes.draw_planes(&_projector, &_player);
 
   omap.darken_background();
   omap.draw_bbox();

@@ -23,10 +23,10 @@ bool flat::set_data(uint8_t const *_data)
   return true;
 }
 
-uint8_t const *flat::get_pixel(int x, int y) const
+uint8_t flat::get_pixel(int x, int y) const
 {
   // FIXME: assert x,y are sane
-  return &data[(y*FLAT_WIDTH)+x];
+  return data[(y*FLAT_WIDTH)+x];
 }
 
 void flat::print_html_file(char const *filename, palette const *pal)

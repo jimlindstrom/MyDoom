@@ -3,6 +3,7 @@
 
 #include "vis_plane.h"
 #include "frame_buf.h"
+#include "palettes.h"
 #include "common.h"
 
 #define UNINITIALIZED -1
@@ -20,6 +21,7 @@ vis_plane::vis_plane()
   {
      y_t[i] = UNINITIALIZED; 
      y_b[i] = h+1; 
+     dist[i] = 0;
   }
 }
 
@@ -80,7 +82,13 @@ void vis_plane::update_clip(int16_t x, int16_t yb, int16_t yt)
   y_b[x] = yb;
 }
 
-void vis_plane::draw(void)
+void vis_plane::set_dist(int16_t x, float d)
+{
+  dist[x] = d;
+}
+
+#if 0
+void vis_plane::draw(projector const *_projector, player const *_player)
 {
   int16_t h=games_get_screen_height();
   int16_t w=games_get_screen_width();
@@ -128,4 +136,41 @@ void vis_plane::draw(void)
     }
   }
 }
+#else
+void vis_plane::draw(projector const *_projector, player const *_player)
+{
+  int16_t h=games_get_screen_height();
+  int16_t w=games_get_screen_width();
+  palette const *pal = palettes_get(0); // FIXME: use the right palette
 
+  debug_printf("    visplane (0x%08x) x:[%d,%d]", (uint32_t)this, x_l, x_r);
+  if(plane_type==VIS_PLANE_FLOOR_TYPE) { debug_printf(" (floor)\n"); }
+  else if(plane_type==VIS_PLANE_CEILING_TYPE) { debug_printf(" (ceiling)\n"); }
+  else { debug_printf(" (unknown)\n"); return; }
+
+  for(int16_t x=MAX(0,x_l); x<=MIN(x_r,w-1); x++)
+  {
+    float cur_dist = dist[x_l] + (dist[x_r]-dist[x_l])*(x-x_l)/(x_r-x_l); // FIXME: this doesn't take into account y value at all...
+    float pct_darkened = MIN(cur_dist,1200.0)/1900.0; // FIXME: How does Doom do this?
+    float view_angle = _projector->unproject_x_to_horiz_angle(x) + _player->get_facing_angle();
+    int map_y = cur_dist * sin(view_angle);
+    int map_x = cur_dist * cos(view_angle);
+
+    if(y_t[x]>=0 || y_b[x]<=h)
+    {
+      int16_t y_t_c = MIN(MAX(0, y_t[x]), h-1);
+      int16_t y_b_c = MIN(MAX(0, y_b[x]), h-1);
+
+      debug_printf("  x=%d, y:[%d,%d]\n", x, y_t_c, y_b_c);
+      for(int16_t y=y_t_c+1; y<y_b_c; y++)
+      {
+        uint8_t color_idx = tex->get_pixel(map_x % FLAT_WIDTH, map_y % FLAT_HEIGHT);
+        color_rgba c;
+        c.set_to(pal->get_color(color_idx)); // FIXME: do this up-front
+        c.darken_by(pct_darkened);
+        frame_buf_overlay_pixel(x, y, &c);
+      }
+    }
+  }
+}
+#endif

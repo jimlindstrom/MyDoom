@@ -134,6 +134,7 @@ void linedef::render(int direction, float ldx_l, float ldx_r,
       for(int x=x_l; x<=x_r; x++)
       {
         float yt = yt_l + (yt_r-yt_l)*(x-x_l)/(x_r-x_l);
+        float dist = dist_l + (dist_r-dist_l)*(x-x_l)/(x_r-x_l);
         //float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
         if(ceiling)
         {
@@ -141,7 +142,7 @@ void linedef::render(int direction, float ldx_l, float ldx_r,
           // bot of ceiling = one pixel above the wall (or [ceil], if lower) (or [floor], if higher)
           int16_t ceil_yt = vp->get_ceiling_clip(x)+1;
           int16_t ceil_yb = MIN(vp->get_floor_clip(x)-1, yt-1);
-          if(ceil_yt  <= ceil_yb ) { ceiling->update_clip(x, ceil_yb,  ceil_yt ); }
+          if(ceil_yt  <= ceil_yb ) { ceiling->update_clip(x, ceil_yb,  ceil_yt ); ceiling->set_dist(x, dist); }
         }
       }
     }
@@ -180,13 +181,14 @@ void linedef::render(int direction, float ldx_l, float ldx_r,
       {
         //float yt = yt_l + (yt_r-yt_l)*(x-x_l)/(x_r-x_l);
         float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
+        float dist = dist_l + (dist_r-dist_l)*(x-x_l)/(x_r-x_l);
         if(floor)
         {
           // top of floor be: one pixel below the wall (or [floor], if higher) (or [ceil], if lower)
           // bot of floor be: one pixel higher than the [top of the tallest floor]
           int16_t floor_yt = MAX(vp->get_ceiling_clip(x)+1, yb-1);
           int16_t floor_yb = vp->get_floor_clip(x)-1;
-          if(floor_yt <= floor_yb) { floor  ->update_clip(x, floor_yb, floor_yt); };
+          if(floor_yt <= floor_yb) { floor  ->update_clip(x, floor_yb, floor_yt); floor  ->set_dist(x, dist); };
         }
       }
     }
