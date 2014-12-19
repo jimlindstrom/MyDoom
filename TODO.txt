@@ -1,9 +1,9 @@
 In Progress
 ---
+- FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
 
 Queued up
 ---
-- FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
 
 - BUG: transparent walls, things, and visplanes aren't drawn in the right order
 

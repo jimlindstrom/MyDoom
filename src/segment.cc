@@ -355,6 +355,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
                        clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, 
                        y0_l, dy_l, 
                        y0_r, dy_r, 
+                       dist_l, dist_r,
                        vp, floor, ceiling);
     }
   }

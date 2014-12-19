@@ -10,6 +10,7 @@ public:
   color_rgb(int _r, int _g, int _b) { r=_r; g=_g; b=_b; }
 
   void set_to(color_rgb const *c) { r=c->r; g=c->g; b=c->b; }
+  void darken_by(float pct) { r *= (1.0-pct); g *= (1.0-pct); b *= (1.0-pct); }
 
   uint8_t r;
   uint8_t g;
@@ -24,6 +25,8 @@ public:
 
   void set_to(color_rgba const *c) { r=c->r; g=c->g; b=c->b; a=c->a; }
   void set_to(color_rgb const *c) { r=c->r; g=c->g; b=c->b; a=255; }
+
+  void darken_by(float pct) { r *= (1.0-pct); g *= (1.0-pct); b *= (1.0-pct); }
 
   uint8_t r;
   uint8_t g;

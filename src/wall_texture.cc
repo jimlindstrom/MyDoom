@@ -130,9 +130,15 @@ void wall_texture::pre_render(void)
   }
 }
 
-void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, float yt_l, float yb_l, float yt_r, float yb_r,
+void wall_texture::render(float ldx_l, float ldx_r, int ld_h, 
+                          int x_l, int x_r, 
+                          float yt_l, float yb_l, 
+                          float yt_r, float yb_r,
+                          float dist_l, float dist_r,
                           int16_t x_offset, int16_t y_offset,
-                          vis_planes *vp, vis_plane *floor, vis_plane *ceiling, bool clip_ceil, bool clip_floor) const
+                          vis_planes *vp, 
+                          vis_plane *floor, vis_plane *ceiling, 
+                          bool clip_ceil, bool clip_floor) const
 {
   color_rgba c;
   int16_t h=games_get_screen_height();
@@ -154,6 +160,8 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
 
     float yt = yt_l + (yt_r-yt_l)*(x-x_l)/(x_r-x_l);
     float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
+    float dist = dist_l + (dist_r-dist_l)*(x-x_l)/(x_r-x_l);
+    float pct_darkened = MIN(dist,1200.0)/1900.0; // FIXME: How does Doom do this?
     int clip_t = MAX(0,   vp->get_ceiling_clip(x));
     int clip_b = MIN(h-1, vp->get_floor_clip(  x));
     int clipped_yt = MAX(clip_t, MIN(clip_b, yt));
@@ -189,6 +197,7 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h, int x_l, int x_r, 
   
       int pix_offset = (ty * width) + tx;
       c.set_to(&pixels[pix_offset]);
+      c.darken_by(pct_darkened);
       frame_buf_draw_pixel(x, y, &c);
     }
   }
