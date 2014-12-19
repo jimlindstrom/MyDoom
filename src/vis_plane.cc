@@ -41,6 +41,16 @@ bool vis_plane::matches(int16_t _height, flat const *_tex, uint16_t _light_level
          (light_level == _light_level);
 }
 
+/* 
+ * Algorithm:
+ * When Doom draws a flat, it looks for a compatible visplane, one with the 
+ * same properties (lighting, height, texture). When two compatible visplanes 
+ * are found, the union and intersection of their two spans are computed, and 
+ * if any part of the intersection of the spans has been drawn by other flats 
+ * already, then Doom creates a new visplane.
+ *
+ * (http://www.johnromero.com/lee_killough/editing/visplane.shtml)
+ */
 bool vis_plane::can_be_extended_to(int16_t new_x_l, int16_t new_x_r)
 {
   int16_t inter_x_l = MAX(x_l, new_x_l);
