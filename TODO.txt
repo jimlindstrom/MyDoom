@@ -1,14 +1,11 @@
 In Progress
 ---
-- FEATURE: show things.
-- BUG: not all things should animate all frames. See thing_defn->sequence[].
-- BUG: animation happens too fast.
-- BUG: things don't clip well if they're partially off screen.
-- FEATURE: render things at the right angle
 - FEATURE: render things with transparency
 
 Queued up
 ---
+- BUG: sometimes, crazy OOB-ey pixels are drawn
+
 - FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
 
 - BUG: When a lineseg is long or close, and maybe spans both FOV vectors, it gets clipped but shouldn't.

@@ -120,6 +120,8 @@ void game::handle_key_down(int key_code)
     case KEY_LEFTARROW:  _player.set_is_turning_left(true); break;
     case KEY_UPARROW:    _player.set_is_moving_forward(true); break;
     case KEY_DOWNARROW:  _player.set_is_moving_backward(true); break;
+    case ',':            _player.set_is_strafing_left(true); break;
+    case '.':            _player.set_is_strafing_right(true); break;
 
     case KEY_ESCAPE: break;
     case KEY_ENTER: break;
@@ -158,6 +160,8 @@ void game::handle_key_up(int key_code)
     case KEY_LEFTARROW:  _player.set_is_turning_left(false); break;
     case KEY_UPARROW:    _player.set_is_moving_forward(false); break;
     case KEY_DOWNARROW:  _player.set_is_moving_backward(false); break;
+    case ',':            _player.set_is_strafing_left(false); break;
+    case '.':            _player.set_is_strafing_right(false); break;
 
     case KEY_ESCAPE: break;
     case KEY_ENTER: break;

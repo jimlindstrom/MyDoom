@@ -90,12 +90,26 @@ void thing::render_player_view(column_range_list *col_ranges, projector const *_
   float x_l = _projector->project_horiz_angle_to_x(angle_l);
   float x_r = _projector->project_horiz_angle_to_x(angle_r);
 
+  float sprite_angle = _player->get_map_position()->angle_to_point(&map_position) - facing_angle + DEG_TO_RAD(90);
+  if(sprite_angle <      0.0) { sprite_angle += 2.0*M_PI; }
+  if(sprite_angle > 2.0*M_PI) { sprite_angle -= 2.0*M_PI; }
+  int sprite_angle_idx = 1+MIN(8,MAX(0,(int)(sprite_angle/DEG_TO_RAD(45.0))));
+  printf("    sprite angle: %.1f, idx: %d\n", RAD_TO_DEG(sprite_angle), sprite_angle_idx);
+
   if(!animation) { return; }
   if(animation->get_num_frames()==0) { return; }
   uint8_t cur_frame_idx = get_frame_idx();
   sprite_animation_frame const *cur_frame = animation->get_frame(cur_frame_idx);
   if(!cur_frame) { return; }
-  sprite const *cur_sprite = cur_frame->get_sprite(0);
+  sprite const *cur_sprite;
+  if(cur_frame->get_num_angles() > sprite_angle_idx)
+  {
+    cur_sprite = cur_frame->get_sprite(sprite_angle_idx);
+  }
+  else
+  {
+    cur_sprite = cur_frame->get_sprite(0);
+  }
   if(!cur_sprite) { return; }
 
   float y0, dy;

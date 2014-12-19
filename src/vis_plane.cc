@@ -73,6 +73,7 @@ void vis_plane::update_clip(int16_t x, int16_t yb, int16_t yt)
 void vis_plane::draw(void)
 {
   int16_t h=games_get_screen_height();
+  int16_t w=games_get_screen_width();
 
   color_rgba light_red(  255, 64, 64,255);
   color_rgba dark_red(   255,  0,  0, 64);
@@ -100,17 +101,20 @@ void vis_plane::draw(void)
     return;
   }
 
-  for(int16_t x=x_l; x<=x_r; x++)
+  for(int16_t x=MAX(0,x_l); x<=MIN(x_r,w-1); x++)
   {
     if(y_t[x]>=0 || y_b[x]<=h)
     {
-      debug_printf("  x=%d, y:[%d,%d]\n", x, y_t[x], y_b[x]);
-      frame_buf_overlay_pixel(x, y_t[x], &border_color);
-      for(int16_t y=y_t[x]+1; y<y_b[x]; y++)
+      int16_t y_t_c = MIN(MAX(0, y_t[x]), h-1);
+      int16_t y_b_c = MIN(MAX(0, y_b[x]), h-1);
+
+      debug_printf("  x=%d, y:[%d,%d]\n", x, y_t_c, y_b_c);
+      frame_buf_overlay_pixel(x, y_t_c, &border_color);
+      for(int16_t y=y_t_c+1; y<y_b_c; y++)
       {
         frame_buf_overlay_pixel(x, y, &inner_color);
       }
-      frame_buf_overlay_pixel(x, y_b[x], &border_color);
+      frame_buf_overlay_pixel(x, y_b_c, &border_color);
     }
   }
 }
