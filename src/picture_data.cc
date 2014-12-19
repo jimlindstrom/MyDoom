@@ -52,6 +52,7 @@ bool picture_data::set_from_lump_data(uint8_t const *data)
   for(x=0; x<width; x++)
   {
     pixel_columns[x] = new uint8_t[height];
+    for(int y=0; y<height; y++) { pixel_columns[x][y] = TRANSPARENT_COLOR_IDX; }
     col_ptr = data + column_offsets[x];
 
     rowstart = 0;

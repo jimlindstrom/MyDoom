@@ -3,6 +3,8 @@
 
 #include "color.h"
 
+#define TRANSPARENT_COLOR_IDX 247
+
 class palette
 {
 public:

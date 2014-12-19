@@ -1,6 +1,5 @@
 In Progress
 ---
-- FEATURE: render things with transparency
 
 Queued up
 ---

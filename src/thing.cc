@@ -136,8 +136,12 @@ void thing::render_player_view(column_range_list *col_ranges, projector const *_
     {
       int v = (float)(y - y_t)/(y_b - y_t) * (cur_sprite->get_height()-1);
 
-      c.set_to(pal->get_color(cur_sprite->get_pixel(u, v)));
-      frame_buf_draw_pixel(x, y, &c);
+      uint8_t color_idx = cur_sprite->get_pixel(u, v); // FIXME: do this up-front
+      if(color_idx != TRANSPARENT_COLOR_IDX)
+      {
+        c.set_to(pal->get_color(color_idx)); // FIXME: do this up-front
+        frame_buf_overlay_pixel(x, y, &c);
+      }
     }
   }
 }
