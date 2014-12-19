@@ -282,12 +282,9 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   if(!is_closed_door() && is_same_floor_plane_on_both_sides()  ) { floor   = NULL; }
   if(!is_closed_door() && is_same_ceiling_plane_on_both_sides()) { ceiling = NULL; }
 
-  // step 1: translate it into player-centric coordinates
-  vertex _pvl, _pvr;
-  _pvl.set_to_a_minus_b(vertex_l, _player->get_map_position());
-  _pvr.set_to_a_minus_b(vertex_r, _player->get_map_position());
-  _pvl.rotate(-_player->get_facing_angle());
-  _pvr.rotate(-_player->get_facing_angle());
+  // step 1: translate it into player-centric 3D coordinates
+  vertex _pvl(vertex_l); _pvl.subtract(_player->get_map_position()); _pvl.rotate(-_player->get_facing_angle());
+  vertex _pvr(vertex_r); _pvr.subtract(_player->get_map_position()); _pvr.rotate(-_player->get_facing_angle());
   segment seg(&_pvl, &_pvr);
   //debug_printf("    pv: (%.1f,%.1f)->(%.1f,%.1f)\n", _pvl.get_x(), _pvl.get_y(), _pvr.get_x(), _pvr.get_y()); 
 
@@ -299,11 +296,9 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   seg.clip_to_vectors(clip_l, clip_r, &v_l_c, &v_r_c, &u_l_c, &u_r_c);
   //debug_printf("    v: (%.1f, %.1f)->(%.1f,%.1f)\n", v_l_c.get_x(), v_l_c.get_y(), v_r_c.get_x(), v_r_c.get_y());
 
-  float ang_l_c = origin.angle_to_point(&v_l_c);
-  float ang_r_c = origin.angle_to_point(&v_r_c);
+  float ang_l_c = origin.angle_to_point(&v_l_c); float x_l_c = _projector->project_horiz_angle_to_x(ang_l_c);
+  float ang_r_c = origin.angle_to_point(&v_r_c); float x_r_c = _projector->project_horiz_angle_to_x(ang_r_c);
   //debug_printf("    clipped angles: [%.1f,%.1f]\n", RAD_TO_DEG(ang_l_c), RAD_TO_DEG(ang_r_c));
-  float x_l_c = _projector->project_horiz_angle_to_x(ang_l_c);
-  float x_r_c = _projector->project_horiz_angle_to_x(ang_r_c);
   //debug_printf("    clipped x: [%.1f,%.1f]\n", x_l_c, x_r_c);
 
   // This is the state in which we're simulating actually rendering the wall in the player's view
@@ -311,12 +306,11 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   int num_clipped_crs;
   clipped_ranges = col_ranges->clip_segment(store_clipping, x_l_c, x_r_c, &num_clipped_crs);
   //debug_printf("    %d clipped ranges\n", num_clipped_crs);
-  color_rgba grn(0, 255, 0, 255);
 
-  vertex v1, v2, d;
-  d.set_x(vertex_r->get_x() - vertex_l->get_x());
-  d.set_y(vertex_r->get_y() - vertex_l->get_y());
-  for(int i=0; i<num_clipped_crs; i++)
+  vertex v1, v2;
+  vertex d(vertex_r);
+  d.subtract(vertex_l);
+  for(int i=0; i<num_clipped_crs; i++) // FIXME: Push this down into column_range
   {
     if(x_r_c > x_l_c) // FIXME: there's a bug here in which x_r_c == x_l_c
     {

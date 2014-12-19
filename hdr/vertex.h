@@ -10,6 +10,7 @@ class vertex
 public:
   vertex();
   vertex(float _x, float _y) { x=_x; y=_y; }
+  vertex(vertex const *v) { x = v->get_x(); y = v->get_y(); }
   ~vertex();
 
   bool read_from_lump_data(uint8_t const *lump_data);
@@ -24,6 +25,7 @@ public:
   void set_to_a_minus_b(vertex const *a, vertex const *b);
 
   void translate(vertex const *v) { x += v->get_x(); y += v->get_y(); }
+  void subtract( vertex const *v) { x -= v->get_x(); y -= v->get_y(); }
   void rotate(float angle);
 
   float angle_to_point(vertex const *v) const;
