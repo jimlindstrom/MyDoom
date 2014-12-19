@@ -67,6 +67,7 @@ public:
 
   void render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, float y0_l, float dy_l, float y0_r, float dy_r,
               float dist_l, float dist_r,
+              uint16_t light_level,
               vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const;
 
   int16_t get_ceiling(int direction) const;

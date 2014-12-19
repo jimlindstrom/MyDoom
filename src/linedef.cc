@@ -64,6 +64,7 @@ void linedef::render(int direction, float ldx_l, float ldx_r,
                      int x_l, int x_r, 
                      float y0_l, float dy_l, float y0_r, float dy_r,
                      float dist_l, float dist_r,
+                     uint16_t light_level,
                      vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
 {
   wall_texture const *tex;
@@ -96,7 +97,7 @@ void linedef::render(int direction, float ldx_l, float ldx_r,
 
       debug_printf("        LD-1M:[%.2f,%.2f], x:[%d,%d], h:[%d,%d], y_t:[%.1f,%.1f], y_b:[%.1f,%.1f], ofs:[%d,%d]\n",
                    ldx_l, ldx_r, x_l, x_r, get_ceiling(direction), get_floor(direction), yt_l, yt_r, yb_l, yb_r, x_offset, y_offset);
-      tex->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, dist_l, dist_r, x_offset, y_offset, vp, floor, ceiling, true, true);
+      tex->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, dist_l, dist_r, x_offset, y_offset, light_level, vp, floor, ceiling, true, true);
     }
   }
   // if two-sided, it's a bridge between two sectors
@@ -124,7 +125,7 @@ void linedef::render(int direction, float ldx_l, float ldx_r,
 
       debug_printf("        LD-2U:[%.2f,%.2f], x:[%d,%d], h:[%d,%d], y_t:[%.1f,%.1f], y_b:[%.1f,%.1f], ofs:[%d,%d]\n",
                    ldx_l, ldx_r, x_l, x_r, get_ceiling(direction), get_ceiling(1-direction), yt_l, yt_r, yb_l, yb_r, x_offset, y_offset);
-      tex->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, dist_l, dist_r, x_offset, y_offset, vp, NULL, ceiling, true, false);
+      tex->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, dist_l, dist_r, x_offset, y_offset, light_level, vp, NULL, ceiling, true, false);
     }
     else
     {
@@ -169,7 +170,7 @@ void linedef::render(int direction, float ldx_l, float ldx_r,
 
       debug_printf("        LD-2L:[%.2f,%.2f], x:[%d,%d], h:[%d,%d], y_t:[%.1f,%.1f], y_b:[%.1f,%.1f], ofs:[%d,%d]\n",
                    ldx_l, ldx_r, x_l, x_r, get_floor(1-direction), get_floor(direction), yt_l, yt_r, yb_l, yb_r, x_offset, y_offset);
-      tex->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, dist_l, dist_r, x_offset, y_offset, vp, floor, NULL, false, true);
+      tex->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, dist_l, dist_r, x_offset, y_offset, light_level, vp, floor, NULL, false, true);
     }
     else
     {
@@ -217,7 +218,7 @@ void linedef::render(int direction, float ldx_l, float ldx_r,
 
       debug_printf("        LD-2M:[%.2f,%.2f], x:[%d,%d], h:[%d,%d], y_t:[%.1f,%.1f], y_b:[%.1f,%.1f], ofs:[%d,%d]\n",
                    ldx_l, ldx_r, x_l, x_r, get_ceiling(direction), get_floor(direction), yt_l, yt_r, yb_l, yb_r, x_offset, y_offset);
-      tex->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, dist_l, dist_r, x_offset, y_offset, vp, floor, NULL, false, true);
+      tex->render(ldx_l, ldx_r, ld_h, x_l, x_r, yt_l, yb_l, yt_r, yb_r, dist_l, dist_r, x_offset, y_offset, light_level, vp, floor, NULL, false, true);
     }
   }
 }

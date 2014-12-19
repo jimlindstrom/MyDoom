@@ -307,6 +307,8 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   clipped_ranges = col_ranges->clip_segment(store_clipping, x_l_c, x_r_c, &num_clipped_crs);
   //debug_printf("    %d clipped ranges\n", num_clipped_crs);
 
+  uint16_t light_level = front_sector->get_light_level();
+
   vertex v1, v2;
   vertex d(vertex_r);
   d.subtract(vertex_l);
@@ -350,6 +352,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
                        y0_l, dy_l, 
                        y0_r, dy_r, 
                        dist_l, dist_r,
+                       light_level,
                        vp, floor, ceiling);
     }
   }
