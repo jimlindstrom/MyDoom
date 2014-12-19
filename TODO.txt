@@ -3,10 +3,17 @@ In Progress
 
 Queued up
 ---
-- BUG: sometimes, crazy OOB-ey pixels are drawn
-
 - FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
 
+- BUG: transparent walls, things, and visplanes aren't drawn in the right order
+
+- FEATURE: lighting
+  - FEATURE: user darker color palettes for further-away objects
+  - FEATURE: increase lighting where wall lights are
+
+- BUG: in E1M1, the green thing atop the stairs is buried.
+
+- BUG: seems like the view plane is too far out into the viewing frustrum
 - BUG: When a lineseg is long or close, and maybe spans both FOV vectors, it gets clipped but shouldn't.
 - BUG: View height seems to height. And player doesn't step up soon enough, on stairs.
 
@@ -15,18 +22,10 @@ Queued up
   - CHORE: consider refactoring “clipped, player-centric segment” another class
 - CHORE: refactor height (z) into 3d vertex class
 
+- CHORE: refactor thing::render
+
 - BUG: top of wall is rounded in final room (z projection is wrong)
 
-- FEATURE: use rgba (instead of rgb) for textures, sprites, flats
-- FEATURE: render the transparent (masked) walls back-to-front AFTER the solid walls (and visplanes).
-  See: http://fabiensanglard.net/doomIphone/doomClassicRenderer.php ("The big picture of runtime"
-  and "Things and transparent walls.")
-  - Can I NOT do this, and instead rely on alpha transparency? For non-solid walls, I could use 
-    overlay_pixel() instead of draw_pixel()
-
-- FEATURE: lighting
-  - FEATURE: user darker color palettes for further-away objects
-  - FEATURE: increase lighting where wall lights are
 - FEATURE: animate wall textures
 
 - FEATURE: head bobbing
