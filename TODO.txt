@@ -7,8 +7,10 @@ Queued up
 
 - BUG: transparent walls, things, and visplanes aren't drawn in the right order
 
-- FEATURE: lighting
-  - FEATURE: user darker color palettes for further-away objects
+- FEATURE: lighting: http://doom.wikia.com/wiki/COLORMAP
+  - FEATURE: use sector light level
+  - FEATURE: use darker color palettes for further-away objects (sort of done?)
+  - FEATURE: change color depending on the direction a wall is facing
   - FEATURE: increase lighting where wall lights are
 
 - BUG: in E1M1, the green thing atop the stairs is buried.
