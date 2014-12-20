@@ -15,7 +15,7 @@
 #include "frame_buf.h"
 #include "ui.h"
 
-#define DO_RANGE_CHECKING
+//#define DO_RANGE_CHECKING
 #define BYTES_PER_PIXEL 4
 
 static int frame_width, frame_height;

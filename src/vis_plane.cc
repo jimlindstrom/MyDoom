@@ -92,51 +92,37 @@ void vis_plane::draw(projector const *_projector, player const *_player)
   else if(plane_type==VIS_PLANE_CEILING_TYPE) { debug_printf(" (ceiling)\n"); }
   else                                        { debug_printf(" (unknown)\n"); return; }
 
+  float rel_z = _player->get_view_height() - height;
   for(int16_t x=MAX(0,x_l); x<=MIN(x_r,w-1); x++)
   {
     if(y_t[x]>=0 || y_b[x]<=h)
     {
+      float view_angle = _projector->unproject_x_to_horiz_angle(x) + _player->get_facing_angle();
+      float sin_view_angle = sin(view_angle);
+      float cos_view_angle = cos(view_angle);
       int16_t y_t_c = MIN(MAX(0, y_t[x]), h-1);
       int16_t y_b_c = MIN(MAX(0, y_b[x]), h-1);
 
       debug_printf("  x=%d, y:[%d,%d]\n", x, y_t_c, y_b_c);
       for(int16_t y=y_t_c+1; y<y_b_c; y++)
       {
-        /* 
-         * desired output: {map_x, map_y} -> because that gives us texture {x,y}
-         * input: {a 3d line defined by 
-         *         a horizontal angle, 
-         *         a vertical angle,
-         *         a delta-z}
-         *
-         * Question: how do I get a line from a delta-z, a horizontal angle and a vertical angle
-         * First, assume the camera is at the origin. Find a second point (dummy) along the line by putting one
-         * one unit out along the view direction. Then rotate it first (along the screen bot-to-top axis) then 
-         * a second time along the screen left-to-right axis. Then add both points by the player's map x,y,z.
-         * now solve for where the line intersects the z-plane of the visplane.
-    
+        /*
          * screen_y = -1000*map_z/[(map_x^2)+(map_y^2)]^0.5 + (screen_h/2)
          * screen_y - (screen_h/2) = -1000*map_z / [(map_x^2)+(map_y^2)]^0.5 
          * [(map_x^2)+(map_y^2)]^0.5  = -1000*map_z / [screen_y - (screen_h/2)]
          * (map_x^2)+(map_y^2)  = [-1000*map_z / [screen_y - (screen_h/2)]]^2
          * (map_x^2) + (map_y^2)  = map_z^2 * 1000^2 / [screen_y - (screen_h/2)]^2
-         *
-         *    - Note that {map_z} is known: that's the visplane height
-         *    - Note that screen_y is known: we're iterating over that point
-         *    - We just need some relationship between x and y and we're set to go...
-         *
-         * 
          */
-    
-        float rel_z = _player->get_view_height() - height;
         float cur_dist = -1000 * rel_z / (y - (h/2.0));
+        int map_y = (cur_dist * sin_view_angle) - _player->get_map_position()->get_y();
+        int map_x = (cur_dist * cos_view_angle) - _player->get_map_position()->get_x();
         float pct_darkened = MIN(cur_dist,1200.0)/1900.0; // FIXME: How does Doom do this?
-        float view_angle = _projector->unproject_x_to_horiz_angle(x) + _player->get_facing_angle();
-        int map_y = (cur_dist * sin(view_angle)) - _player->get_map_position()->get_y();
-        int map_x = (cur_dist * cos(view_angle)) - _player->get_map_position()->get_x();
 
-
+        #if 0
         uint8_t color_idx = tex->get_pixel(map_x % FLAT_WIDTH, map_y % FLAT_HEIGHT);
+        #else
+        uint8_t color_idx = tex->get_pixel(map_x & (FLAT_WIDTH-1), map_y & (FLAT_HEIGHT-1)); // because w,h are powers of 2
+        #endif
         color_rgba c;
         c.set_to(pal->get_color(color_idx)); // FIXME: do this up-front
         c.darken_by(pct_darkened); // FIXME
