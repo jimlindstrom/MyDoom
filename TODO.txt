@@ -1,16 +1,17 @@
 In Progress
 ---
+- BUG: transparent walls, things, and visplanes aren't drawn in the right order
 
 Queued up
 ---
 
-- BUG: transparent walls, things, and visplanes aren't drawn in the right order
-
 - BUG: in E1M1, the green thing atop the stairs is buried.
 
 - BUG: seems like the view plane is too far out into the viewing frustrum
+  - Player doesn't step up soon enough, on stairs.
+  - Ceilings disappear too soon (as you walk forward)
 - BUG: When a lineseg is long or close, and maybe spans both FOV vectors, it gets clipped but shouldn't.
-- BUG: View height seems to height. And player doesn't step up soon enough, on stairs.
+- BUG: Player view height seems too high. 
 
 - CHORE: refactor seg::render
   - CHORE: consider refactoring “player-centric segment” a class (then forgetting about player)
@@ -19,9 +20,8 @@ Queued up
 
 - CHORE: refactor thing::render
 
-- BUG: top of wall is rounded in final room (z projection is wrong)
-
 - FEATURE: animate wall textures
+- FEATURE: animate flats
 
 - FEATURE: head bobbing
 
@@ -34,3 +34,5 @@ Queued up
 - FEATURE: lighting: http://doom.wikia.com/wiki/COLORMAP
   - FEATURE: change color depending on the direction a wall is facing
   - FEATURE: increase lighting where wall lights are
+
+- BUG: top of wall is rounded in final room (z projection is wrong)
