@@ -6,6 +6,7 @@
 #include "vertex.h"
 #include "sidedef.h"
 #include "vis_planes.h"
+#include "wall_projection.h"
 
 #define LINEDEF_NUM_BYTES 14 // size on disk (in the lump)
 
@@ -60,18 +61,14 @@ public:
   vertex const *get_start_vertex(void) const { return start_vertex; }
   vertex const *get_end_vertex(void) const { return end_vertex; }
 
-  //vertex  const *get_vertex( int direction) const { return (direction ? start_vertex  : end_vertex   ); } // unused so far...
   sidedef const *get_sidedef(int direction) const { return (direction ? left_sidedef : right_sidedef ); } // dir is from segment
 
   float get_length(void) const { return start_vertex->distance_to_point(end_vertex); }
 
-  void render(int direction, float ldx_l, float ldx_r, int x_l, int x_r, float y0_l, float dy_l, float y0_r, float dy_r,
-              float dist_l, float dist_r,
-              uint16_t light_level,
-              vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const;
+  int16_t get_ceiling_z(int direction) const;
+  int16_t get_floor_z(int direction) const;
 
-  int16_t get_ceiling(int direction) const;
-  int16_t get_floor(int direction) const;
+  void render(int direction, wall_projection *wall) const;
 
 private:
   uint16_t start_vertex_num;
@@ -86,6 +83,14 @@ private:
   sidedef const *right_sidedef;
   vertex const *start_vertex;
   vertex const *end_vertex;
+
+  void calc_upper_y_values(int direction, wall_projection *wall) const;
+  void calc_mid_y_values(  int direction, wall_projection *wall) const;
+  void calc_lower_y_values(int direction, wall_projection *wall) const;
+
+  int16_t get_upper_ty_peg_offset(int16_t ld_h, int16_t tex_h) const;
+  int16_t get_mid_ty_peg_offset(  int16_t ld_h, int16_t tex_h) const;
+  int16_t get_lower_ty_peg_offset(int16_t ld_h, int16_t tex_h) const;
 };
 
 #endif

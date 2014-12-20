@@ -242,6 +242,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
                                      vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
 {
   vertex origin(0,0);
+  wall_projection wall;
 
   debug_printf("  segment %d: (%.1f,%.1f)->(%.1f,%.1f)\n",
          segment_num,
@@ -307,7 +308,10 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   clipped_ranges = col_ranges->clip_segment(store_clipping, x_l_c, x_r_c, &num_clipped_crs);
   //debug_printf("    %d clipped ranges\n", num_clipped_crs);
 
-  uint16_t light_level = front_sector->get_light_level();
+  wall.light_level = front_sector->get_light_level();
+  wall.vp = vp;
+  wall.floor = floor;
+  wall.ceiling = ceiling;
 
   vertex v1, v2;
   vertex d(vertex_r);
@@ -316,44 +320,36 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   {
     if(x_r_c > x_l_c) // FIXME: there's a bug here in which x_r_c == x_l_c
     {
-      float t1 = (clipped_ranges[i]->x_left - x_l_c)/(float)(x_r_c-x_l_c);
-      t1 = (t1*(u_r_c - u_l_c)) + u_l_c;
+      wall.x_l = clipped_ranges[i]->x_left;
+      wall.x_r = clipped_ranges[i]->x_right;
+
+      float t1 = (wall.x_l - x_l_c)/(float)(x_r_c-x_l_c);
+      t1 = (t1*(u_r_c - u_l_c)) + u_l_c; // FIXME: should this come AFTER we set V1?
       v1.set_x(vertex_l->get_x() + t1*d.get_x());
       v1.set_y(vertex_l->get_y() + t1*d.get_y());
-      float t2 = (clipped_ranges[i]->x_right- x_l_c)/(float)(x_r_c-x_l_c);
-      t2 = (t2*(u_r_c - u_l_c)) + u_l_c;
+      float t2 = (wall.x_r - x_l_c)/(float)(x_r_c-x_l_c);
+      t2 = (t2*(u_r_c - u_l_c)) + u_l_c; // FIXME: should this come AFTER we set V2?
       v2.set_x(vertex_l->get_x() + t2*d.get_x());
       v2.set_y(vertex_l->get_y() + t2*d.get_y());
-      debug_printf("      clipped range %d: [%d,%d], t:[%.2f,%.2f]\n", i, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, t1, t2);
+      debug_printf("      clipped range %d: [%d,%d], t:[%.2f,%.2f]\n", i, wall.x_l, wall.x_r, t1, t2);
 
-      float y0_l, dy_l, y0_r, dy_r; // FIXME: just a first-order approximation
-      float dist_l = _player->get_map_position()->distance_to_point(&v1); // FIXME: this should be the clipped point.
-      float dist_r = _player->get_map_position()->distance_to_point(&v2); // ...
+      wall.dist_l = _player->get_map_position()->distance_to_point(&v1); // FIXME: this should be the clipped point.
+      wall.dist_r = _player->get_map_position()->distance_to_point(&v2); // ...
       debug_printf("      dists: [%.1f,%.1f]\n", dist_l, dist_r);
-      _projector->project_z_to_y(-_player->get_view_height(), dist_l, &y0_l, &dy_l);
-      _projector->project_z_to_y(-_player->get_view_height(), dist_r, &y0_r, &dy_r);
+      _projector->project_z_to_y(-_player->get_view_height(), wall.dist_l, &wall.y0_l, &wall.dy_l);
+      _projector->project_z_to_y(-_player->get_view_height(), wall.dist_r, &wall.y0_r, &wall.dy_r);
   
       float seg_len= get_length(); 
       float seg_off= _linedef->get_start_vertex()->distance_to_point(vertex_l);
       if(direction == 1) { seg_off = seg_len - seg_off; } // FIXME: why am I reversing this? seems bad...
-      float ldx_l = seg_off + (t1*seg_len);
-      float ldx_r = seg_off + (t2*seg_len);
+      wall.ldx_l = seg_off + (t1*seg_len);
+      wall.ldx_r = seg_off + (t2*seg_len);
       debug_printf("        dir:%d, offset:%d, seg_len:%.1f, ld_len:%.1f, seg_off:%.1f\n", direction, offset, seg_len, ld_len, seg_off);
  
-      // FIXME: need to set this for other segs in same sector, too?
-      if(floor)   { floor   = vp->adjust_or_create(floor,   clipped_ranges[i]->x_left, clipped_ranges[i]->x_right); }
-      if(ceiling) { ceiling = vp->adjust_or_create(ceiling, clipped_ranges[i]->x_left, clipped_ranges[i]->x_right); }
-      if(floor)   { floor  ->set_plane_type(VIS_PLANE_FLOOR_TYPE  ); }
-      if(ceiling) { ceiling->set_plane_type(VIS_PLANE_CEILING_TYPE); }
-  
-      _linedef->render(direction, 
-                       ldx_l, ldx_r, 
-                       clipped_ranges[i]->x_left, clipped_ranges[i]->x_right, 
-                       y0_l, dy_l, 
-                       y0_r, dy_r, 
-                       dist_l, dist_r,
-                       light_level,
-                       vp, floor, ceiling);
+      if(floor)   { floor   = vp->adjust_or_create(floor,   wall.x_l, wall.x_r); floor  ->set_plane_type(VIS_PLANE_FLOOR_TYPE  ); }
+      if(ceiling) { ceiling = vp->adjust_or_create(ceiling, wall.x_l, wall.x_r); ceiling->set_plane_type(VIS_PLANE_CEILING_TYPE); }
+
+      _linedef->render(direction, &wall);
     }
   }
   delete[] clipped_ranges;

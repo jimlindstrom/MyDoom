@@ -39,7 +39,7 @@ public:
               float yt_l, float yb_l, 
               float yt_r, float yb_r,
               float dist_l, float dist_r,
-              int16_t x_offset, int16_t y_offset,  
+              int16_t tx_offset, int16_t ty_offset,  
               uint16_t light_level,
               vis_planes *vp, vis_plane *floor, vis_plane *ceiling,  
               bool clip_ceil, bool clip_floor) const;

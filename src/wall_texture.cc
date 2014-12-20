@@ -136,7 +136,7 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h,
                           float yt_l, float yb_l, 
                           float yt_r, float yb_r,
                           float dist_l, float dist_r,
-                          int16_t x_offset, int16_t y_offset,
+                          int16_t tx_offset, int16_t ty_offset,
                           uint16_t light_level,
                           vis_planes *vp, 
                           vis_plane *floor, vis_plane *ceiling, 
@@ -147,8 +147,8 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h,
 
   debug_printf("        texture::render(%dx%d)\n", width, height);
 
-  while(x_offset<0) { x_offset += width;  }
-  while(y_offset<0) { y_offset += height; }
+  while(tx_offset<0) { tx_offset += width;  }
+  while(ty_offset<0) { ty_offset += height; }
 
   if(x_l == x_r)
   {
@@ -158,15 +158,15 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h,
   for(int x=x_l; x<=x_r; x++)
   {
     int ldx = ldx_l + (ldx_r-ldx_l)*(x-x_l)/(x_r-x_l);
-    int tx = (x_offset+ldx) % width;
+    int tx = (tx_offset+ldx) % width;
 
     float yt = yt_l + (yt_r-yt_l)*(x-x_l)/(x_r-x_l);
     float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
     float dist = dist_l + (dist_r-dist_l)*(x-x_l)/(x_r-x_l);
     float pct_darkened = DIST_TO_PCT_DARKENED(dist) * // Darken for distance (FIXME: How does Doom do this?)
                          (light_level/255.0);         // Darken for sector light level
-    int clip_t = MAX(0,   vp->get_ceiling_clip(x));
-    int clip_b = MIN(h-1, vp->get_floor_clip(  x));
+    int clip_t = MAX(0,   vp->get_ceiling_clip(x)+1);
+    int clip_b = MIN(h-1, vp->get_floor_clip(  x)-1);
     int clipped_yt = MAX(clip_t, MIN(clip_b, yt));
     int clipped_yb = MAX(clip_t, MIN(clip_b, yb));
     debug_printf("          x:%d, y:[%.1f,%.1f] cy:[%d,%d]\n", x, yt,yb, clipped_yt,clipped_yb);
@@ -183,7 +183,7 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h,
     {
       // top of floor be: one pixel below the wall (or [floor], if higher) (or [ceil], if lower)
       // bot of floor be: one pixel higher than the [top of the tallest floor]
-      int16_t floor_yt = MAX(vp->get_ceiling_clip(x)+1, yb-1);
+      int16_t floor_yt = MAX(vp->get_ceiling_clip(x)+1, yb+1);
       int16_t floor_yb = vp->get_floor_clip(x)-1;
       debug_printf("            floor clipping: %d <= %d\n", floor_yt, floor_yb);
       if(floor_yt <= floor_yb) { floor  ->update_clip(x, floor_yb, floor_yt); }
@@ -196,7 +196,7 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h,
     for(int y=MAX(0,clipped_yt); y<=MIN(h-1,clipped_yb); y++)
     {
       int ldy = ld_h*(y-yt)/(yb-yt);
-      int ty = (y_offset+ldy) % height;
+      int ty = (ty_offset+ldy) % height;
   
       int pix_offset = (ty * width) + tx;
       c.set_to(&pixels[pix_offset]);

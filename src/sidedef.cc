@@ -21,8 +21,8 @@ sidedef::~sidedef()
 
 bool sidedef::read_from_lump_data(uint8_t const *lump_data)
 {
-  x_offset = *((int16_t*)lump_data); lump_data += 2;
-  y_offset = *((int16_t*)lump_data); lump_data += 2;
+  tx_offset = *((int16_t*)lump_data); lump_data += 2;
+  ty_offset = *((int16_t*)lump_data); lump_data += 2;
 
   memcpy(upper_texture_name, lump_data, 8);
   upper_texture_name[8] = 0;

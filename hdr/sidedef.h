@@ -16,8 +16,8 @@ public:
 
   bool read_from_lump_data(uint8_t const *lump_data);
 
-  int16_t get_x_offset(void) const { return x_offset; };
-  int16_t get_y_offset(void) const { return y_offset; };
+  int16_t get_tx_offset(void) const { return tx_offset; };
+  int16_t get_ty_offset(void) const { return ty_offset; };
   char const *get_upper_texture_name(void) const { return upper_texture_name; };
   char const *get_lower_texture_name(void) const { return lower_texture_name; };
   char const *get_mid_texture_name(void) const { return mid_texture_name; };
@@ -39,8 +39,8 @@ public:
   sector const *get_sector(void) const { return _sector; }
 
 private:
-  int16_t  x_offset;
-  int16_t  y_offset;
+  int16_t  tx_offset;
+  int16_t  ty_offset;
   char     upper_texture_name[9]; // 8 + NULL
   char     lower_texture_name[9]; // 8 + NULL
   char     mid_texture_name[9];   // 8 + NULL
