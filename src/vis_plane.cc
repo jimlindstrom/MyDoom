@@ -4,6 +4,7 @@
 #include "vis_plane.h"
 #include "frame_buf.h"
 #include "palettes.h"
+#include "lighting.h"
 #include "common.h"
 
 #define UNINITIALIZED -1
@@ -113,10 +114,10 @@ void vis_plane::draw(projector const *_projector, player const *_player)
          * (map_x^2)+(map_y^2)  = [-1000*map_z / [screen_y - (screen_h/2)]]^2
          * (map_x^2) + (map_y^2)  = map_z^2 * 1000^2 / [screen_y - (screen_h/2)]^2
          */
-        float cur_dist = -1000 * rel_z / (y - (h/2.0));
-        int map_y = (cur_dist * sin_view_angle) - _player->get_map_position()->get_y();
-        int map_x = (cur_dist * cos_view_angle) - _player->get_map_position()->get_x();
-        float pct_darkened = MIN(cur_dist,1200.0)/1900.0; // FIXME: How does Doom do this?
+        float cur_dist = 1000 * rel_z / (y - (h/2.0));
+        int map_y = (-cur_dist * sin_view_angle) - _player->get_map_position()->get_y();
+        int map_x = (-cur_dist * cos_view_angle) - _player->get_map_position()->get_x();
+        float pct_darkened = DIST_TO_PCT_DARKENED(cur_dist);
 
         #if 0
         uint8_t color_idx = tex->get_pixel(map_x % FLAT_WIDTH, map_y % FLAT_HEIGHT);
@@ -125,8 +126,8 @@ void vis_plane::draw(projector const *_projector, player const *_player)
         #endif
         color_rgba c;
         c.set_to(pal->get_color(color_idx)); // FIXME: do this up-front
-        c.darken_by(pct_darkened); // FIXME
-        frame_buf_overlay_pixel(x, y, &c);
+        c.darken_by(pct_darkened);
+        frame_buf_draw_pixel(x, y, &c);
       }
     }
   }

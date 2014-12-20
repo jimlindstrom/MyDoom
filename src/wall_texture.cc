@@ -5,6 +5,7 @@
 #include "patches.h"
 #include "palettes.h"
 #include "wall_texture.h"
+#include "lighting.h"
 #include "common.h"
 #include "frame_buf.h"
 
@@ -162,8 +163,8 @@ void wall_texture::render(float ldx_l, float ldx_r, int ld_h,
     float yt = yt_l + (yt_r-yt_l)*(x-x_l)/(x_r-x_l);
     float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
     float dist = dist_l + (dist_r-dist_l)*(x-x_l)/(x_r-x_l);
-    float pct_darkened = MIN(dist,1200.0)/1800.0 * // Darken for distance (FIXME: How does Doom do this?)
-                         (light_level/255.0);      // Darken for sector light level
+    float pct_darkened = DIST_TO_PCT_DARKENED(dist) * // Darken for distance (FIXME: How does Doom do this?)
+                         (light_level/255.0);         // Darken for sector light level
     int clip_t = MAX(0,   vp->get_ceiling_clip(x));
     int clip_b = MIN(h-1, vp->get_floor_clip(  x));
     int clipped_yt = MAX(clip_t, MIN(clip_b, yt));

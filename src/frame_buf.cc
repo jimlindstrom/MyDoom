@@ -17,6 +17,7 @@
 
 //#define DO_RANGE_CHECKING
 #define BYTES_PER_PIXEL 4
+#define BYTES_PER_PIXEL_SHIFT 2
 
 static int frame_width, frame_height;
 static int frame_num_bytes;
@@ -62,7 +63,7 @@ void frame_buf_overlay_pixel(int x, int y, color_rgba const *color)
   #endif
 
   uint8_t *ptr;
-  ptr = frame + (y*frame_width*BYTES_PER_PIXEL) + (x*BYTES_PER_PIXEL);
+  ptr = frame + (((y*frame_width) + x)*BYTES_PER_PIXEL);
   *(ptr+0) = (color->r * color->a/255.0) + (*(ptr+0) * (255.0-color->a)/255.0);
   *(ptr+1) = (color->g * color->a/255.0) + (*(ptr+1) * (255.0-color->a)/255.0);
   *(ptr+2) = (color->b * color->a/255.0) + (*(ptr+2) * (255.0-color->a)/255.0);
@@ -80,7 +81,7 @@ void frame_buf_draw_pixel(int x, int y, color_rgba const *color)
   #endif
 
   uint8_t *ptr;
-  ptr = frame + (y*frame_width*BYTES_PER_PIXEL) + (x*BYTES_PER_PIXEL);
+  ptr = frame + (((y*frame_width) + x)*BYTES_PER_PIXEL);
   *(ptr++) = color->r;
   *(ptr++) = color->g;
   *(ptr++) = color->b;
