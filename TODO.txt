@@ -32,7 +32,7 @@ Queued up
 - FEATURE: trigger shoot actions on linedefs
 
 - FEATURE: lighting: http://doom.wikia.com/wiki/COLORMAP
-  - FEATURE: change color depending on the direction a wall is facing
+  - FEATURE: change color depending on the direction a wall is facing (r_segs.c:605)
   - FEATURE: increase lighting where wall lights are
 
 - BUG: top of wall is rounded in final room (z projection is wrong)
