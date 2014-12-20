@@ -7,7 +7,7 @@
 #include "projector.h"
 #include "player.h"
 
-#define MAX_VIS_PLANES (64)
+#define MAX_VIS_PLANES (128)
 
 class vis_planes
 {

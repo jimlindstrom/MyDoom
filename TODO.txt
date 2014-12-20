@@ -1,6 +1,5 @@
 In Progress
 ---
-- FEATURE: render flats instead of red/green: http://www.johnromero.com/lee_killough/editing/visplane.shtml
 
 Queued up
 ---

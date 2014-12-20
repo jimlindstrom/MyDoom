@@ -49,6 +49,10 @@ void projector::project_z_to_y(float z, float d, float *y0, float *dy) const
   *dy = *y0 / z;
   *y0 = *y0 + (screen_height/2);
 }
+// screen_y = -(map_z / (map_xy_dist/1000)) + (screen_h/2)
+// screen_y = -(map_z / (map_xy_dist/1000)) + (screen_h/2)
+// screen_y = -(map_z * (1000/map_xy_dist)) + (screen_h/2)
+// screen_y = -1000*map_z/[(map_x^2)+(map_y^2)]^0.5 + (screen_h/2)
 
 void projector::set_left_clipping_vector(vertex *clip_l1, vertex *clip_l2) const
 {

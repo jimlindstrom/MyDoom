@@ -35,7 +35,6 @@ public:
   int16_t get_y_b(int x) const { return y_b[x]; }
 
   void update_clip(int16_t x, int16_t yb, int16_t yt);
-  void set_dist(int16_t x, float d);
 
   void draw(projector const *_projector, player const *_player);
 
@@ -46,7 +45,6 @@ private:
   int16_t x_l, x_r;
   int16_t y_t[MAX_SCREEN_WIDTH];
   int16_t y_b[MAX_SCREEN_WIDTH];
-  float   dist[MAX_SCREEN_WIDTH];
 
   int plane_type; // debug only
   

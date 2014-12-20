@@ -21,7 +21,6 @@ vis_plane::vis_plane()
   {
      y_t[i] = UNINITIALIZED; 
      y_b[i] = h+1; 
-     dist[i] = 0;
   }
 }
 
@@ -82,61 +81,6 @@ void vis_plane::update_clip(int16_t x, int16_t yb, int16_t yt)
   y_b[x] = yb;
 }
 
-void vis_plane::set_dist(int16_t x, float d)
-{
-  dist[x] = d;
-}
-
-#if 0
-void vis_plane::draw(projector const *_projector, player const *_player)
-{
-  int16_t h=games_get_screen_height();
-  int16_t w=games_get_screen_width();
-
-  color_rgba light_red(  255, 64, 64,255);
-  color_rgba dark_red(   255,  0,  0, 64);
-  color_rgba light_green( 64,255, 64,255);
-  color_rgba dark_green(   0,255,  0, 64);
-  color_rgba border_color( 0,  0,255,128);
-  color_rgba inner_color(  0,  0,255, 64);
-
-  debug_printf("    visplane (0x%08x) x:[%d,%d]", (uint32_t)this, x_l, x_r);
-  if(plane_type==VIS_PLANE_FLOOR_TYPE)
-  {
-    debug_printf(" (floor)\n");
-    border_color.set_to(&light_red);
-    inner_color.set_to(&dark_red);
-  }
-  else if(plane_type==VIS_PLANE_CEILING_TYPE)
-  {
-    debug_printf(" (ceiling)\n");
-    border_color.set_to(&light_green);
-    inner_color.set_to(&dark_green);
-  }
-  else
-  {
-    debug_printf(" (unknown)\n"); 
-    return;
-  }
-
-  for(int16_t x=MAX(0,x_l); x<=MIN(x_r,w-1); x++)
-  {
-    if(y_t[x]>=0 || y_b[x]<=h)
-    {
-      int16_t y_t_c = MIN(MAX(0, y_t[x]), h-1);
-      int16_t y_b_c = MIN(MAX(0, y_b[x]), h-1);
-
-      debug_printf("  x=%d, y:[%d,%d]\n", x, y_t_c, y_b_c);
-      frame_buf_overlay_pixel(x, y_t_c, &border_color);
-      for(int16_t y=y_t_c+1; y<y_b_c; y++)
-      {
-        frame_buf_overlay_pixel(x, y, &inner_color);
-      }
-      frame_buf_overlay_pixel(x, y_b_c, &border_color);
-    }
-  }
-}
-#else
 void vis_plane::draw(projector const *_projector, player const *_player)
 {
   int16_t h=games_get_screen_height();
@@ -150,12 +94,6 @@ void vis_plane::draw(projector const *_projector, player const *_player)
 
   for(int16_t x=MAX(0,x_l); x<=MIN(x_r,w-1); x++)
   {
-    float cur_dist = dist[x_l] + (dist[x_r]-dist[x_l])*(x-x_l)/(x_r-x_l); // FIXME: this doesn't take into account y value at all...
-    float pct_darkened = MIN(cur_dist,1200.0)/1900.0; // FIXME: How does Doom do this?
-    float view_angle = _projector->unproject_x_to_horiz_angle(x) + _player->get_facing_angle();
-    int map_y = cur_dist * sin(view_angle);
-    int map_x = cur_dist * cos(view_angle);
-
     if(y_t[x]>=0 || y_b[x]<=h)
     {
       int16_t y_t_c = MIN(MAX(0, y_t[x]), h-1);
@@ -164,13 +102,46 @@ void vis_plane::draw(projector const *_projector, player const *_player)
       debug_printf("  x=%d, y:[%d,%d]\n", x, y_t_c, y_b_c);
       for(int16_t y=y_t_c+1; y<y_b_c; y++)
       {
+        /* 
+         * desired output: {map_x, map_y} -> because that gives us texture {x,y}
+         * input: {a 3d line defined by 
+         *         a horizontal angle, 
+         *         a vertical angle,
+         *         a delta-z}
+         *
+         * Question: how do I get a line from a delta-z, a horizontal angle and a vertical angle
+         * First, assume the camera is at the origin. Find a second point (dummy) along the line by putting one
+         * one unit out along the view direction. Then rotate it first (along the screen bot-to-top axis) then 
+         * a second time along the screen left-to-right axis. Then add both points by the player's map x,y,z.
+         * now solve for where the line intersects the z-plane of the visplane.
+    
+         * screen_y = -1000*map_z/[(map_x^2)+(map_y^2)]^0.5 + (screen_h/2)
+         * screen_y - (screen_h/2) = -1000*map_z / [(map_x^2)+(map_y^2)]^0.5 
+         * [(map_x^2)+(map_y^2)]^0.5  = -1000*map_z / [screen_y - (screen_h/2)]
+         * (map_x^2)+(map_y^2)  = [-1000*map_z / [screen_y - (screen_h/2)]]^2
+         * (map_x^2) + (map_y^2)  = map_z^2 * 1000^2 / [screen_y - (screen_h/2)]^2
+         *
+         *    - Note that {map_z} is known: that's the visplane height
+         *    - Note that screen_y is known: we're iterating over that point
+         *    - We just need some relationship between x and y and we're set to go...
+         *
+         * 
+         */
+    
+        float rel_z = _player->get_view_height() - height;
+        float cur_dist = -1000 * rel_z / (y - (h/2.0));
+        float pct_darkened = MIN(cur_dist,1200.0)/1900.0; // FIXME: How does Doom do this?
+        float view_angle = _projector->unproject_x_to_horiz_angle(x) + _player->get_facing_angle();
+        int map_y = (cur_dist * sin(view_angle)) - _player->get_map_position()->get_y();
+        int map_x = (cur_dist * cos(view_angle)) - _player->get_map_position()->get_x();
+
+
         uint8_t color_idx = tex->get_pixel(map_x % FLAT_WIDTH, map_y % FLAT_HEIGHT);
         color_rgba c;
         c.set_to(pal->get_color(color_idx)); // FIXME: do this up-front
-        c.darken_by(pct_darkened);
+        c.darken_by(pct_darkened); // FIXME
         frame_buf_overlay_pixel(x, y, &c);
       }
     }
   }
 }
-#endif
