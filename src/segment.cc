@@ -318,17 +318,17 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   d.subtract(vertex_l);
   for(int i=0; i<num_clipped_crs; i++) // FIXME: Push this down into column_range
   {
-    if(x_r_c > x_l_c) // FIXME: there's a bug here in which x_r_c == x_l_c
+    if(x_r_c > x_l_c) // FIXME: there's a bug here in which x_r_c == x_l_c (FIXME: why is this within the for loop??)
     {
       wall.x_l = clipped_ranges[i]->x_left;
       wall.x_r = clipped_ranges[i]->x_right;
 
       float t1 = (wall.x_l - x_l_c)/(float)(x_r_c-x_l_c);
-      t1 = (t1*(u_r_c - u_l_c)) + u_l_c; // FIXME: should this come AFTER we set V1?
+      t1 = (t1*(u_r_c - u_l_c)) + u_l_c;
       v1.set_x(vertex_l->get_x() + t1*d.get_x());
       v1.set_y(vertex_l->get_y() + t1*d.get_y());
       float t2 = (wall.x_r - x_l_c)/(float)(x_r_c-x_l_c);
-      t2 = (t2*(u_r_c - u_l_c)) + u_l_c; // FIXME: should this come AFTER we set V2?
+      t2 = (t2*(u_r_c - u_l_c)) + u_l_c;
       v2.set_x(vertex_l->get_x() + t2*d.get_x());
       v2.set_y(vertex_l->get_y() + t2*d.get_y());
       debug_printf("      clipped range %d: [%d,%d], t:[%.2f,%.2f]\n", i, wall.x_l, wall.x_r, t1, t2);
