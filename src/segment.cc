@@ -8,7 +8,7 @@
 #include "tests.h"
 #include "common.h"
 
-#define DEBUG_PRINTING
+//#define DEBUG_PRINTING
 #include "debug.h"
 
 static uint16_t next_segment_num = 0; // for debug printing
