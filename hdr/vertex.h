@@ -21,6 +21,7 @@ public:
   void set_to(vertex const *v) { x=v->get_x(); y=v->get_y(); }
   void set_x(float _x) { x=_x; }
   void set_y(float _y) { y=_y; }
+  void set_xy(float _x, float _y) { x=_x; y=_y;}
 
   void set_to_a_minus_b(vertex const *a, vertex const *b);
 

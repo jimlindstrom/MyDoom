@@ -108,10 +108,10 @@ void node::render_player_view(column_range_list *col_ranges,
 bool node::undrawn_columns_toward_bbox(bbox const *_bbox, column_range_list *col_ranges, projector const *_projector, player const *_player) const
 {
   vertex v[4];
-  v[0].set_x(_bbox->x_left);  v[0].set_y(_bbox->y_top);
-  v[1].set_x(_bbox->x_left);  v[1].set_y(_bbox->y_bottom);
-  v[2].set_x(_bbox->x_right); v[2].set_y(_bbox->y_top);
-  v[3].set_x(_bbox->x_right); v[3].set_y(_bbox->y_bottom);
+  v[0].set_xy(_bbox->x_left,  _bbox->y_top   );
+  v[1].set_xy(_bbox->x_left,  _bbox->y_bottom);
+  v[2].set_xy(_bbox->x_right, _bbox->y_top   );
+  v[3].set_xy(_bbox->x_right, _bbox->y_bottom);
 
   float angle[4], angle_left = -M_PI, angle_right = M_PI;
   debug_printf("  angles: [");
