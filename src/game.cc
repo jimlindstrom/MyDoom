@@ -62,10 +62,6 @@ void game::do_frame(void)
 {
   printf("frame\n");
 
-  column_range_list col_ranges;
-  vis_planes _vis_planes;
-  vis_things _vis_things;
-
   _player.move(_map);
 
   printf("  player at (%.1f,%.1f) facing %.1f\n", 
@@ -73,25 +69,37 @@ void game::do_frame(void)
          _player.get_map_position()->get_y(), 
          RAD_TO_DEG(_player.get_facing_angle()));
 
+  frame_buf_clear();
+  render_player_view();
+  render_overhead_map();
+  frame_buf_flush_to_ui();
+  track_frames_per_sec();
+}
+
+void game::render_player_view(void)
+{
+  column_range_list col_ranges;
+  vis_planes _vis_planes;
+  vis_things _vis_things;
+
+  _map->render_player_view(&col_ranges, &_projector, &_player, &_vis_planes, &_vis_things);
+  _vis_planes.draw_planes(&_projector, &_player);
+  _vis_things.draw_things(&col_ranges, &_projector, &_player);
+}
+
+void game::render_overhead_map(void)
+{
   overhead_map omap;
+
   bbox map_bbox(screen_height-10, screen_height-140, screen_width-200, screen_width-10);
   omap.set_bbox(&map_bbox);
   omap.set_scale(0.040);
   omap.translate_origin(-60,-145);
-
-  frame_buf_clear();
-  _map->render_player_view(&col_ranges, &_projector, &_player, &_vis_planes, &_vis_things);
-  _vis_planes.draw_planes(&_projector, &_player);
-  _vis_things.draw_things(&col_ranges, &_projector, &_player);
-
   omap.darken_background();
   omap.draw_bbox();
+
   _map->draw_overhead_map(&omap); 
   _player.draw_overhead_map_marker(&omap);
-
-  frame_buf_flush_to_ui();
-
-  track_frames_per_sec();
 }
 
 void game::track_frames_per_sec(void)

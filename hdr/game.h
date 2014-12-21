@@ -40,6 +40,8 @@ private:
   int frame_time_idx;
   uint32_t frame_count;
 
+  void render_player_view(void);
+  void render_overhead_map(void);
   void track_frames_per_sec(void);
 };
 
