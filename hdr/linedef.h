@@ -84,9 +84,8 @@ private:
   vertex const *start_vertex;
   vertex const *end_vertex;
 
-  void calc_upper_y_values(int direction, wall_projection *wall) const;
-  void calc_mid_y_values(  int direction, wall_projection *wall) const;
-  void calc_lower_y_values(int direction, wall_projection *wall) const;
+  void calc_1sided_y_values(int direction, wall_projection *wall) const;
+  void calc_2sided_y_values(  int direction, wall_projection *wall) const;
 
   int16_t get_upper_ty_peg_offset(int16_t ld_h, int16_t tex_h) const;
   int16_t get_mid_ty_peg_offset(  int16_t ld_h, int16_t tex_h) const;

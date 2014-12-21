@@ -1,28 +1,22 @@
 In Progress
 ---
 - BUG: transparent walls, things, and visplanes aren't drawn in the right order
-
-Queued up
----
-
-- BUG: in E1M1, the green thing atop the stairs is buried.
-
+  - Need to draw things AFTER everything. and clip them against what's already drawn
 - BUG: seems like the view plane is too far out into the viewing frustrum
   - Player doesn't step up soon enough, on stairs.
   - Ceilings disappear too soon (as you walk forward)
 - BUG: When a lineseg is long or close, and maybe spans both FOV vectors, it gets clipped but shouldn't.
-- BUG: Player view height seems too high. 
 
-- CHORE: refactor seg::render
-  - CHORE: consider refactoring “player-centric segment” a class (then forgetting about player)
-  - CHORE: consider refactoring “clipped, player-centric segment” another class
-- CHORE: refactor height (z) into 3d vertex class
+Queued up
+---
+- BUG: in E1M1, the green thing atop the stairs is buried.
 
 - CHORE: refactor thing::render
 
 - FEATURE: animate wall textures
 - FEATURE: animate flats
 
+- BUG: Player view height seems too high. 
 - FEATURE: head bobbing
 
 - FEATURE: collision detection: http://doom.wikia.com/wiki/Blockmap

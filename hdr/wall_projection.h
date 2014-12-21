@@ -9,13 +9,8 @@
 class wall_projection
 {
 public:
-  void clip_2sided_upper(void) const;
-  void clip_2sided_lower(void) const;
-
-  void render_1sided_mid(  void) const;
-  void render_2sided_upper(void) const;
-  void render_2sided_mid(  void) const;
-  void render_2sided_lower(void) const;
+  void render_1sided(  void) const;
+  void render_2sided(void) const;
 
   // filled in by segment::render
   float ldx_l, ldx_r;
@@ -25,12 +20,18 @@ public:
   uint16_t light_level;
   vis_planes *vp;
   vis_plane *floor, *ceiling;
+  bool clip_floor, clip_ceiling;
 
   // filled in by linedef::render
-  float yt_l, yb_l, yt_r, yb_r;
-  int16_t ld_h;
-  wall_texture const *tex;
-  int16_t tx_offset, ty_offset;
+  bool is_one_sided;
+  typedef struct {
+    float yt_l, yt_r;
+    float yb_l, yb_r;
+    int16_t ld_h;
+    wall_texture const *tex;
+    int16_t tx_offset, ty_offset;
+  } wall_part;
+  wall_part upper, mid, lower;
 };
 
 #endif // #ifndef __WALL_PROJECION_H

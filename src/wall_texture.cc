@@ -131,77 +131,50 @@ void wall_texture::pre_render(void)
   }
 }
 
-void wall_texture::render(float ldx_l, float ldx_r, int ld_h, 
-                          int x_l, int x_r, 
-                          float yt_l, float yb_l, 
-                          float yt_r, float yb_r,
-                          float dist_l, float dist_r,
-                          int16_t tx_offset, int16_t ty_offset,
-                          uint16_t light_level,
-                          vis_planes *vp, 
-                          vis_plane *floor, vis_plane *ceiling, 
-                          bool clip_ceil, bool clip_floor) const
+void wall_texture::render_col(float ldx, int ld_h, 
+                              int x, float yt, float yb,  float clipped_yt, float clipped_yb,
+                              float dist,
+                              int16_t tx_offset, int16_t ty_offset,
+                              float pct_darkened) const
 {
   color_rgba c;
   int16_t h=games_get_screen_height();
+  //#define DEBUG_TEXTURES
+  #ifdef DEBUG_TEXTURES
+  color_rgba cyan(100, 255, 255, 255);
+  color_rgba peru(255, 155,  80, 255);
+  color_rgba yell(255, 255, 100, 255);
+  color_rgba purp(200,   0, 200, 255);
+  #endif
 
   debug_printf("        texture::render(%dx%d)\n", width, height);
 
-  while(tx_offset<0) { tx_offset += width;  }
-  while(ty_offset<0) { ty_offset += height; }
+  while(ty_offset < 0) { ty_offset += height; }
 
-  if(x_l == x_r)
+  int   tx   = (width + tx_offset + (int)ldx) % width;
+  for(int y=MAX(0,clipped_yt); y<=MIN(h-1,clipped_yb); y++)
   {
-    debug_printf("          aborting because x_l == x_r\n");
-    return;
-  }
-  for(int x=x_l; x<=x_r; x++)
-  {
-    int ldx = ldx_l + (ldx_r-ldx_l)*(x-x_l)/(x_r-x_l);
-    int tx = (tx_offset+ldx) % width;
+    int ldy = ld_h*(y-yt)/(yb-yt);
+    int ty = (ty_offset+ldy) % height;
 
-    float yt = yt_l + (yt_r-yt_l)*(x-x_l)/(x_r-x_l);
-    float yb = yb_l + (yb_r-yb_l)*(x-x_l)/(x_r-x_l);
-    float dist = dist_l + (dist_r-dist_l)*(x-x_l)/(x_r-x_l);
-    float pct_darkened = DIST_TO_PCT_DARKENED(dist) * // Darken for distance (FIXME: How does Doom do this?)
-                         (light_level/255.0);         // Darken for sector light level
-    int clip_t = MAX(0,   vp->get_ceiling_clip(x)+1);
-    int clip_b = MIN(h-1, vp->get_floor_clip(  x)-1);
-    int clipped_yt = MAX(clip_t, MIN(clip_b, yt));
-    int clipped_yb = MAX(clip_t, MIN(clip_b, yb));
-    debug_printf("          x:%d, y:[%.1f,%.1f] cy:[%d,%d]\n", x, yt,yb, clipped_yt,clipped_yb);
-
-    if(ceiling)
+    int pix_offset = (ty * width) + tx;
+    c.set_to(&pixels[pix_offset]);
+    c.darken_by(pct_darkened);
+    frame_buf_draw_pixel(x, y, &c);
+    #ifdef DEBUG_TEXTURES
+    if(( x==x_l) || (x==x_r) || 
+       ( (x-1)==x_l) || ((x+1)==x_r) || 
+       (y==MAX(0,clipped_yt)) || (y==MIN(h-1,clipped_yb)) ||
+       ((y-1)==MAX(0,clipped_yt)) || ((y+1)==MIN(h-1,clipped_yb)))
     {
-      // top of ceiling = one pixel lower than the [bottom of the lowest ceiling]
-      // bot of ceiling = one pixel above the wall (or [ceil], if lower) (or [floor], if higher)
-      int16_t ceil_yt = vp->get_ceiling_clip(x)+1;
-      int16_t ceil_yb = MIN(vp->get_floor_clip(x)-1, yt-1);
-      if(ceil_yt  <= ceil_yb ) { ceiling->update_clip(x, ceil_yb,  ceil_yt ); }
+      switch(clip_type)
+      {
+        case WALL_1_SIDED_MID:   frame_buf_draw_pixel(x, y, &cyan); break;
+        case WALL_2_SIDED_UPPER: frame_buf_draw_pixel(x, y, &peru); break;
+        case WALL_2_SIDED_LOWER: frame_buf_draw_pixel(x, y, &yell); break;
+        case WALL_2_SIDED_MID:   frame_buf_draw_pixel(x, y, &purp); break;
+      }
     }
-    if(floor)
-    {
-      // top of floor be: one pixel below the wall (or [floor], if higher) (or [ceil], if lower)
-      // bot of floor be: one pixel higher than the [top of the tallest floor]
-      int16_t floor_yt = MAX(vp->get_ceiling_clip(x)+1, yb+1);
-      int16_t floor_yb = vp->get_floor_clip(x)-1;
-      debug_printf("            floor clipping: %d <= %d\n", floor_yt, floor_yb);
-      if(floor_yt <= floor_yb) { floor  ->update_clip(x, floor_yb, floor_yt); }
-    }
-    if(clip_ceil) { vp->update_ceiling_clip(x, yt); }
-    else          { vp->update_floor_clip(  x, yt); }
-    if(clip_floor){ vp->update_floor_clip(  x, yb); }
-    else          { vp->update_ceiling_clip(x, yb); }
-
-    for(int y=MAX(0,clipped_yt); y<=MIN(h-1,clipped_yb); y++)
-    {
-      int ldy = ld_h*(y-yt)/(yb-yt);
-      int ty = (ty_offset+ldy) % height;
-  
-      int pix_offset = (ty * width) + tx;
-      c.set_to(&pixels[pix_offset]);
-      c.darken_by(pct_darkened);
-      frame_buf_draw_pixel(x, y, &c);
-    }
+    #endif
   }
 }

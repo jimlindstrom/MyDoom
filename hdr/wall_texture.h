@@ -33,16 +33,12 @@ public:
 
   bool is_valid(void);
 
-  void render(float ldx_l, float ldx_r,  
-              int ld_h,  
-              int x_l, int x_r,  
-              float yt_l, float yb_l, 
-              float yt_r, float yb_r,
-              float dist_l, float dist_r,
-              int16_t tx_offset, int16_t ty_offset,  
-              uint16_t light_level,
-              vis_planes *vp, vis_plane *floor, vis_plane *ceiling,  
-              bool clip_ceil, bool clip_floor) const;
+  void render_col(float ldx, int ld_h, 
+                  int x, float yt, float yb, float clipped_yt, float clipped_yb,
+                  float dist,
+                  int16_t tx_offset, int16_t ty_offset,
+                  float pct_darkened) const;
+
 
 private:
   char name[9]; // An ASCII string defining the name of the map texture. Only the characters A-Z (uppercase), 

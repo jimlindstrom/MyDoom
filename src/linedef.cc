@@ -60,31 +60,37 @@ int16_t linedef::get_floor_z(int direction) const
   return get_sidedef(direction)->get_sector()->get_floor_height();
 }
 
-void linedef::calc_upper_y_values(int direction, wall_projection *wall) const
+void linedef::calc_1sided_y_values(  int direction, wall_projection *wall) const
 {
-  wall->yt_l = wall->y0_l + (get_ceiling_z(direction  ) * wall->dy_l);
-  wall->yb_l = wall->y0_l + (get_ceiling_z(1-direction) * wall->dy_l);
-  wall->yt_r = wall->y0_r + (get_ceiling_z(direction  ) * wall->dy_r);
-  wall->yb_r = wall->y0_r + (get_ceiling_z(1-direction) * wall->dy_r);
-  wall->ld_h = get_ceiling_z(direction) - get_ceiling_z(1-direction);
+  wall->mid.yt_l = wall->y0_l + (get_ceiling_z(direction) * wall->dy_l);
+  wall->mid.yb_l = wall->y0_l + (get_floor_z(  direction) * wall->dy_l);
+  wall->mid.yt_r = wall->y0_r + (get_ceiling_z(direction) * wall->dy_r);
+  wall->mid.yb_r = wall->y0_r + (get_floor_z(  direction) * wall->dy_r);
+  wall->mid.ld_h = get_ceiling_z(direction) - get_floor_z(direction);
 }
 
-void linedef::calc_mid_y_values(  int direction, wall_projection *wall) const
+void linedef::calc_2sided_y_values(int direction, wall_projection *wall) const
 {
-  wall->yt_l = wall->y0_l + (get_ceiling_z(direction) * wall->dy_l);
-  wall->yb_l = wall->y0_l + (get_floor_z(  direction) * wall->dy_l);
-  wall->yt_r = wall->y0_r + (get_ceiling_z(direction) * wall->dy_r);
-  wall->yb_r = wall->y0_r + (get_floor_z(  direction) * wall->dy_r);
-  wall->ld_h = get_ceiling_z(direction) - get_floor_z(direction);
-}
+  // upper
+  wall->upper.yt_l = wall->y0_l + (get_ceiling_z(direction  ) * wall->dy_l);
+  wall->upper.yt_r = wall->y0_r + (get_ceiling_z(direction  ) * wall->dy_r);
+  wall->upper.yb_l = wall->y0_l + (get_ceiling_z(1-direction) * wall->dy_l); // - 1?
+  wall->upper.yb_r = wall->y0_r + (get_ceiling_z(1-direction) * wall->dy_r); // - 1?
+  wall->upper.ld_h = get_ceiling_z(direction) - get_ceiling_z(1-direction);
 
-void linedef::calc_lower_y_values(int direction, wall_projection *wall) const
-{
-  wall->yt_l = wall->y0_l + (get_floor_z(1-direction) * wall->dy_l);
-  wall->yb_l = wall->y0_l + (get_floor_z(direction  ) * wall->dy_l);
-  wall->yt_r = wall->y0_r + (get_floor_z(1-direction) * wall->dy_r);
-  wall->yb_r = wall->y0_r + (get_floor_z(direction  ) * wall->dy_r);
-  wall->ld_h = get_floor_z(1-direction) - get_floor_z(direction);
+  // mid
+  wall->mid.yt_l = wall->y0_l + (get_ceiling_z(1-direction) * wall->dy_l);
+  wall->mid.yt_r = wall->y0_r + (get_ceiling_z(1-direction) * wall->dy_r);
+  wall->mid.yb_l = wall->y0_l + (get_floor_z(  1-direction) * wall->dy_l);
+  wall->mid.yb_r = wall->y0_r + (get_floor_z(  1-direction) * wall->dy_r);
+  wall->mid.ld_h = get_ceiling_z(1-direction) - get_floor_z(1-direction);
+
+  // lower
+  wall->lower.yt_l = wall->y0_l + (get_floor_z(  1-direction) * wall->dy_l);
+  wall->lower.yt_r = wall->y0_r + (get_floor_z(  1-direction) * wall->dy_r);
+  wall->lower.yb_l = wall->y0_l + (get_floor_z(direction    ) * wall->dy_l);
+  wall->lower.yb_r = wall->y0_r + (get_floor_z(direction    ) * wall->dy_r);
+  wall->lower.ld_h = get_floor_z(1-direction) - get_floor_z(direction);
 }
 
 int16_t linedef::get_upper_ty_peg_offset(int16_t ld_h, int16_t tex_h) const
@@ -124,60 +130,42 @@ void linedef::render(int direction, wall_projection *wall) const
   // if one-sided -> it's a solid wall
   if(is_one_sided())
   {
-    calc_mid_y_values(direction, wall);
-    if((wall->tex = _sd->get_mid_texture()))
+    wall->is_one_sided = true;
+    calc_1sided_y_values(direction, wall);
+    if((wall->mid.tex = _sd->get_mid_texture()))
     {
       debug_printf("        LD-1M\n");
-      wall->tx_offset = _sd->get_tx_offset();
-      wall->ty_offset = _sd->get_ty_offset() + get_mid_ty_peg_offset(wall->ld_h, wall->tex->get_height());
-      wall->render_1sided_mid();
+      wall->mid.tx_offset = _sd->get_tx_offset();
+      wall->mid.ty_offset = _sd->get_ty_offset() + get_mid_ty_peg_offset(wall->mid.ld_h, wall->mid.tex->get_height());
     }
+
+    wall->render_1sided();
   }
 
   // if two-sided, it's a bridge between two sectors
   else if(is_two_sided())
   {
-    // UPPER TEXTURE
-    calc_upper_y_values(direction, wall);
-    if((wall->tex = get_sidedef(direction)->get_upper_texture()))
+    wall->is_one_sided = false;
+    calc_2sided_y_values(direction,  wall);
+    if((wall->upper.tex = get_sidedef(direction)->get_upper_texture()))
     {
       debug_printf("        LD-2U\n");
-      wall->tx_offset = _sd->get_tx_offset();
-      wall->ty_offset = _sd->get_ty_offset() + get_upper_ty_peg_offset(wall->ld_h, wall->tex->get_height());
-      wall->render_2sided_upper();
+      wall->upper.tx_offset = _sd->get_tx_offset();
+      wall->upper.ty_offset = _sd->get_ty_offset() + get_upper_ty_peg_offset(wall->upper.ld_h, wall->upper.tex->get_height());
     }
-    else
-    {
-      debug_printf("        LD-2U: (clip only)\n");
-      wall->clip_2sided_upper();
-    }
-
-    // LOWER TEXTURE
-    calc_lower_y_values(direction, wall);
-    if((wall->tex = get_sidedef(direction)->get_lower_texture()))
+    if((wall->lower.tex = get_sidedef(direction)->get_lower_texture()))
     {
       debug_printf("        LD-2L\n");
-      wall->tx_offset = _sd->get_tx_offset();
-      wall->ty_offset = _sd->get_ty_offset() + get_lower_ty_peg_offset(wall->ld_h, wall->tex->get_height());
-      wall->render_2sided_lower();
+      wall->lower.tx_offset = _sd->get_tx_offset();
+      wall->lower.ty_offset = _sd->get_ty_offset() + get_lower_ty_peg_offset(wall->lower.ld_h, wall->lower.tex->get_height());
     }
-    else
+    if((wall->mid.tex = get_sidedef(direction)->get_mid_texture())) // Right now this gets used for masked see-thru walls
     {
-      debug_printf("        LD-2L: (clip only)\n");
-      wall->clip_2sided_lower();
+      debug_printf("        LD-2M\n");
+      wall->mid.tx_offset = _sd->get_tx_offset();
+      wall->mid.ty_offset = _sd->get_ty_offset() + get_mid_ty_peg_offset(wall->mid.ld_h, wall->mid.tex->get_height());
     }
 
-    // MID TEXTURE
-    calc_mid_y_values(direction, wall);
-    if((wall->tex = get_sidedef(direction)->get_mid_texture())) // Right now this gets used for masked see-thru walls
-    {
-      // if middle texture is set
-      //   -> it is clipped by the lowest ceiling and the highest floor (FIXME)
-      //   -> it follows same alignment logi as single-sided linedef, but does not repeat vertically (FIXME)
-      debug_printf("        LD-2M\n");
-      wall->tx_offset = _sd->get_tx_offset();
-      wall->ty_offset = _sd->get_ty_offset() + get_mid_ty_peg_offset(wall->ld_h, wall->tex->get_height());
-      wall->render_2sided_lower();
-    }
+    wall->render_2sided();
   }
 }

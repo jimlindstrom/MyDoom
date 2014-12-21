@@ -244,14 +244,8 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   vertex origin(0,0);
   wall_projection wall;
 
-  debug_printf("  segment %d: (%.1f,%.1f)->(%.1f,%.1f)\n",
-         segment_num,
-         vertex_l->get_x(), vertex_l->get_y(),
-         vertex_r->get_x(), vertex_r->get_y() ); 
-
   float angle_r, angle_l;
   calculate_angles_from_player(_player, &angle_l, &angle_r);
-  debug_printf("    angles: [%.1f,%.1f]\n", RAD_TO_DEG(angle_l), RAD_TO_DEG(angle_r));
   if(is_backface(angle_l, angle_r) ||
      is_outside_fov(angle_l, angle_r, _projector->get_horiz_fov_radius()))
   {
@@ -280,8 +274,16 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
     store_clipping = false; // pass through...
   }
 
-  if(!is_closed_door() && is_same_floor_plane_on_both_sides()  ) { floor   = NULL; }
-  if(!is_closed_door() && is_same_ceiling_plane_on_both_sides()) { ceiling = NULL; }
+  debug_printf("  segment %d: (%.1f,%.1f)->(%.1f,%.1f)\n",
+               segment_num,
+               vertex_l->get_x(), vertex_l->get_y(),
+               vertex_r->get_x(), vertex_r->get_y() ); 
+  debug_printf("    angles: [%.1f,%.1f]\n", RAD_TO_DEG(angle_l), RAD_TO_DEG(angle_r));
+
+  // If the back sector has the same floor or ceiling, dont' clip the cooresponding plane
+  wall.clip_floor = wall.clip_ceiling = true;
+  if(!is_closed_door() && is_same_floor_plane_on_both_sides()  ) { wall.clip_floor   = false; }
+  if(!is_closed_door() && is_same_ceiling_plane_on_both_sides()) { wall.clip_ceiling = false; }
 
   // step 1: translate it into player-centric 3D coordinates
   vertex _pvl(vertex_l); _pvl.subtract(_player->get_map_position()); _pvl.rotate(-_player->get_facing_angle());
@@ -310,8 +312,6 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
 
   wall.light_level = front_sector->get_light_level();
   wall.vp = vp;
-  wall.floor = floor;
-  wall.ceiling = ceiling;
 
   vertex v1, v2;
   vertex d(vertex_r);
@@ -335,7 +335,7 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
 
       wall.dist_l = _player->get_map_position()->distance_to_point(&v1); // FIXME: this should be the clipped point.
       wall.dist_r = _player->get_map_position()->distance_to_point(&v2); // ...
-      debug_printf("      dists: [%.1f,%.1f]\n", dist_l, dist_r);
+      debug_printf("      dists: [%.1f,%.1f]\n", wall.dist_l, wall.dist_r);
       _projector->project_z_to_y(-_player->get_view_height(), wall.dist_l, &wall.y0_l, &wall.dy_l);
       _projector->project_z_to_y(-_player->get_view_height(), wall.dist_r, &wall.y0_r, &wall.dy_r);
   
@@ -344,10 +344,12 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
       if(direction == 1) { seg_off = seg_len - seg_off; } // FIXME: why am I reversing this? seems bad...
       wall.ldx_l = seg_off + (t1*seg_len);
       wall.ldx_r = seg_off + (t2*seg_len);
-      debug_printf("        dir:%d, offset:%d, seg_len:%.1f, ld_len:%.1f, seg_off:%.1f\n", direction, offset, seg_len, ld_len, seg_off);
+      debug_printf("        dir:%d, offset:%d, seg_len:%.1f, seg_off:%.1f\n", direction, offset, seg_len, seg_off);
  
       if(floor)   { floor   = vp->adjust_or_create(floor,   wall.x_l, wall.x_r); floor  ->set_plane_type(VIS_PLANE_FLOOR_TYPE  ); }
       if(ceiling) { ceiling = vp->adjust_or_create(ceiling, wall.x_l, wall.x_r); ceiling->set_plane_type(VIS_PLANE_CEILING_TYPE); }
+      wall.floor   = floor;
+      wall.ceiling = ceiling;
 
       _linedef->render(direction, &wall);
     }
@@ -373,10 +375,18 @@ bool wad_segment::is_backface(float angle_l, float angle_r) const
 
 bool wad_segment::is_outside_fov(float angle_l, float angle_r, float horiz_fov_radius) const
 {
+#if 0
+  // I thought this would help draw segments that are on camera but whose edges fall outside opposite FOVs
+  return ( ( (angle_l < -horiz_fov_radius) &&
+             (angle_r < -horiz_fov_radius) ) ||
+           ( (angle_l >  horiz_fov_radius) &&
+             (angle_r >  horiz_fov_radius) ) );
+#else
   return ( ( (angle_l < -horiz_fov_radius) ||
              (angle_l >  horiz_fov_radius) ) &&
            ( (angle_r < -horiz_fov_radius) ||
              (angle_r >  horiz_fov_radius) ) );
+#endif
 }
 
 /******************************************************************************

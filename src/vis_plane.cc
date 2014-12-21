@@ -84,6 +84,13 @@ void vis_plane::update_clip(int16_t x, int16_t yb, int16_t yt)
 
 void vis_plane::draw(projector const *_projector, player const *_player)
 {
+  //#define DEBUG_VISPLANES
+  #ifdef DEBUG_VISPLANES
+  color_rgba r( 255, 100, 100, 255);
+  color_rgba g( 100, 255, 100, 255);
+  color_rgba b( 100, 100, 255, 255);
+  color_rgba wh(255, 255, 255, 255);
+  #endif
   int16_t h=games_get_screen_height();
   int16_t w=games_get_screen_width();
   palette const *pal = palettes_get(0); // FIXME: use the right palette
@@ -96,16 +103,16 @@ void vis_plane::draw(projector const *_projector, player const *_player)
   float rel_z = _player->get_view_height() - height;
   for(int16_t x=MAX(0,x_l); x<=MIN(x_r,w-1); x++)
   {
-    if(y_t[x]>=0 || y_b[x]<=h)
+    if(y_t[x]>=0 || y_b[x]<h)
     {
       float view_angle = _projector->unproject_x_to_horiz_angle(x) + _player->get_facing_angle();
       float sin_view_angle = sin(view_angle);
       float cos_view_angle = cos(view_angle);
-      int16_t y_t_c = MIN(MAX(0, y_t[x]), h-1);
-      int16_t y_b_c = MIN(MAX(0, y_b[x]), h-1);
+      int16_t y_t_c = MAX(0, y_t[x]);
+      int16_t y_b_c = MIN(y_b[x], h-1);
 
       debug_printf("  x=%d, y:[%d,%d]\n", x, y_t_c, y_b_c);
-      for(int16_t y=y_t_c+1; y<y_b_c; y++)
+      for(int16_t y=y_t_c; y<=y_b_c; y++)
       {
         /*
          * screen_y = -1000*map_z/[(map_x^2)+(map_y^2)]^0.5 + (screen_h/2)
@@ -128,6 +135,16 @@ void vis_plane::draw(projector const *_projector, player const *_player)
         c.set_to(pal->get_color(color_idx)); // FIXME: do this up-front
         c.darken_by(pct_darkened);
         frame_buf_draw_pixel(x, y, &c);
+        #ifdef DEBUG_VISPLANES
+        if     (y     == y_t_c       ) { frame_buf_draw_pixel(x, y, &r ); }
+        if     ((y-1) == y_t_c       ) { frame_buf_draw_pixel(x, y, &r ); }
+        else if(y     == y_b_c       ) { frame_buf_draw_pixel(x, y, &g ); }
+        else if((y+1) == y_b_c       ) { frame_buf_draw_pixel(x, y, &g ); }
+        else if(x     == MAX(0,x_l)  ) { frame_buf_draw_pixel(x, y, &b ); }
+        else if((x-1) == MAX(0,x_l)  ) { frame_buf_draw_pixel(x, y, &b ); }
+        else if(x     == MIN(x_r,w-1)) { frame_buf_draw_pixel(x, y, &wh); }
+        else if((x+1) == MIN(x_r,w-1)) { frame_buf_draw_pixel(x, y, &wh); }
+        #endif
       }
     }
   }
