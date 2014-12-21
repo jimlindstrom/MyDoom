@@ -25,6 +25,19 @@ bool flat::set_data(uint8_t const *_data)
 
 uint8_t flat::get_pixel(int x, int y) const
 {
+  #define RANGE_CHECKING
+  #ifdef RANGE_CHECKING
+  if(x<0 || x>=FLAT_WIDTH )
+  {
+    printf("ERROR: x is %d, not in [%d,%d]\n", x, 0, FLAT_WIDTH -1); 
+    exit(0);
+  }
+  if(y<0 || y>=FLAT_HEIGHT)
+  {
+    printf("ERROR: y is %d, not in [%d,%d]\n", y, 0, FLAT_HEIGHT-1); 
+    exit(0);
+  }
+  #endif
   // FIXME: assert x,y are sane
   return data[(y*FLAT_WIDTH)+x];
 }

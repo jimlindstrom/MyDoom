@@ -43,7 +43,7 @@ void wall_projection::render_2sided(void) const
 {
   int16_t h=games_get_screen_height();
 
-  if(x_l == x_r) { return; }
+  if(x_l >= x_r) { return; }
 
   for(int x=x_l; x<=x_r; x++)
   {

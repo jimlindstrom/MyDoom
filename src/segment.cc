@@ -8,7 +8,7 @@
 #include "tests.h"
 #include "common.h"
 
-//#define DEBUG_PRINTING
+#define DEBUG_PRINTING
 #include "debug.h"
 
 static uint16_t next_segment_num = 0; // for debug printing
@@ -368,23 +368,14 @@ void wad_segment::calculate_angles_from_player(player const *_player, float *ang
 
 bool wad_segment::is_backface(float angle_l, float angle_r) const
 {
-  return (angle_r > angle_l);
+  #define ANGLE_EPSILON (5.0) // just small enough to avoid weird near-infinity isssues
+  return (angle_r > angle_l) || ((angle_l - angle_r) > DEG_TO_RAD(180.0 - ANGLE_EPSILON));
 }
 
 bool wad_segment::is_outside_fov(float angle_l, float angle_r, float horiz_fov_radius) const
 {
-#if 0
-  // I thought this would help draw segments that are on camera but whose edges fall outside opposite FOVs
-  return ( ( (angle_l < -horiz_fov_radius) &&
-             (angle_r < -horiz_fov_radius) ) ||
-           ( (angle_l >  horiz_fov_radius) &&
-             (angle_r >  horiz_fov_radius) ) );
-#else
-  return ( ( (angle_l < -horiz_fov_radius) ||
-             (angle_l >  horiz_fov_radius) ) &&
-           ( (angle_r < -horiz_fov_radius) ||
-             (angle_r >  horiz_fov_radius) ) );
-#endif
+  return ( ( (angle_l < -horiz_fov_radius) && (angle_r < -horiz_fov_radius) ) ||
+           ( (angle_l >  horiz_fov_radius) && (angle_r >  horiz_fov_radius) ) );
 }
 
 /******************************************************************************

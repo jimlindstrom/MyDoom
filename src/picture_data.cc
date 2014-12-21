@@ -4,8 +4,6 @@
 
 #include "picture_data.h"
 
-#define ROTATE_AFTER_LOADING
-
 picture_data::picture_data()
 {
   pixel_columns = NULL;
@@ -14,11 +12,7 @@ picture_data::picture_data()
 picture_data::~picture_data()
 {
   if(pixel_columns) { 
-    #ifdef ROTATE_AFTER_LOADING
     for(int y=0; y<width; y++)
-    #else
-    for(int y=0; y<height; y++)
-    #endif
     {
       delete[] pixel_columns[y]; 
     }
