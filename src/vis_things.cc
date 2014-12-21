@@ -11,6 +11,11 @@ vis_things::~vis_things(void)
 
 void vis_things::add_thing(thing const *_thing)
 {
+  if((num_vis_things+1) >= MAX_VIS_THINGS)
+  {
+    printf("WARNING: too many visible things!\n");
+    return;
+  }
   things[num_vis_things++] = _thing;
 }
 

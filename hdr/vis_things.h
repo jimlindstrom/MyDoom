@@ -3,7 +3,7 @@
 
 #include "thing.h"
 
-#define MAX_VIS_THINGS 64
+#define MAX_VIS_THINGS 128
 
 class vis_things
 {

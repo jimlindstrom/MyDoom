@@ -5,9 +5,7 @@
 
 #include "column_range.h"
 #include "sprite.h"
-
-#define MAX_SCREEN_WIDTH  (768) // FIXME
-#define MAX_SCREEN_HEIGHT (480) // FIXME
+#include "games.h"
 
 class thing_projection
 {
