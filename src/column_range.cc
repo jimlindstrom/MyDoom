@@ -55,7 +55,10 @@ bool column_range_list::insert(column_range *new_range)
   return false;
 }
 
-column_range **column_range_list::clip_segment(bool store_clipping, int16_t x_left, int16_t x_right, int *num_clipped_crs)
+column_range **column_range_list::clip_segment(bool store_clipping, 
+                                               int16_t x_left, int16_t x_right, 
+                                               float dist_l, float dist_r, 
+                                               int *num_clipped_crs)
 {
   int max_ranges = 2;
   column_range **cr_ptrs = new column_range *[max_ranges];
@@ -63,10 +66,12 @@ column_range **column_range_list::clip_segment(bool store_clipping, int16_t x_le
 
   *num_clipped_crs = 0;
 
-  //printf("\nstarting: [%d,%d]\n", x_left, x_right);
-  while(cur_range && (x_left <= x_right))
+  int16_t xlc = x_left, xrc = x_right;
+
+  //printf("\nstarting: [%d,%d]\n", xlc, xrc);
+  while(cur_range && (xlc <= xrc))
   {
-    //printf("iteration [%d,%d]\n", x_left, x_right);
+    //printf("iteration [%d,%d]\n", xlc, xrc);
     // allocate more pointers, if needed
     if(((*num_clipped_crs)+1) >= max_ranges)
     {
@@ -77,45 +82,51 @@ column_range **column_range_list::clip_segment(bool store_clipping, int16_t x_le
     }
 
     // if there's a gap, and it's more than big enough, we're done.
-    if(x_right < cur_range->x_left)
+    if(xrc < cur_range->x_left)
     {
-      //printf("  Case 1: big enough gap. Adding [%d,%d]\n", x_left, x_right);
+      //printf("  Case 1: big enough gap. Adding [%d,%d]\n", xlc, xrc);
       (*num_clipped_crs)++;
       cr_ptrs[(*num_clipped_crs)-1] = new column_range;
-      cr_ptrs[(*num_clipped_crs)-1]->x_left  = x_left;
-      cr_ptrs[(*num_clipped_crs)-1]->x_right = x_right;
+      cr_ptrs[(*num_clipped_crs)-1]->x_left  = xlc;
+      cr_ptrs[(*num_clipped_crs)-1]->x_right = xrc;
+      cr_ptrs[(*num_clipped_crs)-1]->dist_l  = dist_l + (dist_r-dist_l)*(xlc - x_left)/(x_right - x_left);
+      cr_ptrs[(*num_clipped_crs)-1]->dist_r  = dist_l + (dist_r-dist_l)*(xrc - x_left)/(x_right - x_left);
       if(store_clipping) { insert(cr_ptrs[(*num_clipped_crs)-1]); }
-      x_left = x_right + 1; // DONE
+      xlc = xrc + 1; // DONE
     }
     // okay, well is there *any* gap?
-    else if(x_left < cur_range->x_left)
+    else if(xlc < cur_range->x_left)
     {
-      //printf("  Case 2: small gap. Adding [%d,%d]\n", x_left, cur_range->x_left-1);
+      //printf("  Case 2: small gap. Adding [%d,%d]\n", xlc, cur_range->x_left-1);
       (*num_clipped_crs)++;
       cr_ptrs[(*num_clipped_crs)-1] = new column_range;
-      cr_ptrs[(*num_clipped_crs)-1]->x_left  = x_left;
+      cr_ptrs[(*num_clipped_crs)-1]->x_left  = xlc;
       cr_ptrs[(*num_clipped_crs)-1]->x_right = cur_range->x_left-1;
+      cr_ptrs[(*num_clipped_crs)-1]->dist_l  = dist_l + (dist_r-dist_l)*(xlc - x_left)/(x_right - x_left);
+      cr_ptrs[(*num_clipped_crs)-1]->dist_r  = dist_l + (dist_r-dist_l)*((cur_range->x_left-1) - x_left)/(x_right - x_left);
       if(store_clipping) { insert(cr_ptrs[(*num_clipped_crs)-1]); }
-      x_left = cur_range->x_right + 1;
+      xlc = cur_range->x_right + 1;
     }
     // no? then just advance the left past this range
     else
     {
       //printf("  Case 3: no gap. Advancing\n");
-      x_left = MAX(x_left, cur_range->x_right + 1);
+      xlc = MAX(xlc, cur_range->x_right + 1);
     }
 
     cur_range = cur_range->next_range;
   }
 
   // add any remaining, from after the right edge
-  if(x_left <= x_right)
+  if(xlc <= xrc)
   {
-    //printf("Post-iteration. Adding [%d,%d]\n", x_left, x_right);
+    //printf("Post-iteration. Adding [%d,%d]\n", xlc, xrc);
     (*num_clipped_crs)++;
     cr_ptrs[(*num_clipped_crs)-1] = new column_range;
-    cr_ptrs[(*num_clipped_crs)-1]->x_left  = x_left;
-    cr_ptrs[(*num_clipped_crs)-1]->x_right = x_right;
+    cr_ptrs[(*num_clipped_crs)-1]->x_left  = xlc;
+    cr_ptrs[(*num_clipped_crs)-1]->x_right = xrc;
+    cr_ptrs[(*num_clipped_crs)-1]->dist_l  = dist_l + (dist_r-dist_l)*(xlc - x_left)/(x_right - x_left);
+    cr_ptrs[(*num_clipped_crs)-1]->dist_r  = dist_l + (dist_r-dist_l)*(xrc - x_left)/(x_right - x_left);
     if(store_clipping) { insert(cr_ptrs[(*num_clipped_crs)-1]); }
   }
 
@@ -250,7 +261,7 @@ void column_range_list_clip_test1(void)
   cr_list.insert(cr3);
 
   x_left = -40; x_right = -31;
-  clipped_crs = cr_list.clip_segment(true, x_left, x_right, &num_clipped_crs);
+  clipped_crs = cr_list.clip_segment(true, x_left, x_right, 0, 0, &num_clipped_crs);
   TEST_ASSERT(clipped_crs != NULL);
   TEST_ASSERT_EQUAL(num_clipped_crs, 1);
   TEST_ASSERT_EQUAL(clipped_crs[0]->x_left , x_left);
@@ -279,7 +290,7 @@ void column_range_list_clip_test2(void)
   cr_list.insert(cr3);
 
   x_left = 26; x_right = 30;
-  clipped_crs = cr_list.clip_segment(true, x_left, x_right, &num_clipped_crs);
+  clipped_crs = cr_list.clip_segment(true, x_left, x_right, 0, 0, &num_clipped_crs);
   TEST_ASSERT(clipped_crs != NULL);
   TEST_ASSERT_EQUAL(num_clipped_crs, 1);
   TEST_ASSERT_EQUAL(clipped_crs[0]->x_left , x_left);
@@ -308,7 +319,7 @@ void column_range_list_clip_test3(void)
   cr_list.insert(cr3);
 
   x_left = -12; x_right = 10;
-  clipped_crs = cr_list.clip_segment(true, x_left, x_right, &num_clipped_crs);
+  clipped_crs = cr_list.clip_segment(true, x_left, x_right, 0, 0, &num_clipped_crs);
   TEST_ASSERT(clipped_crs != NULL);
   TEST_ASSERT_EQUAL(num_clipped_crs, 1);
   TEST_ASSERT_EQUAL(clipped_crs[0]->x_left , -9);
@@ -337,7 +348,7 @@ void column_range_list_clip_test4(void)
   cr_list.insert(cr3);
 
   x_left = -32; x_right = 30;
-  clipped_crs = cr_list.clip_segment(true, x_left, x_right, &num_clipped_crs);
+  clipped_crs = cr_list.clip_segment(true, x_left, x_right, 0, 0, &num_clipped_crs);
   TEST_ASSERT(clipped_crs != NULL);
   TEST_ASSERT_EQUAL(num_clipped_crs, 3);
   TEST_ASSERT_EQUAL(clipped_crs[0]->x_left , -32);

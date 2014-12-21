@@ -37,7 +37,10 @@ void subsector::set_nth_segment(int n, wad_segment const *_segment)
   segments[n] = _segment;
 }
 
-void subsector::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, vis_planes *vp, thing *things, int16_t num_things) const
+void subsector::render_player_view(column_range_list *col_ranges, 
+                                   projector const *_projector, player const *_player, 
+                                   vis_planes *vp, 
+                                   thing *things, int16_t num_things, vis_things *vt) const
 {
   debug_printf(" subsector %d\n", subsector_num);
 
@@ -61,7 +64,7 @@ void subsector::render_player_view(column_range_list *col_ranges, projector cons
   {
     if(things[i].get_subsector() == this)
     {
-      things[i].render_player_view(col_ranges, _projector, _player);
+      vt->add_thing(&things[i]);
     }
   }
 }

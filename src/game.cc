@@ -6,6 +6,7 @@
 #include "frame_buf.h"
 #include "key_codes.h"
 #include "column_range.h"
+#include "vis_things.h"
 #include "vis_planes.h"
 
 game::game()
@@ -63,6 +64,7 @@ void game::do_frame(void)
 
   column_range_list col_ranges;
   vis_planes _vis_planes;
+  vis_things _vis_things;
 
   _player.move(_map);
 
@@ -78,8 +80,9 @@ void game::do_frame(void)
   omap.translate_origin(-60,-145);
 
   frame_buf_clear();
-  _map->render_player_view(&col_ranges, &_projector, &_player, &_vis_planes);
+  _map->render_player_view(&col_ranges, &_projector, &_player, &_vis_planes, &_vis_things);
   _vis_planes.draw_planes(&_projector, &_player);
+  _vis_things.draw_things(&col_ranges, &_projector, &_player);
 
   omap.darken_background();
   omap.draw_bbox();

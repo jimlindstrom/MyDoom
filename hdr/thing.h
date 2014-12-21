@@ -10,6 +10,7 @@
 #include "player.h"
 #include "column_range.h"
 #include "sprites.h"
+#include "thing_projection.h"
 
 #define THING_NUM_BYTES 10 // size on disk (in the lump)
 
@@ -51,10 +52,9 @@ public:
   subsector const *get_subsector(void) const { return _subsector; }
   sector const *get_sector(void) const;
   thing_definition const *get_definition(void) const { return defn; }
+  uint8_t get_frame_idx(void) const;
 
   void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player) const;
-
-  uint8_t get_frame_idx(void) const;
 
 private:
   vertex map_position;
@@ -67,6 +67,9 @@ private:
   uint16_t frame_ctr;
 
   subsector const *_subsector;
+
+  void project(projector const *_projector, player const *_player, thing_projection *proj) const;
+  sprite const *get_cur_sprite(thing_projection const *proj) const;
 };
 
 #endif

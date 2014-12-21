@@ -299,23 +299,24 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   seg.clip_to_vectors(clip_l, clip_r, &v_l_c, &v_r_c, &u_l_c, &u_r_c);
   //debug_printf("    v: (%.1f, %.1f)->(%.1f,%.1f)\n", v_l_c.get_x(), v_l_c.get_y(), v_r_c.get_x(), v_r_c.get_y());
 
-  float ang_l_c = origin.angle_to_point(&v_l_c); float x_l_c = _projector->project_horiz_angle_to_x(ang_l_c);
-  float ang_r_c = origin.angle_to_point(&v_r_c); float x_r_c = _projector->project_horiz_angle_to_x(ang_r_c);
+  float ang_l_c = origin.angle_to_point(&v_l_c); 
+  float ang_r_c = origin.angle_to_point(&v_r_c); 
+  float x_l_c = _projector->project_horiz_angle_to_x(ang_l_c);
+  float x_r_c = _projector->project_horiz_angle_to_x(ang_r_c);
+  float dist_l_c = origin.distance_to_point(&v_l_c);
+  float dist_r_c = origin.distance_to_point(&v_r_c);
   //debug_printf("    clipped angles: [%.1f,%.1f]\n", RAD_TO_DEG(ang_l_c), RAD_TO_DEG(ang_r_c));
   //debug_printf("    clipped x: [%.1f,%.1f]\n", x_l_c, x_r_c);
 
   // This is the state in which we're simulating actually rendering the wall in the player's view
   column_range **clipped_ranges;
   int num_clipped_crs;
-  clipped_ranges = col_ranges->clip_segment(store_clipping, x_l_c, x_r_c, &num_clipped_crs);
+  clipped_ranges = col_ranges->clip_segment(store_clipping, x_l_c, x_r_c, dist_l_c, dist_r_c, &num_clipped_crs);
   //debug_printf("    %d clipped ranges\n", num_clipped_crs);
 
   wall.light_level = front_sector->get_light_level();
   wall.vp = vp;
 
-  vertex v1, v2;
-  vertex d(vertex_r);
-  d.subtract(vertex_l);
   for(int i=0; i<num_clipped_crs; i++) // FIXME: Push this down into column_range
   {
     if(x_r_c > x_l_c) // FIXME: there's a bug here in which x_r_c == x_l_c (FIXME: why is this within the for loop??)
@@ -325,16 +326,13 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
 
       float t1 = (wall.x_l - x_l_c)/(float)(x_r_c-x_l_c);
       t1 = (t1*(u_r_c - u_l_c)) + u_l_c;
-      v1.set_x(vertex_l->get_x() + t1*d.get_x());
-      v1.set_y(vertex_l->get_y() + t1*d.get_y());
+
       float t2 = (wall.x_r - x_l_c)/(float)(x_r_c-x_l_c);
       t2 = (t2*(u_r_c - u_l_c)) + u_l_c;
-      v2.set_x(vertex_l->get_x() + t2*d.get_x());
-      v2.set_y(vertex_l->get_y() + t2*d.get_y());
       debug_printf("      clipped range %d: [%d,%d], t:[%.2f,%.2f]\n", i, wall.x_l, wall.x_r, t1, t2);
 
-      wall.dist_l = _player->get_map_position()->distance_to_point(&v1); // FIXME: this should be the clipped point.
-      wall.dist_r = _player->get_map_position()->distance_to_point(&v2); // ...
+      wall.dist_l = clipped_ranges[i]->dist_l; //_player->get_map_position()->distance_to_point(&v1); // FIXME: this should be the clipped point.
+      wall.dist_r = clipped_ranges[i]->dist_r; //_player->get_map_position()->distance_to_point(&v2); // ...
       debug_printf("      dists: [%.1f,%.1f]\n", wall.dist_l, wall.dist_r);
       _projector->project_z_to_y(-_player->get_view_height(), wall.dist_l, &wall.y0_l, &wall.dy_l);
       _projector->project_z_to_y(-_player->get_view_height(), wall.dist_r, &wall.y0_r, &wall.dy_r);

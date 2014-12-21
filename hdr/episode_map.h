@@ -18,6 +18,7 @@
 #include "player.h"
 #include "column_range.h"
 #include "vis_planes.h"
+#include "vis_things.h"
 
 class episode_map
 {
@@ -33,7 +34,9 @@ public:
 
   void draw_overhead_map(overhead_map *omap) const;
 
-  void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, vis_planes *vp) const;
+  void render_player_view(column_range_list *col_ranges, 
+                          projector const *_projector, player const *_player, 
+                          vis_planes *vp, vis_things *vt) const;
 
   bool can_move(vertex const *old_position, vertex const *new_position, float *floor_height) const;
 

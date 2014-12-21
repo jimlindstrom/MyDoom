@@ -1,7 +1,6 @@
 In Progress
 ---
-- BUG: transparent walls, things, and visplanes aren't drawn in the right order
-  - Need to draw things AFTER everything. and clip them against what's already drawn
+- BUG: closer visplanes should occlude further sprites
 - BUG: seems like the view plane is too far out into the viewing frustrum
   - Player doesn't step up soon enough, on stairs.
   - Ceilings disappear too soon (as you walk forward)

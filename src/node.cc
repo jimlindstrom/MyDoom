@@ -49,7 +49,10 @@ bool node::read_from_lump_data(uint8_t const *lump_data)
   return true;
 }
 
-void node::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, vis_planes *vp, thing *things, int16_t num_things) const
+void node::render_player_view(column_range_list *col_ranges, 
+                              projector const *_projector, player const *_player, 
+                              vis_planes *vp, 
+                              thing *things, int16_t num_things, vis_things *vt) const
 {
   node_child_link const *closer_child;
   node_child_link const *farther_child;
@@ -77,8 +80,8 @@ void node::render_player_view(column_range_list *col_ranges, projector const *_p
   }
 
   // render the closer_child
-  if(closer_child->is_node())    { closer_child ->_node     ->render_player_view(col_ranges, _projector, _player, vp, things, num_things); }
-  else                           { closer_child ->_subsector->render_player_view(col_ranges, _projector, _player, vp, things, num_things); }
+  if(closer_child->is_node())    { closer_child ->_node     ->render_player_view(col_ranges, _projector, _player, vp, things, num_things, vt); }
+  else                           { closer_child ->_subsector->render_player_view(col_ranges, _projector, _player, vp, things, num_things, vt); }
   
   // render the farther_child, only if bbox overlaps or if open space in between
   debug_printf("node %d (far side)\n", node_num);
@@ -96,8 +99,8 @@ void node::render_player_view(column_range_list *col_ranges, projector const *_p
     { 
       debug_printf("  undrawn cols toward far bbox\n"); 
     }
-    if(farther_child->is_node()) { farther_child->_node     ->render_player_view(col_ranges, _projector, _player, vp, things, num_things); }
-    else                         { farther_child->_subsector->render_player_view(col_ranges, _projector, _player, vp, things, num_things); }
+    if(farther_child->is_node()) { farther_child->_node     ->render_player_view(col_ranges, _projector, _player, vp, things, num_things, vt); }
+    else                         { farther_child->_subsector->render_player_view(col_ranges, _projector, _player, vp, things, num_things, vt); }
   }
   else { debug_printf("  skipping.\n"); }
 }
