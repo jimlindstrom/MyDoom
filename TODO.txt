@@ -2,13 +2,11 @@ In Progress
 ---
 - BUG: closer visplanes should occlude further sprites
 - BUG: top and bottom textures should occlude further sprites
-- BUG: seems like the view plane is too far out into the viewing frustrum
-  - Player doesn't step up soon enough, on stairs.
-  - Ceilings disappear too soon (as you walk forward)
-- BUG: When a lineseg is long or close, and maybe spans both FOV vectors, it gets clipped but shouldn't.
 
 Queued up
 ---
+- BUG: Some weird glitching. ?
+
 - BUG: in E1M1, the green thing atop the stairs is buried.
 
 - CHORE: refactor thing::render
