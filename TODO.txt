@@ -1,6 +1,7 @@
 In Progress
 ---
 - BUG: closer visplanes should occlude further sprites
+- BUG: top and bottom textures should occlude further sprites
 - BUG: seems like the view plane is too far out into the viewing frustrum
   - Player doesn't step up soon enough, on stairs.
   - Ceilings disappear too soon (as you walk forward)
