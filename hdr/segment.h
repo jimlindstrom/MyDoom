@@ -10,6 +10,7 @@
 #include "linedef.h"
 #include "column_range.h"
 #include "vis_planes.h"
+#include "segment_projection.h"
 
 #define SEGMENT_NUM_BYTES 12 // size on disk (in the lump)
 
@@ -96,6 +97,9 @@ private:
 
   bool is_backface(float angle_l, float angle_r) const;
   bool is_outside_fov(float angle_l, float angle_r, float horiz_fov_radius) const;
+
+  void project(column_range_list *col_ranges, projector const *_projector, player const *_player,
+               segment_projection *proj) const;
 };
 
 void segment_tests(void);

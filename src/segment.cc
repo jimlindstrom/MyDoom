@@ -238,119 +238,112 @@ bool wad_segment::is_same_ceiling_plane_on_both_sides(void) const
          (back_sector->get_light_level()     == front_sector->get_light_level());
 }
 
-void wad_segment::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player,
-                                     vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
+void wad_segment::project(column_range_list *col_ranges, projector const *_projector, player const *_player,
+                          segment_projection *proj) const
 {
-  vertex origin(0,0);
-  wall_projection wall;
+  proj->is_visible = false;
 
-  float angle_r, angle_l;
-  calculate_angles_from_player(_player, &angle_l, &angle_r);
-  if(is_backface(angle_l, angle_r) ||
-     is_outside_fov(angle_l, angle_r, _projector->get_horiz_fov_radius()))
+  // quickly reject empty lines, back faces, lines outside/behind FOV
+  calculate_angles_from_player(_player, &proj->ang_l, &proj->ang_r);
+  if(is_empty_line() ||
+     is_backface(proj->ang_l, proj->ang_r) ||
+     is_outside_fov(proj->ang_l, proj->ang_r, _projector->get_horiz_fov_radius()))
   {
     return;
-  }
-
-  bool store_clipping = true;
-  if(is_singled_sided_line())
-  {
-    // carry on
-  }
-  else if(is_closed_door())
-  {
-    // carry on
-  }
-  else if(is_window())
-  {
-    store_clipping = false; // pass through...
-  }
-  else if(is_empty_line())
-  {
-    return; // ignore
-  }
-  else if(is_other_single_sided_line())
-  {
-    store_clipping = false; // pass through...
   }
 
   debug_printf("  segment %d: (%.1f,%.1f)->(%.1f,%.1f)\n",
                segment_num,
                vertex_l->get_x(), vertex_l->get_y(),
                vertex_r->get_x(), vertex_r->get_y() ); 
-  debug_printf("    angles: [%.1f,%.1f]\n", RAD_TO_DEG(angle_l), RAD_TO_DEG(angle_r));
+  debug_printf("    angles: [%.1f,%.1f]\n", RAD_TO_DEG(proj->angle_l), RAD_TO_DEG(proj->angle_r));
+
+  // If not a solid line segment, don't consider the columns completely occluded. (continue drawing further-back segments)
+  if(is_window() || is_other_single_sided_line()) { proj->store_clipping = false; }
+  else                                            { proj->store_clipping = true;  }
 
   // If the back sector has the same floor or ceiling, dont' clip the cooresponding plane
-  wall.clip_floor = wall.clip_ceiling = true;
-  if(!is_closed_door() && is_same_floor_plane_on_both_sides()  ) { wall.clip_floor   = false; }
-  if(!is_closed_door() && is_same_ceiling_plane_on_both_sides()) { wall.clip_ceiling = false; }
+  proj->clip_floor = proj->clip_ceiling = true;
+  if(!is_closed_door() && is_same_floor_plane_on_both_sides()  ) { proj->clip_floor   = false; }
+  if(!is_closed_door() && is_same_ceiling_plane_on_both_sides()) { proj->clip_ceiling = false; }
 
-  // step 1: translate it into player-centric 3D coordinates
+  // step 1: translate segment's verticies into player-centric map coordinates
   vertex _pvl(vertex_l); _pvl.subtract(_player->get_map_position()); _pvl.rotate(-_player->get_facing_angle());
   vertex _pvr(vertex_r); _pvr.subtract(_player->get_map_position()); _pvr.rotate(-_player->get_facing_angle());
   segment seg(&_pvl, &_pvr);
-  //debug_printf("    pv: (%.1f,%.1f)->(%.1f,%.1f)\n", _pvl.get_x(), _pvl.get_y(), _pvr.get_x(), _pvr.get_y()); 
 
   // Step 2: clip it 
   vector const *clip_l = _projector->get_left_clipping_vector();
   vector const *clip_r = _projector->get_right_clipping_vector();
-  vertex v_l_c, v_r_c;
-  float u_l_c, u_r_c;
-  seg.clip_to_vectors(clip_l, clip_r, &v_l_c, &v_r_c, &u_l_c, &u_r_c);
-  //debug_printf("    v: (%.1f, %.1f)->(%.1f,%.1f)\n", v_l_c.get_x(), v_l_c.get_y(), v_r_c.get_x(), v_r_c.get_y());
+  seg.clip_to_vectors(clip_l, clip_r, &proj->v_l_c, &proj->v_r_c, &proj->u_l_c, &proj->u_r_c);
 
-  float ang_l_c = origin.angle_to_point(&v_l_c); 
-  float ang_r_c = origin.angle_to_point(&v_r_c); 
-  float x_l_c = _projector->project_horiz_angle_to_x(ang_l_c);
-  float x_r_c = _projector->project_horiz_angle_to_x(ang_r_c);
-  float dist_l_c = origin.distance_to_point(&v_l_c);
-  float dist_r_c = origin.distance_to_point(&v_r_c);
-  //debug_printf("    clipped angles: [%.1f,%.1f]\n", RAD_TO_DEG(ang_l_c), RAD_TO_DEG(ang_r_c));
-  //debug_printf("    clipped x: [%.1f,%.1f]\n", x_l_c, x_r_c);
+  // Step 3: Project it
+  vertex origin(0,0);
+  proj->ang_l_c  = origin.angle_to_point(&proj->v_l_c); 
+  proj->ang_r_c  = origin.angle_to_point(&proj->v_r_c); 
+  proj->x_l_c    = _projector->project_horiz_angle_to_x(proj->ang_l_c);
+  proj->x_r_c    = _projector->project_horiz_angle_to_x(proj->ang_r_c);
+  proj->dist_l_c = origin.distance_to_point(&proj->v_l_c);
+  proj->dist_r_c = origin.distance_to_point(&proj->v_r_c);
 
-  // This is the state in which we're simulating actually rendering the wall in the player's view
+  // guard against zero-width segments
+  if(proj->x_r_c <= proj->x_l_c) { return; } // FIXME: how could this happen?
+
+  proj->is_visible = true;
+}
+
+void wad_segment::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player,
+                                     vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
+{
+  segment_projection seg_proj;
   column_range **clipped_ranges;
   int num_clipped_crs;
-  clipped_ranges = col_ranges->clip_segment(store_clipping, x_l_c, x_r_c, dist_l_c, dist_r_c, &num_clipped_crs);
-  //debug_printf("    %d clipped ranges\n", num_clipped_crs);
+  wall_projection wall_proj;
 
-  wall.light_level = front_sector->get_light_level();
-  wall.vp = vp;
+  project(col_ranges, _projector, _player, &seg_proj);
+  if(!seg_proj.is_visible)
+  {
+    return;
+  }
+
+  wall_proj.clip_floor     = seg_proj.clip_floor;
+  wall_proj.clip_ceiling   = seg_proj.clip_ceiling;
+  wall_proj.light_level    = front_sector->get_light_level();
+  wall_proj.vp             = vp;
+
+  clipped_ranges = col_ranges->clip_segment(seg_proj.store_clipping, 
+                                            seg_proj.x_l_c, seg_proj.x_r_c, 
+                                            seg_proj.dist_l_c, seg_proj.dist_r_c, 
+                                            &num_clipped_crs);
 
   for(int i=0; i<num_clipped_crs; i++) // FIXME: Push this down into column_range
   {
-    if(x_r_c > x_l_c) // FIXME: there's a bug here in which x_r_c == x_l_c (FIXME: why is this within the for loop??)
-    {
-      wall.x_l = clipped_ranges[i]->x_left;
-      wall.x_r = clipped_ranges[i]->x_right;
+    wall_proj.x_l = clipped_ranges[i]->x_left;
+    wall_proj.x_r = clipped_ranges[i]->x_right;
 
-      float t1 = (wall.x_l - x_l_c)/(float)(x_r_c-x_l_c);
-      t1 = (t1*(u_r_c - u_l_c)) + u_l_c;
+    float t1 = seg_proj.u_l_c + (seg_proj.u_r_c - seg_proj.u_l_c)*(wall_proj.x_l - seg_proj.x_l_c)/(float)(seg_proj.x_r_c-seg_proj.x_l_c);
+    float t2 = seg_proj.u_l_c + (seg_proj.u_r_c - seg_proj.u_l_c)*(wall_proj.x_r - seg_proj.x_l_c)/(float)(seg_proj.x_r_c-seg_proj.x_l_c);
+    debug_printf("      clipped range %d: [%d,%d], t:[%.2f,%.2f]\n", i, wall_proj.x_l, wall_proj.x_r, t1, t2);
 
-      float t2 = (wall.x_r - x_l_c)/(float)(x_r_c-x_l_c);
-      t2 = (t2*(u_r_c - u_l_c)) + u_l_c;
-      debug_printf("      clipped range %d: [%d,%d], t:[%.2f,%.2f]\n", i, wall.x_l, wall.x_r, t1, t2);
+    wall_proj.dist_l = clipped_ranges[i]->dist_l;
+    wall_proj.dist_r = clipped_ranges[i]->dist_r;
+    debug_printf("      dists: [%.1f,%.1f]\n", wall_proj.dist_l, wall_proj.dist_r);
+    _projector->project_z_to_y(-_player->get_view_height(), wall_proj.dist_l, &wall_proj.y0_l, &wall_proj.dy_l);
+    _projector->project_z_to_y(-_player->get_view_height(), wall_proj.dist_r, &wall_proj.y0_r, &wall_proj.dy_r);
 
-      wall.dist_l = clipped_ranges[i]->dist_l; //_player->get_map_position()->distance_to_point(&v1); // FIXME: this should be the clipped point.
-      wall.dist_r = clipped_ranges[i]->dist_r; //_player->get_map_position()->distance_to_point(&v2); // ...
-      debug_printf("      dists: [%.1f,%.1f]\n", wall.dist_l, wall.dist_r);
-      _projector->project_z_to_y(-_player->get_view_height(), wall.dist_l, &wall.y0_l, &wall.dy_l);
-      _projector->project_z_to_y(-_player->get_view_height(), wall.dist_r, &wall.y0_r, &wall.dy_r);
-  
-      float seg_len= get_length(); 
-      float seg_off= _linedef->get_start_vertex()->distance_to_point(vertex_l);
-      if(direction == 1) { seg_off = seg_len - seg_off; } // FIXME: why am I reversing this? seems bad...
-      wall.ldx_l = seg_off + (t1*seg_len);
-      wall.ldx_r = seg_off + (t2*seg_len);
-      debug_printf("        dir:%d, offset:%d, seg_len:%.1f, seg_off:%.1f\n", direction, offset, seg_len, seg_off);
- 
-      if(floor)   { floor   = vp->adjust_or_create(floor,   wall.x_l, wall.x_r); floor  ->set_plane_type(VIS_PLANE_FLOOR_TYPE  ); }
-      if(ceiling) { ceiling = vp->adjust_or_create(ceiling, wall.x_l, wall.x_r); ceiling->set_plane_type(VIS_PLANE_CEILING_TYPE); }
-      wall.floor   = floor;
-      wall.ceiling = ceiling;
+    float seg_len= get_length(); 
+    float seg_off= _linedef->get_start_vertex()->distance_to_point(vertex_l);
+    if(direction == 1) { seg_off = seg_len - seg_off; } // FIXME: why am I reversing this? seems bad...
+    wall_proj.ldx_l = seg_off + (t1*seg_len);
+    wall_proj.ldx_r = seg_off + (t2*seg_len);
+    debug_printf("        dir:%d, offset:%d, seg_len:%.1f, seg_off:%.1f\n", direction, offset, seg_len, seg_off);
 
-      _linedef->render(direction, &wall);
-    }
+    if(floor)   { floor   = vp->adjust_or_create(floor,   wall_proj.x_l, wall_proj.x_r); }
+    if(ceiling) { ceiling = vp->adjust_or_create(ceiling, wall_proj.x_l, wall_proj.x_r); }
+    wall_proj.floor   = floor;
+    wall_proj.ceiling = ceiling;
+
+    _linedef->render(direction, &wall_proj);
   }
   delete[] clipped_ranges;
 }

@@ -96,9 +96,6 @@ void vis_plane::draw(projector const *_projector, player const *_player)
   palette const *pal = palettes_get(0); // FIXME: use the right palette
 
   debug_printf("    visplane (0x%08x) x:[%d,%d]", (uint32_t)this, x_l, x_r);
-  if     (plane_type==VIS_PLANE_FLOOR_TYPE  ) { debug_printf(" (floor)\n");   }
-  else if(plane_type==VIS_PLANE_CEILING_TYPE) { debug_printf(" (ceiling)\n"); }
-  else                                        { debug_printf(" (unknown)\n"); return; }
 
   float rel_z = _player->get_view_height() - height;
   for(int16_t x=MAX(0,x_l); x<=MIN(x_r,w-1); x++)

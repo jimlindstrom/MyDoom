@@ -24,8 +24,6 @@ public:
   bool can_be_extended_to(int16_t new_x_l, int16_t new_x_r);
   void extend_to(int16_t new_x_l, int16_t new_x_r);
 
-  void set_plane_type(int t) { plane_type = t; }
-
   int16_t get_height() const { return height; }
   flat const *get_tex(void) const { return tex; }
   uint16_t get_light_level(void) const { return light_level; }
@@ -45,8 +43,6 @@ private:
   int16_t x_l, x_r;
   int16_t y_t[MAX_SCREEN_WIDTH];
   int16_t y_b[MAX_SCREEN_WIDTH];
-
-  int plane_type; // debug only
   
 };
 
