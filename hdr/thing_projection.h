@@ -29,11 +29,10 @@ public:
   float horiz_fov_radius;
   float x_l, x_r;
   float y_t, y_b;
+  float z_t, z_b;
 
-  int16_t x_l_c;
-  int16_t x_r_c;
-  int16_t y_t_c;
-  int16_t y_b_c;
+  int16_t x_l_c, x_r_c;
+  int16_t y_t_c, y_b_c;
 
   sprite const *_sprite;
 

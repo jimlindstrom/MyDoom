@@ -1,15 +1,16 @@
 In Progress
 ---
-- BUG: closer visplanes should occlude further sprites
-- BUG: top and bottom textures should occlude further sprites
+- BUG: as you walk through doors, they get pegged to screen-bottom?
+- BUG: certian lower textures are cycling nondeterministically
+
+- BUG: top of backface lower/upper walls should occlude further-away sprites
+- BUG: certain wall types (doors?) are unnecessarily clipping closer-in sprites
 
 Queued up
 ---
+- CHORE: tech debt, FIXMEs, modeling...
+
 - BUG: Some weird glitching. ?
-
-- BUG: in E1M1, the green thing atop the stairs is buried.
-
-- CHORE: refactor thing::render
 
 - FEATURE: animate wall textures
 - FEATURE: animate flats
@@ -28,3 +29,7 @@ Queued up
   - FEATURE: increase lighting where wall lights are
 
 - BUG: top of wall is rounded in final room (z projection is wrong)
+
+- FEATURE: ammo
+- FEATURE: shooting
+- FEATURE: things move around

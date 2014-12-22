@@ -14,13 +14,14 @@ void thing_projection::clip(column_range_list *col_ranges)
 {
   int16_t screen_h = games_get_screen_height();
   int16_t screen_w = games_get_screen_width();
+  bool have_tried_nonsolid_walls = false;
 
   x_l_c = MAX(0,          x_l);
   x_r_c = MIN(screen_w-1, x_r);
   y_t_c = MAX(0,          y_t);
   y_b_c = MIN(screen_h-1, y_b);
 
-  wall_projection const *wall_proj = col_ranges->get_left_range();
+  wall_projection const *wall_proj = col_ranges->get_left_solid_range();
   while(wall_proj)
   {
     if(wall_proj->overlaps_range(x_l_c, x_r_c))
@@ -29,16 +30,41 @@ void thing_projection::clip(column_range_list *col_ranges)
       int16_t xr = MIN(x_r_c, wall_proj->x_r);
       for(int16_t x=xl; x<=xr; x++)
       {
-        float clip_dist  = wall_proj->dist_l + (wall_proj->dist_r - wall_proj->dist_l)*(x - wall_proj->x_l)/(wall_proj->x_r - wall_proj->x_l);
+        float clip_dist  = wall_proj->dist_l + ( (wall_proj->dist_r - wall_proj->dist_l) *
+                                                 (x                 - wall_proj->x_l   ) /
+                                                 (wall_proj->x_r    - wall_proj->x_l   ) );
         float thing_dist = dist_l + (dist_r - dist_l)*(x - x_l)/(x_r - x_l);
-        if(thing_dist < clip_dist)
+        // First, check whether the thing is nearer than the closest solid wall
+        if(thing_dist < clip_dist) // thing is closer than player
         {
-          cliptop[x] = y_t_c;
-          clipbot[x] = y_b_c;
+          if(wall_proj->mid.tex)
+          {
+            cliptop[x] = y_t_c;
+            clipbot[x] = y_b_c;
+          }
+        }
+        // Then check whether it's occluded by any visplanes
+        if(clip_dist < thing_dist) // wall is closer than thing
+        {
+          if(wall_proj->upper.tex)
+          {
+            cliptop[x] = MAX(cliptop[x], wall_proj->sprite_clip_top[x]);
+          }
+          if(wall_proj->lower.tex)
+          {
+            clipbot[x] = MIN(clipbot[x], wall_proj->sprite_clip_bot[x]);
+          }
         }
       }
     }
+
+    // next
     wall_proj = wall_proj->next_range;
+    if(!wall_proj && !have_tried_nonsolid_walls)
+    {
+      have_tried_nonsolid_walls = true;
+      wall_proj = col_ranges->get_first_nonsolid_range();
+    }
   }
 }
 

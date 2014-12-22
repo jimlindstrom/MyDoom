@@ -6,6 +6,7 @@
 #include "vis_planes.h"
 #include "vis_plane.h"
 
+// FIXME: this is badly named. It's a projected, *clipped segment* of a wall.
 class wall_projection
 {
 public:
@@ -17,7 +18,7 @@ public:
   void render_2sided(void) const;
 
   // filled in by column_range_list::clip_segment
-  wall_projection *next_range;
+  wall_projection *next_range; // FIXME: this should be in a container class like node_child_link
   int16_t x_l,    x_r;     // screen x
   float   dist_l, dist_r;  // distance from player to edge (overhead perspective. ignores z)
 
@@ -30,6 +31,8 @@ public:
   vis_planes *vp;
   vis_plane *floor, *ceiling;
   bool clip_floor, clip_ceiling;
+  int16_t sprite_clip_top[MAX_SCREEN_WIDTH];
+  int16_t sprite_clip_bot[MAX_SCREEN_WIDTH];
 
   // filled in by linedef::render
   bool is_one_sided;

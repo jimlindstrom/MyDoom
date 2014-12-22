@@ -7,12 +7,23 @@
 
 column_range_list::column_range_list()
 {
-  left_range = NULL;
+  left_solid_range = NULL;
+  first_nonsolid_range = NULL;
 }
 
 column_range_list::~column_range_list()
 {
-  wall_projection *cur_range = left_range, *next_range;;
+  wall_projection *cur_range, *next_range;
+
+  cur_range = left_solid_range;
+  while(cur_range)
+  {
+    next_range = cur_range->next_range;
+    delete cur_range;
+    cur_range = next_range;
+  }
+
+  cur_range = first_nonsolid_range;
   while(cur_range)
   {
     next_range = cur_range->next_range;
@@ -21,23 +32,23 @@ column_range_list::~column_range_list()
   }
 }
 
-bool column_range_list::insert(wall_projection *new_range)
+bool column_range_list::insert_solid(wall_projection *new_range)
 {
   new_range->next_range = NULL;
 
-  if(left_range == NULL)
+  if(left_solid_range == NULL)
   {
-    left_range = new_range;
+    left_solid_range = new_range;
     return true;
   }
-  if(new_range->x_r <= left_range->x_l)
+  if(new_range->x_r <= left_solid_range->x_l)
   {
-    new_range->next_range = left_range;
-    left_range = new_range;
+    new_range->next_range = left_solid_range;
+    left_solid_range = new_range;
     return true;
   }
 
-  wall_projection *cur_range = left_range;
+  wall_projection *cur_range = left_solid_range;
   while(cur_range)
   {
     if(cur_range->x_r <= new_range->x_l)
@@ -55,12 +66,19 @@ bool column_range_list::insert(wall_projection *new_range)
   return false;
 }
 
+void column_range_list::insert_nonsolid(wall_projection *new_range)
+{
+  // just insert it at the beginning of the list, for simplicity's sake
+  new_range->next_range = first_nonsolid_range;
+  first_nonsolid_range = new_range;
+}
+
 wall_projection **column_range_list::clip_segment(segment_projection const *seg_proj,
                                                   int *num_clipped_crs)
 {
   int max_ranges = 2;
   wall_projection **cr_ptrs = new wall_projection *[max_ranges];
-  wall_projection *cur_range = left_range;
+  wall_projection *cur_range = left_solid_range;
 
   *num_clipped_crs = 0;
 
@@ -93,7 +111,8 @@ wall_projection **column_range_list::clip_segment(segment_projection const *seg_
       cr_ptrs[(*num_clipped_crs)-1]->dist_r  = seg_proj->dist_l_c + ( (seg_proj->dist_r_c-seg_proj->dist_l_c) *
                                                                       (xrc - seg_proj->x_l_c)                 /
                                                                       (seg_proj->x_r_c   - seg_proj->x_l_c  ) );
-      if(seg_proj->store_clipping) { insert(cr_ptrs[(*num_clipped_crs)-1]); }
+      if(seg_proj->store_clipping) { insert_solid(   cr_ptrs[(*num_clipped_crs)-1]); }
+      else                         { insert_nonsolid(cr_ptrs[(*num_clipped_crs)-1]); }
       xlc = xrc + 1; // DONE
     }
     // okay, well is there *any* gap?
@@ -106,7 +125,8 @@ wall_projection **column_range_list::clip_segment(segment_projection const *seg_
       cr_ptrs[(*num_clipped_crs)-1]->x_r = cur_range->x_l-1;
       cr_ptrs[(*num_clipped_crs)-1]->dist_l  = seg_proj->dist_l_c + (seg_proj->dist_r_c-seg_proj->dist_l_c)*(xlc - seg_proj->x_l_c)/(seg_proj->x_r_c - seg_proj->x_l_c);
       cr_ptrs[(*num_clipped_crs)-1]->dist_r  = seg_proj->dist_l_c + (seg_proj->dist_r_c-seg_proj->dist_l_c)*((cur_range->x_l-1) - seg_proj->x_l_c)/(seg_proj->x_r_c - seg_proj->x_l_c);
-      if(seg_proj->store_clipping) { insert(cr_ptrs[(*num_clipped_crs)-1]); }
+      if(seg_proj->store_clipping) { insert_solid(   cr_ptrs[(*num_clipped_crs)-1]); }
+      else                         { insert_nonsolid(cr_ptrs[(*num_clipped_crs)-1]); }
       xlc = cur_range->x_r + 1;
     }
     // no? then just advance the left past this range
@@ -129,7 +149,8 @@ wall_projection **column_range_list::clip_segment(segment_projection const *seg_
     cr_ptrs[(*num_clipped_crs)-1]->x_r = xrc;
     cr_ptrs[(*num_clipped_crs)-1]->dist_l  = seg_proj->dist_l_c + (seg_proj->dist_r_c-seg_proj->dist_l_c)*(xlc - seg_proj->x_l_c)/(seg_proj->x_r_c - seg_proj->x_l_c);
     cr_ptrs[(*num_clipped_crs)-1]->dist_r  = seg_proj->dist_l_c + (seg_proj->dist_r_c-seg_proj->dist_l_c)*(xrc - seg_proj->x_l_c)/(seg_proj->x_r_c - seg_proj->x_l_c);
-    if(seg_proj->store_clipping) { insert(cr_ptrs[(*num_clipped_crs)-1]); }
+    if(seg_proj->store_clipping) { insert_solid(   cr_ptrs[(*num_clipped_crs)-1]); }
+    else                         { insert_nonsolid(cr_ptrs[(*num_clipped_crs)-1]); }
   }
 
   return cr_ptrs;
@@ -137,7 +158,7 @@ wall_projection **column_range_list::clip_segment(segment_projection const *seg_
 
 bool column_range_list::any_unclipped_columns_in_range(int16_t x_l, int16_t x_r) const
 {
-  wall_projection *cur_range = left_range;
+  wall_projection *cur_range = left_solid_range;
 
   while(cur_range && (x_l <= x_r))
   {
@@ -169,9 +190,14 @@ bool column_range_list::any_unclipped_columns_in_range(int16_t x_l, int16_t x_r)
   return false;
 }
 
-wall_projection const *column_range_list::get_left_range() const
+wall_projection const *column_range_list::get_left_solid_range() const
 {
-  return left_range;
+  return left_solid_range;
+}
+
+wall_projection const *column_range_list::get_first_nonsolid_range() const
+{
+  return first_nonsolid_range;
 }
 
 /******************************************************************************
@@ -195,12 +221,12 @@ void column_range_list_insert_ordering_test(void)
   cr3->x_left =  -8; cr3->x_right =  25;
   cr4->x_left =  30; cr4->x_right =  35;
 
-  TEST_ASSERT(cr_list.insert(cr2));
-  TEST_ASSERT(cr_list.insert(cr1));
-  TEST_ASSERT(cr_list.insert(cr4));
-  TEST_ASSERT(cr_list.insert(cr3));
+  TEST_ASSERT(cr_list.insert_solid(cr2));
+  TEST_ASSERT(cr_list.insert_solid(cr1));
+  TEST_ASSERT(cr_list.insert_solid(cr4));
+  TEST_ASSERT(cr_list.insert_solid(cr3));
 
-  cur_cr = cr_list.get_left_range();
+  cur_cr = cr_list.get_left_solid_range();
   TEST_ASSERT(cur_cr != NULL);
   TEST_ASSERT(cur_cr->x_left == cr1->x_left);
 
@@ -235,12 +261,12 @@ void column_range_list_insert_overlap_test(void)
 
   cr5->x_left = -11; cr5->x_right =  -9;
 
-  TEST_ASSERT(cr_list.insert(cr2) == true);
-  TEST_ASSERT(cr_list.insert(cr1) == true);
-  TEST_ASSERT(cr_list.insert(cr4) == true);
-  TEST_ASSERT(cr_list.insert(cr3) == true);
+  TEST_ASSERT(cr_list.insert_solid(cr2) == true);
+  TEST_ASSERT(cr_list.insert_solid(cr1) == true);
+  TEST_ASSERT(cr_list.insert_solid(cr4) == true);
+  TEST_ASSERT(cr_list.insert_solid(cr3) == true);
 
-  TEST_ASSERT(cr_list.insert(cr5) == false);
+  TEST_ASSERT(cr_list.insert_solid(cr5) == false);
 }
 
 void column_range_list_clip_test1(void)
@@ -259,9 +285,9 @@ void column_range_list_clip_test1(void)
   cr2->x_left = -24; cr2->x_right = -10;
   cr3->x_left =  -3; cr3->x_right =  25;
 
-  cr_list.insert(cr1);
-  cr_list.insert(cr2);
-  cr_list.insert(cr3);
+  cr_list.insert_solid(cr1);
+  cr_list.insert_solid(cr2);
+  cr_list.insert_solid(cr3);
 
   x_left = -40; x_right = -31;
   clipped_crs = cr_list.clip_segment(true, x_left, x_right, 0, 0, &num_clipped_crs);
@@ -288,9 +314,9 @@ void column_range_list_clip_test2(void)
   cr2->x_left = -24; cr2->x_right = -10;
   cr3->x_left =  -3; cr3->x_right =  25;
 
-  cr_list.insert(cr1);
-  cr_list.insert(cr2);
-  cr_list.insert(cr3);
+  cr_list.insert_solid(cr1);
+  cr_list.insert_solid(cr2);
+  cr_list.insert_solid(cr3);
 
   x_left = 26; x_right = 30;
   clipped_crs = cr_list.clip_segment(true, x_left, x_right, 0, 0, &num_clipped_crs);
@@ -317,9 +343,9 @@ void column_range_list_clip_test3(void)
   cr2->x_left = -24; cr2->x_right = -10;
   cr3->x_left =  -3; cr3->x_right =  25;
 
-  cr_list.insert(cr1);
-  cr_list.insert(cr2);
-  cr_list.insert(cr3);
+  cr_list.insert_solid(cr1);
+  cr_list.insert_solid(cr2);
+  cr_list.insert_solid(cr3);
 
   x_left = -12; x_right = 10;
   clipped_crs = cr_list.clip_segment(true, x_left, x_right, 0, 0, &num_clipped_crs);
@@ -346,9 +372,9 @@ void column_range_list_clip_test4(void)
   cr2->x_left = -24; cr2->x_right = -10;
   cr3->x_left =  -3; cr3->x_right =  25;
 
-  cr_list.insert(cr1);
-  cr_list.insert(cr2);
-  cr_list.insert(cr3);
+  cr_list.insert_solid(cr1);
+  cr_list.insert_solid(cr2);
+  cr_list.insert_solid(cr3);
 
   x_left = -32; x_right = 30;
   clipped_crs = cr_list.clip_segment(true, x_left, x_right, 0, 0, &num_clipped_crs);

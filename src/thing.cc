@@ -113,6 +113,9 @@ void thing::project(projector const *_projector, player const *_player, thing_pr
   proj->y_t = y0-h;
   proj->y_b = y0;
 
+  proj->z_t = get_sector()->get_floor_height() + h;
+  proj->z_b = get_sector()->get_floor_height();
+
   debug_printf("    x:[%.1f,%.1f], h:%.1f, y0:%.1f, dy:%.1f, y:[%.1f,%.1f]\n", proj->x_l, proj->x_r, h, y0, dy, proj->y_t, proj->y_b);
   debug_printf("    aspect ratio: %.3f\n", (proj->x_r - proj->x_l)/(proj->y_b - proj->y_t));
 
