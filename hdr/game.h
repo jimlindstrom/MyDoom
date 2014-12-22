@@ -1,7 +1,9 @@
 #ifndef __GAME_H
 #define __GAME_H
 
-#include <sys/time.h>
+#include <stdint.h>
+
+#include "fps_tracker.h"
 #include "episode_map.h"
 #include "projector.h"
 #include "player.h"
@@ -25,7 +27,7 @@ public:
 
   bool is_done(void) const { return done; }
 
-  uint32_t get_frame_count(void) const { return frame_count; }
+  uint32_t get_frame_count(void) const { return _fps_tracker.get_frame_count(); }
 
 private:
   bool done;
@@ -35,14 +37,10 @@ private:
   episode_map const *_map;
   player _player;
 
-  #define FRAME_TIMES_COUNT 50
-  struct timeval frame_times[FRAME_TIMES_COUNT];
-  int frame_time_idx;
-  uint32_t frame_count;
+  fps_tracker _fps_tracker;
 
   void render_player_view(void);
   void render_overhead_map(void);
-  void track_frames_per_sec(void);
 };
 
 #endif
