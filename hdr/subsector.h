@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include "projector.h"
-#include "segment.h"
+#include "wad_segment.h"
 #include "sector.h"
 #include "player.h"
 #include "column_range_list.h"

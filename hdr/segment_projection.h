@@ -6,8 +6,18 @@
 class segment_projection
 {
 public:
+  bool is_backface(void) const;
+  bool is_outside_fov(float horiz_fov_radius) const;
+
   float delta_x(void) const { return x_r_c - x_l_c; }
   float delta_u(void) const { return u_r_c - u_l_c; }
+
+  bool is_zero_width(void) const { return (delta_x() < 0.0); }
+
+  float get_texture_x_offset(int16_t x);
+
+  float unclipped_length;        // the length of the original, unclipped wad_segment
+  float unclipped_offset;        // dist from the start of the line segment to the start of the unclipped wad_segment
 
   bool  is_visible;
   bool  store_clipping;          // in column_ranges

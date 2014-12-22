@@ -83,9 +83,7 @@ void thing::project(projector const *_projector, player const *_player, thing_pr
   if(!proj->_sprite) { return; }
 
   // project horizontally
-  float angle_c = _player->get_map_position()->angle_to_point(&map_position) - _player->get_facing_angle();
-  if     (angle_c >  M_PI) { angle_c -= 2.0*M_PI; }
-  else if(angle_c < -M_PI) { angle_c += 2.0*M_PI; }
+  float angle_c = NORMALIZE_ANGLE(_player->get_map_position()->angle_to_point(&map_position) - _player->get_facing_angle());
   float dist_c  = _player->get_map_position()->distance_to_point(&map_position);
   float angle_delta = atan2(proj->_sprite->get_width()/2.0, dist_c);
   proj->angle_l = angle_c + angle_delta;

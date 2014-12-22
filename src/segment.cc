@@ -11,9 +11,24 @@
 //#define DEBUG_PRINTING
 #include "debug.h"
 
-static uint16_t next_segment_num = 0; // for debug printing
-
 #define FLATNESS_EPSILON 0.00001
+
+segment::segment()
+{
+  vertex_r = vertex_l = _vertex_r = _vertex_l = NULL;
+}
+
+segment::segment(vertex const *vl, vertex const *vr)
+{
+  vertex_l = vl;
+  vertex_r = vr;
+}
+
+segment::~segment()
+{
+  if(_vertex_l) { delete _vertex_l; }
+  if(_vertex_r) { delete _vertex_r; }
+}
 
 bool segment::is_vertical(void) const
 {
@@ -145,216 +160,16 @@ void segment::clip_to_vectors(vector const *clip_l, vector const *clip_r,
   debug_printf("    u: [%.3f, %.3f] clipped to [%.3f, %.3f]\n", u_l, u_r, *u_l_c, *u_r_c);
 }
 
-/*********************************************************************************************/
-
-wad_segment::wad_segment()
+segment *segment::transform_origin(vertex const *new_origin, float new_ang) const
 {
-  _linedef = NULL;
-  front_sector = back_sector = NULL;
-}
+  vertex *vl = new vertex(vertex_l); vl->subtract(new_origin); vl->rotate(-new_ang);
+  vertex *vr = new vertex(vertex_r); vr->subtract(new_origin); vr->rotate(-new_ang);
 
-wad_segment::~wad_segment()
-{
-}
+  segment *s = new segment();
+  s->add_vertex_l(vl);
+  s->add_vertex_r(vr);
 
-bool wad_segment::read_from_lump_data(uint8_t const *lump_data)
-{
-  segment_num  = next_segment_num++; // for debug printing
-
-  vertex_l_num = *((uint16_t*)lump_data); lump_data += 2;
-  vertex_r_num = *((uint16_t*)lump_data); lump_data += 2;
-  angle =(float)(*(( int16_t*)lump_data))/256.0; lump_data += 2;
-  linedef_num  = *((uint16_t*)lump_data); lump_data += 2;
-  direction    = *((uint16_t*)lump_data); lump_data += 2;
-  offset       = *((uint16_t*)lump_data); lump_data += 2;
-
-  // convert angle from degrees to radians
-  angle = DEG_TO_RAD(angle); // FIXME: I'm not sure I use this anywhere...
-
-  return true;
-}
-
-void wad_segment::set_linedef(linedef const *ld)
-{
-  _linedef = ld;
-}
-
-bool wad_segment::is_singled_sided_line(void) const
-{
-  return (back_sector == NULL);
-}
-
-bool wad_segment::is_closed_door(void) const
-{
-  if(is_singled_sided_line()) { return false; }
-  return (back_sector->get_ceiling_height() <= front_sector->get_floor_height()  ) ||
-         (back_sector->get_floor_height()   >= front_sector->get_ceiling_height());
-}
-
-bool wad_segment::is_window(void) const
-{
-  if(is_singled_sided_line()) { return false; }
-  if(is_closed_door())        { return false; }
-
-  return (back_sector->get_ceiling_height() != front_sector->get_ceiling_height()) ||
-         (back_sector->get_floor_height()   != front_sector->get_floor_height()  );
-}
-
-bool wad_segment::is_empty_line(void) const
-{
-  if(is_singled_sided_line()) { return false; }
-  if(is_closed_door())        { return false; }
-  if(is_window())             { return false; }
- 
-  return (back_sector->get_ceiling_texture() == front_sector->get_ceiling_texture()) &&
-         (back_sector->get_floor_texture()   == front_sector->get_floor_texture()  ) &&
-         (back_sector->get_light_level()     == front_sector->get_light_level()    ) &&
-         (!_linedef->get_sidedef(direction)->has_mid_texture());
-}
-
-bool wad_segment::is_other_single_sided_line(void) const
-{
-  if(is_singled_sided_line()) { return false; }
-  if(is_closed_door())        { return false; }
-  if(is_window())             { return false; }
-  if(is_empty_line())         { return false; }
-
-  return true;
-}
-
-bool wad_segment::is_same_floor_plane_on_both_sides(void) const
-{
-  if(is_singled_sided_line()) { return false; }
-  return (back_sector->get_floor_height()  == front_sector->get_floor_height()) &&
-         (back_sector->get_floor_texture() == front_sector->get_floor_texture()) &&
-         (back_sector->get_light_level()   == front_sector->get_light_level());
-}
-
-bool wad_segment::is_same_ceiling_plane_on_both_sides(void) const
-{
-  if(is_singled_sided_line()) { return false; }
-  return (back_sector->get_ceiling_height()  == front_sector->get_ceiling_height()) &&
-         (back_sector->get_ceiling_texture() == front_sector->get_ceiling_texture()) &&
-         (back_sector->get_light_level()     == front_sector->get_light_level());
-}
-
-void wad_segment::project(column_range_list *col_ranges, projector const *_projector, player const *_player,
-                          segment_projection *proj) const
-{
-  proj->is_visible = false;
-
-  // quickly reject empty lines, back faces, lines outside/behind FOV
-  calculate_angles_from_player(_player, &proj->ang_l, &proj->ang_r);
-  if(is_empty_line() ||
-     is_backface(proj->ang_l, proj->ang_r) ||
-     is_outside_fov(proj->ang_l, proj->ang_r, _projector->get_horiz_fov_radius()))
-  {
-    return;
-  }
-
-  debug_printf("  segment %d: (%.1f,%.1f)->(%.1f,%.1f)\n",
-               segment_num,
-               vertex_l->get_x(), vertex_l->get_y(),
-               vertex_r->get_x(), vertex_r->get_y() ); 
-  debug_printf("    angles: [%.1f,%.1f]\n", RAD_TO_DEG(proj->angle_l), RAD_TO_DEG(proj->angle_r));
-
-  // If not a solid line segment, don't consider the columns completely occluded. (continue drawing further-back segments)
-  if(is_window() || is_other_single_sided_line()) { proj->store_clipping = false; }
-  else                                            { proj->store_clipping = true;  }
-
-  // If the back sector has the same floor or ceiling, dont' clip the cooresponding plane
-  proj->clip_floor = proj->clip_ceiling = true;
-  if(!is_closed_door() && is_same_floor_plane_on_both_sides()  ) { proj->clip_floor   = false; }
-  if(!is_closed_door() && is_same_ceiling_plane_on_both_sides()) { proj->clip_ceiling = false; }
-
-  // step 1: translate segment's verticies into player-centric map coordinates
-  vertex _pvl(vertex_l); _pvl.subtract(_player->get_map_position()); _pvl.rotate(-_player->get_facing_angle());
-  vertex _pvr(vertex_r); _pvr.subtract(_player->get_map_position()); _pvr.rotate(-_player->get_facing_angle());
-  segment seg(&_pvl, &_pvr);
-
-  // Step 2: clip it 
-  vector const *clip_l = _projector->get_left_clipping_vector();
-  vector const *clip_r = _projector->get_right_clipping_vector();
-  seg.clip_to_vectors(clip_l, clip_r, &proj->v_l_c, &proj->v_r_c, &proj->u_l_c, &proj->u_r_c);
-
-  // Step 3: Project it
-  vertex origin(0,0);
-  proj->ang_l_c  = origin.angle_to_point(&proj->v_l_c); 
-  proj->ang_r_c  = origin.angle_to_point(&proj->v_r_c); 
-  proj->x_l_c    = _projector->project_horiz_angle_to_x(proj->ang_l_c);
-  proj->x_r_c    = _projector->project_horiz_angle_to_x(proj->ang_r_c);
-  proj->dist_l_c = origin.distance_to_point(&proj->v_l_c);
-  proj->dist_r_c = origin.distance_to_point(&proj->v_r_c);
-
-  // guard against zero-width segments
-  if(proj->x_r_c <= proj->x_l_c) { return; } // FIXME: how could this happen?
-
-  proj->is_visible = true;
-}
-
-void wad_segment::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player,
-                                     vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
-{
-  segment_projection seg_proj;
-  wall_projection **wall_projs;
-  int num_wall_projs;
-
-  project(col_ranges, _projector, _player, &seg_proj);
-  if(!seg_proj.is_visible)
-  {
-    return;
-  }
-
-  float seg_len = get_length(); 
-  float seg_off = _linedef->get_start_vertex()->distance_to_point(vertex_l);
-  if(direction == 1) { seg_off = seg_len - seg_off; } // FIXME: why am I reversing this? seems bad...
-
-  wall_projs = col_ranges->clip_segment(&seg_proj, &num_wall_projs);
-  for(int i=0; i<num_wall_projs; i++)
-  {
-    wall_projs[i]->project_vertically(_projector, _player);
-
-    float t_l = seg_proj.u_l_c + seg_proj.delta_u()*(wall_projs[i]->x_l - seg_proj.x_l_c)/seg_proj.delta_x();
-    float t_r = seg_proj.u_l_c + seg_proj.delta_u()*(wall_projs[i]->x_r - seg_proj.x_l_c)/seg_proj.delta_x();
-    wall_projs[i]->ldx_l = seg_off + (seg_len*t_l);
-    wall_projs[i]->ldx_r = seg_off + (seg_len*t_r);
-
-    if(floor)   { floor   = vp->adjust_or_create(floor,   wall_projs[i]->x_l, wall_projs[i]->x_r); }
-    if(ceiling) { ceiling = vp->adjust_or_create(ceiling, wall_projs[i]->x_l, wall_projs[i]->x_r); }
-
-    wall_projs[i]->clip_floor   = seg_proj.clip_floor;
-    wall_projs[i]->clip_ceiling = seg_proj.clip_ceiling;
-    wall_projs[i]->light_level  = front_sector->get_light_level();
-    wall_projs[i]->vp           = vp;
-    wall_projs[i]->floor        = floor;
-    wall_projs[i]->ceiling      = ceiling;
-
-    _linedef->render(direction, wall_projs[i]);
-  }
-  delete[] wall_projs;
-}
-
-void wad_segment::calculate_angles_from_player(player const *_player, float *angle_l, float *angle_r) const
-{
-  *angle_l = _player->get_map_position()->angle_to_point(vertex_l) - _player->get_facing_angle();
-  *angle_r = _player->get_map_position()->angle_to_point(vertex_r) - _player->get_facing_angle();
-
-  if     (*angle_l >  M_PI) { *angle_l -= 2.0*M_PI; }
-  else if(*angle_l < -M_PI) { *angle_l += 2.0*M_PI; }
-  if     (*angle_r >  M_PI) { *angle_r -= 2.0*M_PI; }
-  else if(*angle_r < -M_PI) { *angle_r += 2.0*M_PI; }
-}
-
-bool wad_segment::is_backface(float angle_l, float angle_r) const
-{
-  #define ANGLE_EPSILON (5.0) // just small enough to avoid weird near-infinity isssues
-  return (angle_r > angle_l) || ((angle_l - angle_r) > DEG_TO_RAD(180.0 - ANGLE_EPSILON));
-}
-
-bool wad_segment::is_outside_fov(float angle_l, float angle_r, float horiz_fov_radius) const
-{
-  return ( ( (angle_l < -horiz_fov_radius) && (angle_r < -horiz_fov_radius) ) ||
-           ( (angle_l >  horiz_fov_radius) && (angle_r >  horiz_fov_radius) ) );
+  return s;
 }
 
 /******************************************************************************
@@ -445,7 +260,7 @@ void segment_simple_clip_test(void)
   v_r.set_x(10); v_r.set_y(-1); // i.e., assume player is at (0,), looking along the positive x vector
 
   // setup the segment
-  wad_segment s;
+  segment s;
   s.set_vertex_l(&v_l);
   s.set_vertex_r(&v_r);
 
@@ -484,7 +299,7 @@ void segment_complex_clip_test(void)
   v_r.set_x(10); v_r.set_y(-50); // i.e., assume player is at (0,), looking along the positive x vector
 
   // setup the segment
-  wad_segment s;
+  segment s;
   s.set_vertex_l(&v_l);
   s.set_vertex_r(&v_r);
 

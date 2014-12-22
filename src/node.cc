@@ -117,9 +117,7 @@ bool node::undrawn_columns_toward_bbox(bbox const *_bbox, column_range_list *col
   debug_printf("  angles: [");
   for(int i=0; i<4; i++)
   {
-    angle[i] = _player->get_map_position()->angle_to_point(&v[i]) - _player->get_facing_angle();
-    if     (angle[i] >  M_PI) { angle[i] -= 2.0*M_PI; }
-    else if(angle[i] < -M_PI) { angle[i] += 2.0*M_PI; }
+    angle[i] = NORMALIZE_ANGLE(_player->get_map_position()->angle_to_point(&v[i]) - _player->get_facing_angle());
     debug_printf("%.1f%s", RAD_TO_DEG(angle[i]), (i==3)?"":",");
     angle_left  = MAX(angle_left,  angle[i]);
     angle_right = MIN(angle_right, angle[i]);

@@ -1,16 +1,22 @@
 In Progress
 ---
+- CHORE: tech debt, FIXMEs, modeling...
+   - Rename 'column_range_list' to 'column_ranges'?
+   - CHORE: cleanup wad_segment
+   - CHORE: Don't pass the player and projector around. Create camera class, move projector into it, player owns camera, and just pass camera.
+
 - BUG: as you walk through doors, they get pegged to screen-bottom?
 - BUG: certian lower textures are cycling nondeterministically
 
 - BUG: top of backface lower/upper walls should occlude further-away sprites
 - BUG: certain wall types (doors?) are unnecessarily clipping closer-in sprites
+   - I think it's because closed doors are getting treated as windows
 
 Queued up
 ---
-- CHORE: tech debt, FIXMEs, modeling...
 
-- BUG: Some weird glitching. ?
+- BUG: wall texture is misaligned in final room.
+- BUG: Some weird glitching: [(1783.3,-2631.2) facing 0.4] -- make a cmdline opt?
 
 - FEATURE: animate wall textures
 - FEATURE: animate flats
