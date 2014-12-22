@@ -18,15 +18,15 @@ public:
 
   // filled in by column_range_list::clip_segment
   wall_projection *next_range;
-  int16_t x_l,    x_r;
-  float   dist_l, dist_r;
+  int16_t x_l,    x_r;     // screen x
+  float   dist_l, dist_r;  // distance from player to edge (overhead perspective. ignores z)
 
   // filled in by segment::render
-  float   ldx_l,  ldx_r;
-  float   y0_l,   y0_r;
-  float   dy_l,   dy_r;
+  float   ldx_l,  ldx_r;   // linedef x val
+  float   y0_l,   y0_r;    // screen_y at z=0
+  float   dy_l,   dy_r;    // dy/dz (change in screen_y for dz=1)
 
-  uint16_t light_level;
+  uint16_t light_level;    // 0..255
   vis_planes *vp;
   vis_plane *floor, *ceiling;
   bool clip_floor, clip_ceiling;
@@ -34,12 +34,12 @@ public:
   // filled in by linedef::render
   bool is_one_sided;
   typedef struct {
-    float z_t,  z_b;
-    float yt_l, yt_r;
-    float yb_l, yb_r;
-    int16_t dz;
+    float z_t,  z_b;       // z (distance from bottom of level up to bottom,top of wall
+    float yt_l, yt_r;      // screen y at top of wall
+    float yb_l, yb_r;      // screen y at bottom of wall
+    int16_t dz;            // height of wall (in z units)
     wall_texture const *tex;
-    int16_t tx_offset, ty_offset;
+    int16_t tx_offset, ty_offset; // texture offset, for pixel (0,0) of wall segment
   } wall_part;
   wall_part upper, mid, lower;
 };

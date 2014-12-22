@@ -131,6 +131,7 @@ void wall_texture::pre_render(void)
   }
 }
 
+// FIXME: merge ldx into tx_offset. Why pass both of them?
 void wall_texture::render_col(float ldx, int dz, 
                               int x, float yt, float yb,  float clipped_yt, float clipped_yb,
                               float dist,
