@@ -59,7 +59,7 @@ uint8_t thing::get_frame_idx(void) const
   return frame_letter-'A';
 }
 
-void thing::render_player_view(camera const *_camera, column_range_list *col_ranges) const
+void thing::render_player_view(camera const *_camera, clipped_segment_projections *clipped_seg_projs) const
 {
   thing_projection *proj;
 
@@ -69,7 +69,7 @@ void thing::render_player_view(camera const *_camera, column_range_list *col_ran
     return;
   }
 
-  proj->clip(col_ranges);
+  proj->clip(clipped_seg_projs);
   proj->draw();
   delete proj;
 }

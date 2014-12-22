@@ -1,8 +1,5 @@
 In Progress
 ---
-- CHORE: tech debt, FIXMEs, modeling...
-   - Rename 'column_range_list' to 'column_ranges'?
-
 - BUG: as you walk through doors, they get pegged to screen-bottom?
 - BUG: certian lower textures are cycling nondeterministically
 

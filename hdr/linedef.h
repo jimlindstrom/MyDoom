@@ -6,7 +6,7 @@
 #include "vertex.h"
 #include "sidedef.h"
 #include "vis_planes.h"
-#include "wall_projection.h"
+#include "clipped_segment_projection.h"
 
 #define LINEDEF_NUM_BYTES 14 // size on disk (in the lump)
 
@@ -68,7 +68,7 @@ public:
   int16_t get_ceiling_z(int direction) const;
   int16_t get_floor_z(int direction) const;
 
-  void render(int direction, wall_projection *wall) const;
+  void render(int direction, clipped_segment_projection *wall) const;
 
 private:
   uint16_t start_vertex_num;
@@ -84,8 +84,8 @@ private:
   vertex const *start_vertex;
   vertex const *end_vertex;
 
-  void calc_1sided_y_values(int direction, wall_projection *wall) const;
-  void calc_2sided_y_values(  int direction, wall_projection *wall) const;
+  void calc_1sided_y_values(int direction, clipped_segment_projection *wall) const;
+  void calc_2sided_y_values(  int direction, clipped_segment_projection *wall) const;
 
   int16_t get_upper_ty_peg_offset(int16_t dz, int16_t tex_h) const;
   int16_t get_mid_ty_peg_offset(  int16_t dz, int16_t tex_h) const;

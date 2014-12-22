@@ -50,7 +50,7 @@ bool node::read_from_lump_data(uint8_t const *lump_data)
 }
 
 void node::render_player_view(camera const *_camera,
-                              column_range_list *col_ranges, 
+                              clipped_segment_projections *clipped_seg_projs, 
                               vis_planes *vp, 
                               thing *things, int16_t num_things, vis_things *vt) const
 {
@@ -80,13 +80,13 @@ void node::render_player_view(camera const *_camera,
   }
 
   // render the closer_child
-  if(closer_child->is_node())    { closer_child ->_node     ->render_player_view(_camera, col_ranges, vp, things, num_things, vt); }
-  else                           { closer_child ->_subsector->render_player_view(_camera, col_ranges, vp, things, num_things, vt); }
+  if(closer_child->is_node())    { closer_child ->_node     ->render_player_view(_camera, clipped_seg_projs, vp, things, num_things, vt); }
+  else                           { closer_child ->_subsector->render_player_view(_camera, clipped_seg_projs, vp, things, num_things, vt); }
   
   // render the farther_child, only if bbox overlaps or if open space in between
   debug_printf("node %d (far side)\n", node_num);
   bool right_bbox_includes_v = farther_child->_bbox.includes(v);
-  bool undrawn_cols_toward_right_bbox = undrawn_columns_toward_bbox(&(farther_child->_bbox), col_ranges, _camera);
+  bool undrawn_cols_toward_right_bbox = undrawn_columns_toward_bbox(&(farther_child->_bbox), clipped_seg_projs, _camera);
   if(right_bbox_includes_v || undrawn_cols_toward_right_bbox) // FIXME: by doing these inline, we could skip the 2nd test
   {
     if(right_bbox_includes_v)
@@ -99,13 +99,13 @@ void node::render_player_view(camera const *_camera,
     { 
       debug_printf("  undrawn cols toward far bbox\n"); 
     }
-    if(farther_child->is_node()) { farther_child->_node     ->render_player_view(_camera, col_ranges, vp, things, num_things, vt); }
-    else                         { farther_child->_subsector->render_player_view(_camera, col_ranges, vp, things, num_things, vt); }
+    if(farther_child->is_node()) { farther_child->_node     ->render_player_view(_camera, clipped_seg_projs, vp, things, num_things, vt); }
+    else                         { farther_child->_subsector->render_player_view(_camera, clipped_seg_projs, vp, things, num_things, vt); }
   }
   else { debug_printf("  skipping.\n"); }
 }
 
-bool node::undrawn_columns_toward_bbox(bbox const *_bbox, column_range_list *col_ranges, camera const *_camera) const
+bool node::undrawn_columns_toward_bbox(bbox const *_bbox, clipped_segment_projections *clipped_seg_projs, camera const *_camera) const
 {
   vertex v[4];
   v[0].set_xy(_bbox->x_left,  _bbox->y_top   );
@@ -130,7 +130,7 @@ bool node::undrawn_columns_toward_bbox(bbox const *_bbox, column_range_list *col
   int16_t x_right = _projector->project_horiz_angle_to_x(angle_right);
   debug_printf("  testing holes in x: [%d, %d]\n", x_left, x_right);
 
-  return col_ranges->any_unclipped_columns_in_range(x_left, x_right);
+  return clipped_seg_projs->any_unclipped_columns_in_range(x_left, x_right);
 }
 
 subsector const *node::get_subsector_containing(vertex const *v) const

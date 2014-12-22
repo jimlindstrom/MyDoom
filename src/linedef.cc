@@ -60,7 +60,7 @@ int16_t linedef::get_floor_z(int direction) const
   return get_sidedef(direction)->get_sector()->get_floor_height();
 }
 
-void linedef::calc_1sided_y_values(  int direction, wall_projection *wall) const
+void linedef::calc_1sided_y_values(  int direction, clipped_segment_projection *wall) const
 {
   wall->mid.z_t = get_ceiling_z(direction);
   wall->mid.z_b = get_floor_z(  direction);
@@ -72,7 +72,7 @@ void linedef::calc_1sided_y_values(  int direction, wall_projection *wall) const
   wall->mid.yb_r = wall->y0_r + (wall->mid.z_b * wall->dy_r);
 }
 
-void linedef::calc_2sided_y_values(int direction, wall_projection *wall) const
+void linedef::calc_2sided_y_values(int direction, clipped_segment_projection *wall) const
 {
   // upper
   wall->upper.z_t = get_ceiling_z(direction  );
@@ -135,7 +135,7 @@ int16_t linedef::get_lower_ty_peg_offset(int16_t dz, int16_t tex_h) const
   return ty_peg_offset;
 }
 
-void linedef::render(int direction, wall_projection *wall) const
+void linedef::render(int direction, clipped_segment_projection *wall) const
 {
   sidedef const *_sd = get_sidedef(direction);
 

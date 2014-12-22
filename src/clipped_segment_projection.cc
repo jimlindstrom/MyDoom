@@ -1,15 +1,15 @@
 #include "common.h"
 #include "lighting.h"
-#include "wall_projection.h"
+#include "clipped_segment_projection.h"
 
 // NOTE: assumes dist_* has been set
-void wall_projection::project_vertically(camera const *_camera)
+void clipped_segment_projection::project_vertically(camera const *_camera)
 {
   _projector->project_z_to_y(-_camera->get_view_height(), dist_l, &y0_l, &dy_l);
   _projector->project_z_to_y(-_camera->get_view_height(), dist_r, &y0_r, &dy_r);
 }
 
-void wall_projection::render_1sided(void) const
+void clipped_segment_projection::render_1sided(void) const
 {
   int16_t h=games_get_screen_height();
 
@@ -41,14 +41,14 @@ void wall_projection::render_1sided(void) const
 
     vp->update_ceiling_clip(x, h); // FIXME: this should only be "view height" not "screen height"
     vp->update_floor_clip(  x, -1);
-    ((wall_projection *)this)->sprite_clip_top[x] = h; // FIXME: just un-const the function...
-    ((wall_projection *)this)->sprite_clip_bot[x] = -1; // FIXME: just un-const the function...
+    ((clipped_segment_projection *)this)->sprite_clip_top[x] = h; // FIXME: just un-const the function...
+    ((clipped_segment_projection *)this)->sprite_clip_bot[x] = -1; // FIXME: just un-const the function...
 
     mid.tex->render_col(ldx, mid.dz, x, yt, yb, clipped_yt, clipped_yb, dist, mid.tx_offset, mid.ty_offset, pct_darkened);
   }
 }
 
-void wall_projection::render_2sided(void) const
+void clipped_segment_projection::render_2sided(void) const
 {
   if(x_l >= x_r) { return; }
 
@@ -85,18 +85,18 @@ void wall_projection::render_2sided(void) const
       {
         upper.tex->render_col(ldx, upper.dz, x, yt, mid, clipped_yt, mid, dist, upper.tx_offset, upper.ty_offset, pct_darkened);
         vp->update_ceiling_clip(x, mid);
-        ((wall_projection *)this)->sprite_clip_top[x] = mid; // FIXME: just un-const the function...
+        ((clipped_segment_projection *)this)->sprite_clip_top[x] = mid; // FIXME: just un-const the function...
       }
       else
       {
         vp->update_ceiling_clip(x, clipped_yt-1);
-        ((wall_projection *)this)->sprite_clip_top[x] = clipped_yt-1; // FIXME: just un-const the function...
+        ((clipped_segment_projection *)this)->sprite_clip_top[x] = clipped_yt-1; // FIXME: just un-const the function...
       }
     }
     else if(clip_ceiling)
     {
       vp->update_ceiling_clip(x, clipped_yt-1);
-      ((wall_projection *)this)->sprite_clip_top[x] = clipped_yt-1; // FIXME: just un-const the function...
+      ((clipped_segment_projection *)this)->sprite_clip_top[x] = clipped_yt-1; // FIXME: just un-const the function...
     }
 
     if(lower.tex)
@@ -106,18 +106,18 @@ void wall_projection::render_2sided(void) const
       {
         lower.tex->render_col(ldx, lower.dz, x, mid, yb, mid, clipped_yb, dist, upper.tx_offset, upper.ty_offset, pct_darkened);
         vp->update_floor_clip(x, mid);
-        ((wall_projection *)this)->sprite_clip_bot[x] = mid; // FIXME: just un-const the function...
+        ((clipped_segment_projection *)this)->sprite_clip_bot[x] = mid; // FIXME: just un-const the function...
       }
       else
       {
         vp->update_floor_clip(x, clipped_yb+1);
-        ((wall_projection *)this)->sprite_clip_bot[x] = clipped_yb+1; // FIXME: just un-const the function...
+        ((clipped_segment_projection *)this)->sprite_clip_bot[x] = clipped_yb+1; // FIXME: just un-const the function...
       }
     }
     else if(clip_floor)
     {
       vp->update_floor_clip(x, clipped_yb+1);
-      ((wall_projection *)this)->sprite_clip_bot[x] = clipped_yb+1; // FIXME: just un-const the function...
+      ((clipped_segment_projection *)this)->sprite_clip_bot[x] = clipped_yb+1; // FIXME: just un-const the function...
     }
 
     //if(mid.tex) { mid.tex->render_col(ldx, mid  .dz, x, clipped_yt, clipped_yb, dist, mid  .tx_offset, mid  .ty_offset, pct_darkened); }

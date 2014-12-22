@@ -8,7 +8,7 @@
 #include "partition_line.h"
 #include "projector.h"
 #include "camera.h"
-#include "column_range_list.h"
+#include "clipped_segment_projections.h"
 #include "vis_planes.h"
 
 #define NODE_CHILD_NUM_MASK       0x7fff
@@ -51,11 +51,11 @@ public:
   void set_right_subsector(subsector *_subsector) { right._subsector = _subsector; }
 
   void render_player_view(camera const *_camera,
-                          column_range_list *col_ranges, 
+                          clipped_segment_projections *clipped_seg_projs, 
                           vis_planes *vp, 
                           thing *things, int16_t num_things, vis_things *vt) const;
 
-  bool undrawn_columns_toward_bbox(bbox const *_bbox, column_range_list *col_ranges, camera const *_camera) const;
+  bool undrawn_columns_toward_bbox(bbox const *_bbox, clipped_segment_projections *clipped_seg_projs, camera const *_camera) const;
 
   subsector const *get_subsector_containing(vertex const *v) const;
 

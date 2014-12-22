@@ -38,7 +38,7 @@ void subsector::set_nth_segment(int n, wad_segment const *_segment)
 }
 
 void subsector::render_player_view(camera const *_camera,
-                                   column_range_list *col_ranges, 
+                                   clipped_segment_projections *clipped_seg_projs, 
                                    vis_planes *vp, 
                                    thing *things, int16_t num_things, vis_things *vt) const
 {
@@ -57,7 +57,7 @@ void subsector::render_player_view(camera const *_camera,
 
   for(int i=0; i<num_segments; i++)
   {
-    segments[i]->render_player_view(_camera, col_ranges, vp, floor, ceiling);
+    segments[i]->render_player_view(_camera, clipped_seg_projs, vp, floor, ceiling);
   }
 
   for(int i=0; i<num_things; i++)

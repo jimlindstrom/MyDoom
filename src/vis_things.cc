@@ -19,14 +19,14 @@ void vis_things::add_thing(thing const *_thing)
   things[num_vis_things++] = _thing;
 }
 
-void vis_things::draw_things(camera const *_camera, column_range_list *col_ranges)
+void vis_things::draw_things(camera const *_camera, clipped_segment_projections *clipped_seg_projs)
 {
   calc_distances(_camera);
   sort_things_back_to_front();
 
   for(int i=0; i<num_vis_things; i++)
   {
-    things[i]->render_player_view(_camera, col_ranges);
+    things[i]->render_player_view(_camera, clipped_seg_projs);
   }
 }
 

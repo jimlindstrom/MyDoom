@@ -16,7 +16,7 @@
 #include "block_map.h"
 #include "overhead_map.h"
 #include "camera.h"
-#include "column_range_list.h"
+#include "clipped_segment_projections.h"
 #include "vis_planes.h"
 #include "vis_things.h"
 
@@ -35,7 +35,7 @@ public:
   void draw_overhead_map(overhead_map *omap) const;
 
   void render_player_view(camera const *_camera,
-                          column_range_list *col_ranges, 
+                          clipped_segment_projections *clipped_seg_projs, 
                           vis_planes *vp, vis_things *vt) const;
 
   bool can_move(vertex const *old_position, vertex const *new_position, float *floor_height) const;

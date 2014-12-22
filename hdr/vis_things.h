@@ -12,7 +12,7 @@ public:
   ~vis_things(void);
 
   void add_thing(thing const *_thing);
-  void draw_things(camera const *_camera, column_range_list *col_ranges);
+  void draw_things(camera const *_camera, clipped_segment_projections *clipped_seg_projs);
 
 private:
   uint16_t num_vis_things;

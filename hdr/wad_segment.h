@@ -8,7 +8,7 @@
 #include "vertex.h"
 #include "segment.h"
 #include "linedef.h"
-#include "column_range_list.h"
+#include "clipped_segment_projections.h"
 #include "vis_planes.h"
 #include "segment_projection.h"
 
@@ -49,7 +49,7 @@ public:
   bool is_same_floor_plane_on_both_sides(void) const;
   bool is_same_ceiling_plane_on_both_sides(void) const;
 
-  void render_player_view(camera const *_camera, column_range_list *col_ranges,
+  void render_player_view(camera const *_camera, clipped_segment_projections *clipped_seg_projs,
                           vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const;
 
   uint16_t segment_num; // for debug printing

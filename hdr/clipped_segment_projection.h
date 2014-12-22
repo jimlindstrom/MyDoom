@@ -1,5 +1,5 @@
-#ifndef __WALL_PROJECION_H
-#define __WALL_PROJECION_H
+#ifndef __CLIPPED_SEGMENT_PROJECION_H
+#define __CLIPPED_SEGMENT_PROJECION_H
 
 #include <stdint.h>
 #include "wall_texture.h"
@@ -7,7 +7,7 @@
 #include "vis_plane.h"
 
 // FIXME: this is badly named. It's a projected, *clipped segment* of a wall.
-class wall_projection
+class clipped_segment_projection
 {
 public:
   bool overlaps_range(int16_t x1, int16_t x2) const { return !((x1>x_r) || (x2<x_l)); }
@@ -19,8 +19,8 @@ public:
 
 // FIXME: make these private
 
-  // filled in by column_range_list::clip_segment
-  wall_projection *next_range; // FIXME: this should be in a container class like node_child_link
+  // filled in by clipped_segment_projections::clip_segment
+  clipped_segment_projection *next_csp; // FIXME: this should be in a container class like node_child_link
   int16_t x_l,    x_r;     // screen x
   float   dist_l, dist_r;  // distance from player to edge (overhead perspective. ignores z)
 
@@ -49,4 +49,4 @@ public:
   wall_part upper, mid, lower;
 };
 
-#endif // #ifndef __WALL_PROJECION_H
+#endif // #ifndef __CLIPPED_SEGMENT_PROJECION_H

@@ -8,7 +8,7 @@
 #include "projector.h"
 #include "sector.h"
 #include "camera.h"
-#include "column_range_list.h"
+#include "clipped_segment_projections.h"
 #include "sprites.h"
 #include "thing_projection.h"
 
@@ -54,7 +54,7 @@ public:
   thing_definition const *get_definition(void) const { return defn; }
   uint8_t get_frame_idx(void) const;
 
-  void render_player_view(camera const *_camera, column_range_list *col_ranges) const;
+  void render_player_view(camera const *_camera, clipped_segment_projections *clipped_seg_projs) const;
 
 private:
   vertex map_position;

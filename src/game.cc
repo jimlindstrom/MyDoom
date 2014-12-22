@@ -5,7 +5,7 @@
 #include "game.h"
 #include "frame_buf.h"
 #include "key_codes.h"
-#include "column_range_list.h"
+#include "clipped_segment_projections.h"
 #include "vis_things.h"
 #include "vis_planes.h"
 
@@ -79,13 +79,13 @@ void game::do_frame(void)
 
 void game::render_player_view(void)
 {
-  column_range_list col_ranges;
+  clipped_segment_projections clipped_seg_projs;
   vis_planes _vis_planes;
   vis_things _vis_things;
 
-  _map->render_player_view(_player.get_camera(), &col_ranges, &_vis_planes, &_vis_things);
+  _map->render_player_view(_player.get_camera(), &clipped_seg_projs, &_vis_planes, &_vis_things);
   _vis_planes.draw_planes( _player.get_camera());
-  _vis_things.draw_things( _player.get_camera(), &col_ranges);
+  _vis_things.draw_things( _player.get_camera(), &clipped_seg_projs);
 }
 
 void game::render_overhead_map(void)

@@ -107,34 +107,34 @@ bool wad_segment::is_same_ceiling_plane_on_both_sides(void) const
          (back_sector->get_light_level()     == front_sector->get_light_level());
 }
 
-void wad_segment::render_player_view(camera const *_camera, column_range_list *col_ranges,
+void wad_segment::render_player_view(camera const *_camera, clipped_segment_projections *clipped_seg_projs,
                                      vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
 {
   segment_projection *seg_proj = project(_camera);
   if(!seg_proj) { return; }
 
-  int num_wall_projs;
-  wall_projection **wall_projs = col_ranges->clip_segment(seg_proj, &num_wall_projs);
-  debug_printf("    %d clipped wall projections\n", num_wall_projs);
-  for(int i=0; i<num_wall_projs; i++)
+  int num_csps;
+  clipped_segment_projection **clipped_seg_proj = clipped_seg_projs->clip_segment(seg_proj, &num_csps);
+  debug_printf("    %d clipped wall projections\n", num_csps);
+  for(int i=0; i<num_csps; i++)
   {
-    if(floor)   { floor   = vp->adjust_or_create(floor,   wall_projs[i]->x_l, wall_projs[i]->x_r); }
-    if(ceiling) { ceiling = vp->adjust_or_create(ceiling, wall_projs[i]->x_l, wall_projs[i]->x_r); }
+    if(floor)   { floor   = vp->adjust_or_create(floor,   clipped_seg_proj[i]->x_l, clipped_seg_proj[i]->x_r); }
+    if(ceiling) { ceiling = vp->adjust_or_create(ceiling, clipped_seg_proj[i]->x_l, clipped_seg_proj[i]->x_r); }
 
-    wall_projs[i]->project_vertically(_camera);
+    clipped_seg_proj[i]->project_vertically(_camera);
 
-    wall_projs[i]->ldx_l        = seg_proj->get_texture_x_offset(wall_projs[i]->x_l);
-    wall_projs[i]->ldx_r        = seg_proj->get_texture_x_offset(wall_projs[i]->x_r);
-    wall_projs[i]->clip_floor   = seg_proj->clip_floor;
-    wall_projs[i]->clip_ceiling = seg_proj->clip_ceiling;
-    wall_projs[i]->light_level  = front_sector->get_light_level();
-    wall_projs[i]->vp           = vp;
-    wall_projs[i]->floor        = floor;
-    wall_projs[i]->ceiling      = ceiling;
+    clipped_seg_proj[i]->ldx_l        = seg_proj->get_texture_x_offset(clipped_seg_proj[i]->x_l);
+    clipped_seg_proj[i]->ldx_r        = seg_proj->get_texture_x_offset(clipped_seg_proj[i]->x_r);
+    clipped_seg_proj[i]->light_level  = front_sector->get_light_level();
+    clipped_seg_proj[i]->clip_floor   = seg_proj->clip_floor;
+    clipped_seg_proj[i]->clip_ceiling = seg_proj->clip_ceiling;
+    clipped_seg_proj[i]->vp           = vp;
+    clipped_seg_proj[i]->floor        = floor;
+    clipped_seg_proj[i]->ceiling      = ceiling;
 
-    _linedef->render(direction, wall_projs[i]);
+    _linedef->render(direction, clipped_seg_proj[i]);
   }
-  delete[] wall_projs;
+  delete[] clipped_seg_proj;
   delete seg_proj;
 }
 

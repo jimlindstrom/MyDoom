@@ -7,7 +7,7 @@
 #include "wad_segment.h"
 #include "sector.h"
 #include "camera.h"
-#include "column_range_list.h"
+#include "clipped_segment_projections.h"
 #include "vis_planes.h"
 #include "vis_things.h"
 #include "thing.h"
@@ -31,7 +31,7 @@ public:
   void set_nth_segment(int n, wad_segment const *_segment);
 
   void render_player_view(camera const *_camera,
-                          column_range_list *col_ranges, 
+                          clipped_segment_projections *clipped_seg_projs, 
                           vis_planes *vp, 
                           thing *things, int16_t num_things, vis_things *vt) const;
 

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "column_range_list.h"
+#include "clipped_segment_projections.h"
 #include "sprite.h"
 #include "games.h"
 
@@ -19,7 +19,7 @@ public:
                                                (angle_l >  horiz_fov_radius) ) &&
                                              ( (angle_r < -horiz_fov_radius) ||
                                                (angle_r >  horiz_fov_radius) ) ); }
-  void clip(column_range_list *col_ranges);
+  void clip(clipped_segment_projections *clipped_seg_projs);
   void draw(void);
 
   bool is_visible;

@@ -3,7 +3,7 @@
 #include "tests.h"
 #include "partition_line.h"
 #include "vertex.h"
-#include "column_range_list.h"
+#include "clipped_segment_projections.h"
 #include "projector.h"
 #include "segment.h"
 #include "vector.h"
@@ -19,7 +19,7 @@ void tests_run(void)
   projector_tests();
   partition_line_test();
   vertex_test();
-  column_range_list_test();
+  clipped_segment_projections_test();
   segment_tests();
   vector_tests();
 
