@@ -9,14 +9,23 @@
 class wall_projection
 {
 public:
-  void render_1sided(  void) const;
+  bool overlaps_range(int16_t x1, int16_t x2) const { return !((x1>x_r) || (x2<x_l)); }
+
+  void project_vertically(projector const *_projector, player const *_player);
+
+  void render_1sided(void) const;
   void render_2sided(void) const;
 
+  // filled in by column_range_list::clip_segment
+  wall_projection *next_range;
+  int16_t x_l,    x_r;
+  float   dist_l, dist_r;
+
   // filled in by segment::render
-  float ldx_l, ldx_r;
-  int x_l, x_r;
-  float y0_l, dy_l, y0_r, dy_r;
-  float dist_l, dist_r;
+  float   ldx_l,  ldx_r;
+  float   y0_l,   y0_r;
+  float   dy_l,   dy_r;
+
   uint16_t light_level;
   vis_planes *vp;
   vis_plane *floor, *ceiling;

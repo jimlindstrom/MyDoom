@@ -5,7 +5,7 @@
 #include "game.h"
 #include "frame_buf.h"
 #include "key_codes.h"
-#include "column_range.h"
+#include "column_range_list.h"
 #include "vis_things.h"
 #include "vis_planes.h"
 

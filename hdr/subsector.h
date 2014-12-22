@@ -7,7 +7,7 @@
 #include "segment.h"
 #include "sector.h"
 #include "player.h"
-#include "column_range.h"
+#include "column_range_list.h"
 #include "vis_planes.h"
 #include "vis_things.h"
 #include "thing.h"

@@ -6,6 +6,9 @@
 class segment_projection
 {
 public:
+  float delta_x(void) const { return x_r_c - x_l_c; }
+  float delta_u(void) const { return u_r_c - u_l_c; }
+
   bool  is_visible;
   bool  store_clipping;          // in column_ranges
   bool  clip_floor, clip_ceiling;// in vis_planes

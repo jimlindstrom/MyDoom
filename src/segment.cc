@@ -296,9 +296,8 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
                                      vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
 {
   segment_projection seg_proj;
-  column_range **clipped_ranges;
-  int num_clipped_crs;
-  wall_projection wall_proj;
+  wall_projection **wall_projs;
+  int num_wall_projs;
 
   project(col_ranges, _projector, _player, &seg_proj);
   if(!seg_proj.is_visible)
@@ -306,46 +305,33 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
     return;
   }
 
-  wall_proj.clip_floor     = seg_proj.clip_floor;
-  wall_proj.clip_ceiling   = seg_proj.clip_ceiling;
-  wall_proj.light_level    = front_sector->get_light_level();
-  wall_proj.vp             = vp;
+  float seg_len = get_length(); 
+  float seg_off = _linedef->get_start_vertex()->distance_to_point(vertex_l);
+  if(direction == 1) { seg_off = seg_len - seg_off; } // FIXME: why am I reversing this? seems bad...
 
-  clipped_ranges = col_ranges->clip_segment(seg_proj.store_clipping, 
-                                            seg_proj.x_l_c, seg_proj.x_r_c, 
-                                            seg_proj.dist_l_c, seg_proj.dist_r_c, 
-                                            &num_clipped_crs);
-
-  for(int i=0; i<num_clipped_crs; i++) // FIXME: Push this down into column_range
+  wall_projs = col_ranges->clip_segment(&seg_proj, &num_wall_projs);
+  for(int i=0; i<num_wall_projs; i++) // FIXME: Push this down into column_range
   {
-    wall_proj.x_l = clipped_ranges[i]->x_left;
-    wall_proj.x_r = clipped_ranges[i]->x_right;
+    wall_projs[i]->project_vertically(_projector, _player);
 
-    float t1 = seg_proj.u_l_c + (seg_proj.u_r_c - seg_proj.u_l_c)*(wall_proj.x_l - seg_proj.x_l_c)/(float)(seg_proj.x_r_c-seg_proj.x_l_c);
-    float t2 = seg_proj.u_l_c + (seg_proj.u_r_c - seg_proj.u_l_c)*(wall_proj.x_r - seg_proj.x_l_c)/(float)(seg_proj.x_r_c-seg_proj.x_l_c);
-    debug_printf("      clipped range %d: [%d,%d], t:[%.2f,%.2f]\n", i, wall_proj.x_l, wall_proj.x_r, t1, t2);
+    float t1 = seg_proj.u_l_c + seg_proj.delta_u()*(wall_projs[i]->x_l - seg_proj.x_l_c)/seg_proj.delta_x();
+    float t2 = seg_proj.u_l_c + seg_proj.delta_u()*(wall_projs[i]->x_r - seg_proj.x_l_c)/seg_proj.delta_x();
+    wall_projs[i]->ldx_l = seg_off + (seg_len*t1);
+    wall_projs[i]->ldx_r = seg_off + (seg_len*t2);
 
-    wall_proj.dist_l = clipped_ranges[i]->dist_l;
-    wall_proj.dist_r = clipped_ranges[i]->dist_r;
-    debug_printf("      dists: [%.1f,%.1f]\n", wall_proj.dist_l, wall_proj.dist_r);
-    _projector->project_z_to_y(-_player->get_view_height(), wall_proj.dist_l, &wall_proj.y0_l, &wall_proj.dy_l);
-    _projector->project_z_to_y(-_player->get_view_height(), wall_proj.dist_r, &wall_proj.y0_r, &wall_proj.dy_r);
+    if(floor)   { floor   = vp->adjust_or_create(floor,   wall_projs[i]->x_l, wall_projs[i]->x_r); }
+    if(ceiling) { ceiling = vp->adjust_or_create(ceiling, wall_projs[i]->x_l, wall_projs[i]->x_r); }
 
-    float seg_len= get_length(); 
-    float seg_off= _linedef->get_start_vertex()->distance_to_point(vertex_l);
-    if(direction == 1) { seg_off = seg_len - seg_off; } // FIXME: why am I reversing this? seems bad...
-    wall_proj.ldx_l = seg_off + (t1*seg_len);
-    wall_proj.ldx_r = seg_off + (t2*seg_len);
-    debug_printf("        dir:%d, offset:%d, seg_len:%.1f, seg_off:%.1f\n", direction, offset, seg_len, seg_off);
+    wall_projs[i]->clip_floor   = seg_proj.clip_floor;
+    wall_projs[i]->clip_ceiling = seg_proj.clip_ceiling;
+    wall_projs[i]->light_level  = front_sector->get_light_level();
+    wall_projs[i]->vp           = vp;
+    wall_projs[i]->floor        = floor;
+    wall_projs[i]->ceiling      = ceiling;
 
-    if(floor)   { floor   = vp->adjust_or_create(floor,   wall_proj.x_l, wall_proj.x_r); }
-    if(ceiling) { ceiling = vp->adjust_or_create(ceiling, wall_proj.x_l, wall_proj.x_r); }
-    wall_proj.floor   = floor;
-    wall_proj.ceiling = ceiling;
-
-    _linedef->render(direction, &wall_proj);
+    _linedef->render(direction, wall_projs[i]);
   }
-  delete[] clipped_ranges;
+  delete[] wall_projs;
 }
 
 void wad_segment::calculate_angles_from_player(player const *_player, float *angle_l, float *angle_r) const

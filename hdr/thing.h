@@ -8,7 +8,7 @@
 #include "projector.h"
 #include "sector.h"
 #include "player.h"
-#include "column_range.h"
+#include "column_range_list.h"
 #include "sprites.h"
 #include "thing_projection.h"
 

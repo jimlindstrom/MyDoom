@@ -8,7 +8,7 @@
 #include "vertex.h"
 #include "vector.h"
 #include "linedef.h"
-#include "column_range.h"
+#include "column_range_list.h"
 #include "vis_planes.h"
 #include "segment_projection.h"
 

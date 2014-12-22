@@ -20,17 +20,17 @@ void thing_projection::clip(column_range_list *col_ranges)
   y_t_c = MAX(0,          y_t);
   y_b_c = MIN(screen_h-1, y_b);
 
-  column_range const *cr = col_ranges->get_left_range();
-  while(cr)
+  wall_projection const *wall_proj = col_ranges->get_left_range();
+  while(wall_proj)
   {
-    if(cr->overlaps_range(x_l_c, x_r_c))
+    if(wall_proj->overlaps_range(x_l_c, x_r_c))
     {
-      int16_t xl = MAX(x_l_c, cr->x_left );
-      int16_t xr = MIN(x_r_c, cr->x_right);
+      int16_t xl = MAX(x_l_c, wall_proj->x_l);
+      int16_t xr = MIN(x_r_c, wall_proj->x_r);
       for(int16_t x=xl; x<=xr; x++)
       {
-        float clip_dist  = cr->dist_l + (cr->dist_r - cr->dist_l)*(x - cr->x_left)/(cr->x_right - cr->x_left);
-        float thing_dist = dist_l     + (dist_r     - dist_l    )*(x - x_l       )/(x_r         - x_l       );
+        float clip_dist  = wall_proj->dist_l + (wall_proj->dist_r - wall_proj->dist_l)*(x - wall_proj->x_l)/(wall_proj->x_r - wall_proj->x_l);
+        float thing_dist = dist_l + (dist_r - dist_l)*(x - x_l)/(x_r - x_l);
         if(thing_dist < clip_dist)
         {
           cliptop[x] = y_t_c;
@@ -38,7 +38,7 @@ void thing_projection::clip(column_range_list *col_ranges)
         }
       }
     }
-    cr = cr->next_range;
+    wall_proj = wall_proj->next_range;
   }
 }
 

@@ -3,7 +3,7 @@
 #include "tests.h"
 #include "partition_line.h"
 #include "vertex.h"
-#include "column_range.h"
+#include "column_range_list.h"
 #include "projector.h"
 #include "segment.h"
 #include "vector.h"

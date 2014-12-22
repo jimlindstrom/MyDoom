@@ -8,7 +8,7 @@
 #include "partition_line.h"
 #include "projector.h"
 #include "player.h"
-#include "column_range.h"
+#include "column_range_list.h"
 #include "vis_planes.h"
 
 #define NODE_CHILD_NUM_MASK       0x7fff

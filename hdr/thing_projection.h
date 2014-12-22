@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "column_range.h"
+#include "column_range_list.h"
 #include "sprite.h"
 #include "games.h"
 
