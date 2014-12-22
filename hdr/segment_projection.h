@@ -16,11 +16,11 @@ public:
 
   float get_texture_x_offset(int16_t x);
 
+// FIXME: Make these private
   float unclipped_length;        // the length of the original, unclipped wad_segment
   float unclipped_offset;        // dist from the start of the line segment to the start of the unclipped wad_segment
 
-  bool  is_visible;
-  bool  store_clipping;          // in column_ranges
+  bool  is_opaque;               // true if solid wall or closed door.
   bool  clip_floor, clip_ceiling;// in vis_planes
 
   float  ang_l,    ang_r;        // raw angles to left and right vertex

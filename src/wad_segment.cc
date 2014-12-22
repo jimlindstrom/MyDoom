@@ -162,25 +162,23 @@ segment_projection *wad_segment::project(projector const *_projector, player con
   debug_printf("    angles: [%.1f,%.1f]\n", RAD_TO_DEG(seg_proj->angle_l), RAD_TO_DEG(seg_proj->angle_r));
 
   // If not a solid line segment, don't consider the columns completely occluded. (continue drawing further-back segments)
-  if(is_window() || is_other_single_sided_line()) { seg_proj->store_clipping = false; }
-  else                                            { seg_proj->store_clipping = true;  }
+  seg_proj->is_opaque = !( is_window() || is_other_single_sided_line() );
 
   // If the back sector has the same floor or ceiling, dont' clip the cooresponding plane
-  seg_proj->clip_floor = seg_proj->clip_ceiling = true;
-  if(!is_closed_door() && is_same_floor_plane_on_both_sides()  ) { seg_proj->clip_floor   = false; }
-  if(!is_closed_door() && is_same_ceiling_plane_on_both_sides()) { seg_proj->clip_ceiling = false; }
+  seg_proj->clip_floor   = is_closed_door() || !is_same_floor_plane_on_both_sides();
+  seg_proj->clip_ceiling = is_closed_door() || !is_same_ceiling_plane_on_both_sides();
 
   // step 1: translate segment's verticies into player-centric map coordinates
   segment *transformed_seg = transform_origin(_player->get_map_position(), _player->get_facing_angle());
 
-  // Step 2: clip it 
+  // step 2: clip it 
   transformed_seg->clip_to_vectors(_projector->get_left_clipping_vector(),
                                    _projector->get_right_clipping_vector(),
                                    &seg_proj->v_l_c, &seg_proj->v_r_c, 
                                    &seg_proj->u_l_c, &seg_proj->u_r_c);
   delete transformed_seg; // we don't need the transformed seg now that we've clipped it
 
-  // Step 3: Project it
+  // step 3: Project it
   vertex origin(0,0);
   seg_proj->ang_l_c  = origin.angle_to_point(&seg_proj->v_l_c); 
   seg_proj->ang_r_c  = origin.angle_to_point(&seg_proj->v_r_c); 

@@ -111,8 +111,8 @@ wall_projection **column_range_list::clip_segment(segment_projection const *seg_
       cr_ptrs[(*num_clipped_crs)-1]->dist_r  = seg_proj->dist_l_c + ( (seg_proj->dist_r_c-seg_proj->dist_l_c) *
                                                                       (xrc - seg_proj->x_l_c)                 /
                                                                       (seg_proj->x_r_c   - seg_proj->x_l_c  ) );
-      if(seg_proj->store_clipping) { insert_solid(   cr_ptrs[(*num_clipped_crs)-1]); }
-      else                         { insert_nonsolid(cr_ptrs[(*num_clipped_crs)-1]); }
+      if(seg_proj->is_opaque) { insert_solid(   cr_ptrs[(*num_clipped_crs)-1]); }
+      else                    { insert_nonsolid(cr_ptrs[(*num_clipped_crs)-1]); }
       xlc = xrc + 1; // DONE
     }
     // okay, well is there *any* gap?
@@ -125,8 +125,8 @@ wall_projection **column_range_list::clip_segment(segment_projection const *seg_
       cr_ptrs[(*num_clipped_crs)-1]->x_r = cur_range->x_l-1;
       cr_ptrs[(*num_clipped_crs)-1]->dist_l  = seg_proj->dist_l_c + (seg_proj->dist_r_c-seg_proj->dist_l_c)*(xlc - seg_proj->x_l_c)/(seg_proj->x_r_c - seg_proj->x_l_c);
       cr_ptrs[(*num_clipped_crs)-1]->dist_r  = seg_proj->dist_l_c + (seg_proj->dist_r_c-seg_proj->dist_l_c)*((cur_range->x_l-1) - seg_proj->x_l_c)/(seg_proj->x_r_c - seg_proj->x_l_c);
-      if(seg_proj->store_clipping) { insert_solid(   cr_ptrs[(*num_clipped_crs)-1]); }
-      else                         { insert_nonsolid(cr_ptrs[(*num_clipped_crs)-1]); }
+      if(seg_proj->is_opaque) { insert_solid(   cr_ptrs[(*num_clipped_crs)-1]); }
+      else                    { insert_nonsolid(cr_ptrs[(*num_clipped_crs)-1]); }
       xlc = cur_range->x_r + 1;
     }
     // no? then just advance the left past this range
@@ -149,8 +149,8 @@ wall_projection **column_range_list::clip_segment(segment_projection const *seg_
     cr_ptrs[(*num_clipped_crs)-1]->x_r = xrc;
     cr_ptrs[(*num_clipped_crs)-1]->dist_l  = seg_proj->dist_l_c + (seg_proj->dist_r_c-seg_proj->dist_l_c)*(xlc - seg_proj->x_l_c)/(seg_proj->x_r_c - seg_proj->x_l_c);
     cr_ptrs[(*num_clipped_crs)-1]->dist_r  = seg_proj->dist_l_c + (seg_proj->dist_r_c-seg_proj->dist_l_c)*(xrc - seg_proj->x_l_c)/(seg_proj->x_r_c - seg_proj->x_l_c);
-    if(seg_proj->store_clipping) { insert_solid(   cr_ptrs[(*num_clipped_crs)-1]); }
-    else                         { insert_nonsolid(cr_ptrs[(*num_clipped_crs)-1]); }
+    if(seg_proj->is_opaque) { insert_solid(   cr_ptrs[(*num_clipped_crs)-1]); }
+    else                    { insert_nonsolid(cr_ptrs[(*num_clipped_crs)-1]); }
   }
 
   return cr_ptrs;
