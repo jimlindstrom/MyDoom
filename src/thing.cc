@@ -75,47 +75,41 @@ void thing::project(projector const *_projector, player const *_player, thing_pr
 {
   proj->is_visible = false;
 
+  // figure out which sprite to use
+  proj->sprite_angle = _player->get_map_position()->angle_to_point(&map_position) - facing_angle + DEG_TO_RAD(90);
+  if(proj->sprite_angle <      0.0) { proj->sprite_angle += 2.0*M_PI; }
+  if(proj->sprite_angle > 2.0*M_PI) { proj->sprite_angle -= 2.0*M_PI; }
+  proj->_sprite = get_cur_sprite(proj); // NOTE: requires proj->sprite_angle be filled in
+  if(!proj->_sprite) { return; }
+
+  // project horizontally
   float angle_c = _player->get_map_position()->angle_to_point(&map_position) - _player->get_facing_angle();
   if     (angle_c >  M_PI) { angle_c -= 2.0*M_PI; }
   else if(angle_c < -M_PI) { angle_c += 2.0*M_PI; }
   float dist_c  = _player->get_map_position()->distance_to_point(&map_position);
-  float angle_delta = atan2(defn->radius, dist_c);
-
+  float angle_delta = atan2(proj->_sprite->get_width()/2.0, dist_c);
   proj->angle_l = angle_c + angle_delta;
   proj->angle_r = angle_c - angle_delta;
   proj->horiz_fov_radius = _projector->get_horiz_fov_radius();
-
-  proj->dist_l = dist_c; // FIXME: do some trig here?
-  proj->dist_r = dist_c; // FIXME: do some trig here?
-
+  proj->dist_l = dist_c; // FIXME: do some trig here. this is an approximation
+  proj->dist_r = dist_c; // FIXME: do some trig here. this is an approximation
   if(proj->is_backface())    { return; }
   if(proj->is_outside_fov()) { return; }
-  
   debug_printf("  rendering \"%s\"\n", defn->description);
   debug_printf("    angles: [%1.f, %.1f, %.1f] dist: %.1f\n", 
               RAD_TO_DEG(proj->angle_l), RAD_TO_DEG(proj->angle_c), RAD_TO_DEG(proj->angle_r), dist_c);
-
   proj->x_l = _projector->project_horiz_angle_to_x(proj->angle_l);
   proj->x_r = _projector->project_horiz_angle_to_x(proj->angle_r);
 
-  proj->sprite_angle = _player->get_map_position()->angle_to_point(&map_position) - facing_angle + DEG_TO_RAD(90);
-  if(proj->sprite_angle <      0.0) { proj->sprite_angle += 2.0*M_PI; }
-  if(proj->sprite_angle > 2.0*M_PI) { proj->sprite_angle -= 2.0*M_PI; }
-
+  // project vertically
   float y0, dy;
   float rel_height = _player->get_view_height() - get_sector()->get_floor_height(); // FIXME: assumes it sits on floor
   _projector->project_z_to_y(-rel_height, dist_c, &y0, &dy);
-
-  proj->_sprite = get_cur_sprite(proj);
-  if(!proj->_sprite) { return; }
-
   float h = (proj->x_r - proj->x_l) * proj->_sprite->get_height() / proj->_sprite->get_width();
   proj->y_t = y0-h;
   proj->y_b = y0;
-
   proj->z_t = get_sector()->get_floor_height() + h;
   proj->z_b = get_sector()->get_floor_height();
-
   debug_printf("    x:[%.1f,%.1f], h:%.1f, y0:%.1f, dy:%.1f, y:[%.1f,%.1f]\n", proj->x_l, proj->x_r, h, y0, dy, proj->y_t, proj->y_b);
   debug_printf("    aspect ratio: %.3f\n", (proj->x_r - proj->x_l)/(proj->y_b - proj->y_t));
 
