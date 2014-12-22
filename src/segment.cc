@@ -310,14 +310,14 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
   if(direction == 1) { seg_off = seg_len - seg_off; } // FIXME: why am I reversing this? seems bad...
 
   wall_projs = col_ranges->clip_segment(&seg_proj, &num_wall_projs);
-  for(int i=0; i<num_wall_projs; i++) // FIXME: Push this down into column_range
+  for(int i=0; i<num_wall_projs; i++)
   {
     wall_projs[i]->project_vertically(_projector, _player);
 
-    float t1 = seg_proj.u_l_c + seg_proj.delta_u()*(wall_projs[i]->x_l - seg_proj.x_l_c)/seg_proj.delta_x();
-    float t2 = seg_proj.u_l_c + seg_proj.delta_u()*(wall_projs[i]->x_r - seg_proj.x_l_c)/seg_proj.delta_x();
-    wall_projs[i]->ldx_l = seg_off + (seg_len*t1);
-    wall_projs[i]->ldx_r = seg_off + (seg_len*t2);
+    float t_l = seg_proj.u_l_c + seg_proj.delta_u()*(wall_projs[i]->x_l - seg_proj.x_l_c)/seg_proj.delta_x();
+    float t_r = seg_proj.u_l_c + seg_proj.delta_u()*(wall_projs[i]->x_r - seg_proj.x_l_c)/seg_proj.delta_x();
+    wall_projs[i]->ldx_l = seg_off + (seg_len*t_l);
+    wall_projs[i]->ldx_r = seg_off + (seg_len*t_r);
 
     if(floor)   { floor   = vp->adjust_or_create(floor,   wall_projs[i]->x_l, wall_projs[i]->x_r); }
     if(ceiling) { ceiling = vp->adjust_or_create(ceiling, wall_projs[i]->x_l, wall_projs[i]->x_r); }
