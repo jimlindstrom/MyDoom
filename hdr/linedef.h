@@ -87,9 +87,9 @@ private:
   void calc_1sided_y_values(int direction, wall_projection *wall) const;
   void calc_2sided_y_values(  int direction, wall_projection *wall) const;
 
-  int16_t get_upper_ty_peg_offset(int16_t ld_h, int16_t tex_h) const;
-  int16_t get_mid_ty_peg_offset(  int16_t ld_h, int16_t tex_h) const;
-  int16_t get_lower_ty_peg_offset(int16_t ld_h, int16_t tex_h) const;
+  int16_t get_upper_ty_peg_offset(int16_t dz, int16_t tex_h) const;
+  int16_t get_mid_ty_peg_offset(  int16_t dz, int16_t tex_h) const;
+  int16_t get_lower_ty_peg_offset(int16_t dz, int16_t tex_h) const;
 };
 
 #endif

@@ -34,9 +34,10 @@ public:
   // filled in by linedef::render
   bool is_one_sided;
   typedef struct {
+    float z_t,  z_b;
     float yt_l, yt_r;
     float yb_l, yb_r;
-    int16_t ld_h;
+    int16_t dz;
     wall_texture const *tex;
     int16_t tx_offset, ty_offset;
   } wall_part;

@@ -131,7 +131,7 @@ void wall_texture::pre_render(void)
   }
 }
 
-void wall_texture::render_col(float ldx, int ld_h, 
+void wall_texture::render_col(float ldx, int dz, 
                               int x, float yt, float yb,  float clipped_yt, float clipped_yb,
                               float dist,
                               int16_t tx_offset, int16_t ty_offset,
@@ -154,7 +154,7 @@ void wall_texture::render_col(float ldx, int ld_h,
   int   tx   = (width + tx_offset + (int)ldx) % width;
   for(int y=MAX(0,clipped_yt); y<=MIN(h-1,clipped_yb); y++)
   {
-    int ldy = ld_h*(y-yt)/(yb-yt);
+    int ldy = dz*(y-yt)/(yb-yt);
     int ty = (ty_offset+ldy) % height;
 
     int pix_offset = (ty * width) + tx;

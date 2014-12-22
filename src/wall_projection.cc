@@ -42,7 +42,7 @@ void wall_projection::render_1sided(void) const
     vp->update_ceiling_clip(x, h); // FIXME: this should only be "view height" not "screen height"
     vp->update_floor_clip(  x, -1);
 
-    mid.tex->render_col(ldx, mid.ld_h, x, yt, yb, clipped_yt, clipped_yb, dist, mid.tx_offset, mid.ty_offset, pct_darkened);
+    mid.tex->render_col(ldx, mid.dz, x, yt, yb, clipped_yt, clipped_yb, dist, mid.tx_offset, mid.ty_offset, pct_darkened);
   }
 }
 
@@ -81,7 +81,7 @@ void wall_projection::render_2sided(void) const
       int mid = MIN(ymt-1, vp->get_floor_clip(x)-1);
       if(mid >= clipped_yt)
       {
-        upper.tex->render_col(ldx, upper.ld_h, x, yt, mid, clipped_yt, mid, dist, upper.tx_offset, upper.ty_offset, pct_darkened);
+        upper.tex->render_col(ldx, upper.dz, x, yt, mid, clipped_yt, mid, dist, upper.tx_offset, upper.ty_offset, pct_darkened);
         vp->update_ceiling_clip(x, mid);
       }
       else
@@ -99,7 +99,7 @@ void wall_projection::render_2sided(void) const
       int mid = MAX(ymb+1, vp->get_ceiling_clip(x)+1);
       if(clipped_yb >= mid)
       {
-        lower.tex->render_col(ldx, lower.ld_h, x, mid, yb, mid, clipped_yb, dist, upper.tx_offset, upper.ty_offset, pct_darkened);
+        lower.tex->render_col(ldx, lower.dz, x, mid, yb, mid, clipped_yb, dist, upper.tx_offset, upper.ty_offset, pct_darkened);
         vp->update_floor_clip(x, mid);
       }
       else
@@ -112,7 +112,7 @@ void wall_projection::render_2sided(void) const
       vp->update_floor_clip(x, clipped_yb+1);
     }
 
-    //if(mid.tex) { mid.tex->render_col(ldx, mid  .ld_h, x, clipped_yt, clipped_yb, dist, mid  .tx_offset, mid  .ty_offset, pct_darkened); }
+    //if(mid.tex) { mid.tex->render_col(ldx, mid  .dz, x, clipped_yt, clipped_yb, dist, mid  .tx_offset, mid  .ty_offset, pct_darkened); }
   }
 }
 

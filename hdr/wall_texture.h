@@ -33,7 +33,7 @@ public:
 
   bool is_valid(void);
 
-  void render_col(float ldx, int ld_h, 
+  void render_col(float ldx, int dz, 
                   int x, float yt, float yb, float clipped_yt, float clipped_yb,
                   float dist,
                   int16_t tx_offset, int16_t ty_offset,
