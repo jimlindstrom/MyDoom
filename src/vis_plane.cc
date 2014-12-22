@@ -82,7 +82,7 @@ void vis_plane::update_clip(int16_t x, int16_t yb, int16_t yt)
   y_b[x] = yb;
 }
 
-void vis_plane::draw(projector const *_projector, player const *_player)
+void vis_plane::draw(camera const *_camera)
 {
   //#define DEBUG_VISPLANES
   #ifdef DEBUG_VISPLANES
@@ -97,12 +97,12 @@ void vis_plane::draw(projector const *_projector, player const *_player)
 
   debug_printf("    visplane (0x%08x) x:[%d,%d]", (uint32_t)this, x_l, x_r);
 
-  float rel_z = _player->get_view_height() - height;
+  float rel_z = _camera->get_view_height() - height;
   for(int16_t x=MAX(0,x_l); x<=MIN(x_r,w-1); x++)
   {
     if(y_t[x]>=0 || y_b[x]<h)
     {
-      float view_angle = _projector->unproject_x_to_horiz_angle(x) + _player->get_facing_angle();
+      float view_angle = _projector->unproject_x_to_horiz_angle(x) + _camera->get_facing_angle();
       float sin_view_angle = sin(view_angle);
       float cos_view_angle = cos(view_angle);
       int16_t y_t_c = MAX(0, y_t[x]);
@@ -119,8 +119,8 @@ void vis_plane::draw(projector const *_projector, player const *_player)
          * (map_x^2) + (map_y^2)  = map_z^2 * 1000^2 / [screen_y - (screen_h/2)]^2
          */
         float cur_dist = 1000 * rel_z / (y - (h/2.0));
-        int map_y = (-cur_dist * sin_view_angle) - _player->get_map_position()->get_y();
-        int map_x = (-cur_dist * cos_view_angle) - _player->get_map_position()->get_x();
+        int map_y = (-cur_dist * sin_view_angle) - _camera->get_map_position()->get_y();
+        int map_x = (-cur_dist * cos_view_angle) - _camera->get_map_position()->get_x();
         float pct_darkened = DIST_TO_PCT_DARKENED(cur_dist);
 
         #if 0

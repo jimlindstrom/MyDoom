@@ -19,22 +19,22 @@ void vis_things::add_thing(thing const *_thing)
   things[num_vis_things++] = _thing;
 }
 
-void vis_things::draw_things(column_range_list *col_ranges, projector const *_projector, player const *_player) 
+void vis_things::draw_things(camera const *_camera, column_range_list *col_ranges)
 {
-  calc_distances(_player);
+  calc_distances(_camera);
   sort_things_back_to_front();
 
   for(int i=0; i<num_vis_things; i++)
   {
-    things[i]->render_player_view(col_ranges, _projector, _player);
+    things[i]->render_player_view(_camera, col_ranges);
   }
 }
 
-void vis_things::calc_distances(player const *_player)
+void vis_things::calc_distances(camera const *_camera)
 {
   for(int i=0; i<num_vis_things; i++)
   {
-    dists[i] = _player->get_map_position()->distance_to_point(things[i]->get_map_position());
+    dists[i] = _camera->get_map_position()->distance_to_point(things[i]->get_map_position());
   }
 }
 

@@ -5,6 +5,9 @@
 #include "projector.h"
 #include "tests.h"
 
+projector __projector;
+projector *_projector = &__projector; // GLOBAL
+
 projector::projector()
 : clip_l(&clip_l1, &clip_l2),
   clip_r(&clip_r1, &clip_r2)

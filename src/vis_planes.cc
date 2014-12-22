@@ -22,12 +22,12 @@ vis_planes::~vis_planes()
 {
 }
 
-void vis_planes::draw_planes(projector const *_projector, player const *_player)
+void vis_planes::draw_planes(camera const *_camera)
 {
   debug_printf("  drawing visplanes\n");
   for(int i=0; i<num_vis_planes; i++)
   {
-    _vis_planes[i].draw(_projector, _player);
+    _vis_planes[i].draw(_camera);
   }
 }
 

@@ -476,11 +476,11 @@ void episode_map::draw_overhead_map(overhead_map *omap) const
   }
 }
 
-void episode_map::render_player_view(column_range_list *col_ranges, 
-                                     projector const *_projector, player const *_player, 
+void episode_map::render_player_view(camera const *_camera,
+                                     column_range_list *col_ranges, 
                                      vis_planes *vp, vis_things *vt) const
 {
-  root_node()->render_player_view(col_ranges, _projector, _player, vp, &things[0], num_things, vt);
+  root_node()->render_player_view(_camera, col_ranges, vp, &things[0], num_things, vt);
 }
 
 bool episode_map::can_move(vertex const *old_position, vertex const *new_position, float *floor_height) const

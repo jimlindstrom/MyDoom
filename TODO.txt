@@ -3,7 +3,6 @@ In Progress
 - CHORE: tech debt, FIXMEs, modeling...
    - Rename 'column_range_list' to 'column_ranges'?
    - CHORE: cleanup wad_segment
-   - CHORE: Don't pass the player and projector around. Create camera class, move projector into it, player owns camera, and just pass camera.
 
 - BUG: as you walk through doors, they get pegged to screen-bottom?
 - BUG: certian lower textures are cycling nondeterministically

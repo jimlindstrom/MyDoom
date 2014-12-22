@@ -36,6 +36,8 @@ private:
          clip_r;
 };
 
+extern projector *_projector; // GLOBAL
+
 void projector_tests(void);
 
 #endif

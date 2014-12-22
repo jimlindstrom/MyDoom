@@ -7,7 +7,7 @@
 #include "subsector.h"
 #include "partition_line.h"
 #include "projector.h"
-#include "player.h"
+#include "camera.h"
 #include "column_range_list.h"
 #include "vis_planes.h"
 
@@ -50,12 +50,12 @@ public:
   void set_left_subsector(subsector *_subsector) { left._subsector = _subsector; }
   void set_right_subsector(subsector *_subsector) { right._subsector = _subsector; }
 
-  void render_player_view(column_range_list *col_ranges, 
-                          projector const *_projector, player const *_player, 
+  void render_player_view(camera const *_camera,
+                          column_range_list *col_ranges, 
                           vis_planes *vp, 
                           thing *things, int16_t num_things, vis_things *vt) const;
 
-  bool undrawn_columns_toward_bbox(bbox const *_bbox, column_range_list *col_ranges, projector const *_projector, player const *_player) const;
+  bool undrawn_columns_toward_bbox(bbox const *_bbox, column_range_list *col_ranges, camera const *_camera) const;
 
   subsector const *get_subsector_containing(vertex const *v) const;
 

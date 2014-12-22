@@ -6,7 +6,7 @@
 #include "projector.h"
 #include "wad_segment.h"
 #include "sector.h"
-#include "player.h"
+#include "camera.h"
 #include "column_range_list.h"
 #include "vis_planes.h"
 #include "vis_things.h"
@@ -30,8 +30,8 @@ public:
   void allocate_segments(void);
   void set_nth_segment(int n, wad_segment const *_segment);
 
-  void render_player_view(column_range_list *col_ranges, 
-                          projector const *_projector, player const *_player, 
+  void render_player_view(camera const *_camera,
+                          column_range_list *col_ranges, 
                           vis_planes *vp, 
                           thing *things, int16_t num_things, vis_things *vt) const;
 

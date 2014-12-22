@@ -107,20 +107,21 @@ bool wad_segment::is_same_ceiling_plane_on_both_sides(void) const
          (back_sector->get_light_level()     == front_sector->get_light_level());
 }
 
-void wad_segment::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player,
+void wad_segment::render_player_view(camera const *_camera, column_range_list *col_ranges,
                                      vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const
 {
-  segment_projection *seg_proj = project(_projector, _player);
+  segment_projection *seg_proj = project(_camera);
   if(!seg_proj) { return; }
 
   int num_wall_projs;
   wall_projection **wall_projs = col_ranges->clip_segment(seg_proj, &num_wall_projs);
+  debug_printf("    %d clipped wall projections\n", num_wall_projs);
   for(int i=0; i<num_wall_projs; i++)
   {
     if(floor)   { floor   = vp->adjust_or_create(floor,   wall_projs[i]->x_l, wall_projs[i]->x_r); }
     if(ceiling) { ceiling = vp->adjust_or_create(ceiling, wall_projs[i]->x_l, wall_projs[i]->x_r); }
 
-    wall_projs[i]->project_vertically(_projector, _player);
+    wall_projs[i]->project_vertically(_camera);
 
     wall_projs[i]->ldx_l        = seg_proj->get_texture_x_offset(wall_projs[i]->x_l);
     wall_projs[i]->ldx_r        = seg_proj->get_texture_x_offset(wall_projs[i]->x_r);
@@ -141,13 +142,13 @@ void wad_segment::render_player_view(column_range_list *col_ranges, projector co
  * wad_segment: private interface
  ******************************************************************************/
 
-segment_projection *wad_segment::project(projector const *_projector, player const *_player) const
+segment_projection *wad_segment::project(camera const *_camera) const
 {
   segment_projection *seg_proj = new segment_projection();
 
   // quickly reject empty lines, back faces, lines outside/behind FOV
-  seg_proj->ang_l = NORMALIZE_ANGLE(_player->get_map_position()->angle_to_point(vertex_l) - _player->get_facing_angle());
-  seg_proj->ang_r = NORMALIZE_ANGLE(_player->get_map_position()->angle_to_point(vertex_r) - _player->get_facing_angle());
+  seg_proj->ang_l = NORMALIZE_ANGLE(_camera->get_map_position()->angle_to_point(vertex_l) - _camera->get_facing_angle());
+  seg_proj->ang_r = NORMALIZE_ANGLE(_camera->get_map_position()->angle_to_point(vertex_r) - _camera->get_facing_angle());
   if(is_empty_line() ||
      seg_proj->is_backface() ||
      seg_proj->is_outside_fov(_projector->get_horiz_fov_radius()))
@@ -159,7 +160,7 @@ segment_projection *wad_segment::project(projector const *_projector, player con
                segment_num,
                vertex_l->get_x(), vertex_l->get_y(),
                vertex_r->get_x(), vertex_r->get_y() ); 
-  debug_printf("    angles: [%.1f,%.1f]\n", RAD_TO_DEG(seg_proj->angle_l), RAD_TO_DEG(seg_proj->angle_r));
+  debug_printf("    angles: [%.1f,%.1f]\n", RAD_TO_DEG(seg_proj->ang_l), RAD_TO_DEG(seg_proj->ang_r));
 
   // If not a solid line segment, don't consider the columns completely occluded. (continue drawing further-back segments)
   seg_proj->is_opaque = !( is_window() || is_other_single_sided_line() );
@@ -169,7 +170,7 @@ segment_projection *wad_segment::project(projector const *_projector, player con
   seg_proj->clip_ceiling = is_closed_door() || !is_same_ceiling_plane_on_both_sides();
 
   // step 1: translate segment's verticies into player-centric map coordinates
-  segment *transformed_seg = transform_origin(_player->get_map_position(), _player->get_facing_angle());
+  segment *transformed_seg = transform_origin(_camera->get_map_position(), _camera->get_facing_angle());
 
   // step 2: clip it 
   transformed_seg->clip_to_vectors(_projector->get_left_clipping_vector(),

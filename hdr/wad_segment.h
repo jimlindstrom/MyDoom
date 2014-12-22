@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include "projector.h"
-#include "player.h"
+#include "camera.h"
 #include "vertex.h"
 #include "segment.h"
 #include "linedef.h"
@@ -49,7 +49,7 @@ public:
   bool is_same_floor_plane_on_both_sides(void) const;
   bool is_same_ceiling_plane_on_both_sides(void) const;
 
-  void render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player, 
+  void render_player_view(camera const *_camera, column_range_list *col_ranges,
                           vis_planes *vp, vis_plane *floor, vis_plane *ceiling) const;
 
   uint16_t segment_num; // for debug printing
@@ -65,7 +65,7 @@ private:
   linedef const *_linedef;
   sector const *front_sector, *back_sector;
 
-  segment_projection *project(projector const *_projector, player const *_player) const;
+  segment_projection *project(camera const *_camera) const;
 };
 
 #endif

@@ -24,7 +24,7 @@ void game::set_screen_resolution(int w, int h)
 {
   screen_width = w;
   screen_height = h;
-  _projector.set_screen_size(w, h);
+  _projector->set_screen_size(w, h);
 }
 
 void game::init_things(void)
@@ -40,8 +40,7 @@ void game::init_things(void)
       switch(cur_thing->get_thing_type())
       {
         case THING_PLAYER_1_START_TYPE:
-          _player.set_map_position(cur_thing->get_map_position());
-          _player.set_facing_angle(cur_thing->get_facing_angle());
+          _player.reset_camera(cur_thing->get_map_position(), cur_thing->get_facing_angle());
           break;
   
         default:
@@ -53,8 +52,7 @@ void game::init_things(void)
 
   #if 0
   vertex v(2873.1,-3068.2);
-  _player.set_map_position(&v);
-  _player.set_facing_angle(DEG_TO_RAD(150.4));
+  _player.reset_camera(&v, DEG_TO_RAD(150.4));
   #endif
 }
 
@@ -64,10 +62,11 @@ void game::do_frame(void)
 
   _player.move(_map);
 
-  printf("  player at (%.1f,%.1f) facing %.1f\n", 
-         _player.get_map_position()->get_x(), 
-         _player.get_map_position()->get_y(), 
-         RAD_TO_DEG(_player.get_facing_angle()));
+  printf("  player at (%.1f,%.1f,%.1f) facing %.1f\n", 
+         _player.get_camera()->get_map_position()->get_x(), 
+         _player.get_camera()->get_map_position()->get_y(), 
+         _player.get_camera()->get_view_height(),
+         RAD_TO_DEG(_player.get_camera()->get_facing_angle()));
 
   frame_buf_clear();
   render_player_view();
@@ -82,9 +81,9 @@ void game::render_player_view(void)
   vis_planes _vis_planes;
   vis_things _vis_things;
 
-  _map->render_player_view(&col_ranges, &_projector, &_player, &_vis_planes, &_vis_things);
-  _vis_planes.draw_planes(&_projector, &_player);
-  _vis_things.draw_things(&col_ranges, &_projector, &_player);
+  _map->render_player_view(_player.get_camera(), &col_ranges, &_vis_planes, &_vis_things);
+  _vis_planes.draw_planes( _player.get_camera());
+  _vis_things.draw_things( _player.get_camera(), &col_ranges);
 }
 
 void game::render_overhead_map(void)
@@ -102,7 +101,7 @@ void game::render_overhead_map(void)
   _player.draw_overhead_map_marker(&omap);
 }
 
-void game::track_frames_per_sec(void)
+void game::track_frames_per_sec(void) // FIXME: move into its own class
 {
   double delta_sec, fps;
   int idx_prev = (frame_time_idx+1)%FRAME_TIMES_COUNT;
@@ -110,8 +109,8 @@ void game::track_frames_per_sec(void)
 
   gettimeofday(&frame_times[frame_time_idx], NULL);
 
-  delta_sec =  (frame_times[frame_time_idx].tv_sec - frame_times[idx_prev      ].tv_sec) +
-              ((frame_times[frame_time_idx].tv_usec- frame_times[idx_prev      ].tv_usec)/1000000.0);
+  delta_sec =  (frame_times[frame_time_idx].tv_sec - frame_times[idx_prev].tv_sec) +
+              ((frame_times[frame_time_idx].tv_usec- frame_times[idx_prev].tv_usec)/1000000.0);
   if(delta_sec>0.00001 && delta_sec<10.0)
   {
     fps = (double)num_frames / delta_sec;

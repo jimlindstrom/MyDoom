@@ -12,7 +12,7 @@ class wall_projection
 public:
   bool overlaps_range(int16_t x1, int16_t x2) const { return !((x1>x_r) || (x2<x_l)); }
 
-  void project_vertically(projector const *_projector, player const *_player);
+  void project_vertically(camera const *_camera);
 
   void render_1sided(void) const; // FIXME: just make a single point and branch. This is ugly...
   void render_2sided(void) const;

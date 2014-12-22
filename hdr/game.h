@@ -34,7 +34,7 @@ private:
   int level;
   episode_map const *_map;
   player _player;
-  projector _projector;
+
   #define FRAME_TIMES_COUNT 50
   struct timeval frame_times[FRAME_TIMES_COUNT];
   int frame_time_idx;

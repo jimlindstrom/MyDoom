@@ -59,32 +59,32 @@ uint8_t thing::get_frame_idx(void) const
   return frame_letter-'A';
 }
 
-void thing::render_player_view(column_range_list *col_ranges, projector const *_projector, player const *_player) const
+void thing::render_player_view(camera const *_camera, column_range_list *col_ranges) const
 {
   thing_projection proj;
 
-  project(_projector, _player, &proj);
-  if(proj.is_visible)
+  project(_camera, &proj);
+  if(proj.is_visible)  // FIXME: return ptr instead
   {
     proj.clip(col_ranges);
     proj.draw();
   }
 }
 
-void thing::project(projector const *_projector, player const *_player, thing_projection *proj) const
+void thing::project(camera const *_camera, thing_projection *proj) const
 {
   proj->is_visible = false;
 
   // figure out which sprite to use
-  proj->sprite_angle = _player->get_map_position()->angle_to_point(&map_position) - facing_angle + DEG_TO_RAD(90);
+  proj->sprite_angle = _camera->get_map_position()->angle_to_point(&map_position) - facing_angle + DEG_TO_RAD(90);
   if(proj->sprite_angle <      0.0) { proj->sprite_angle += 2.0*M_PI; }
   if(proj->sprite_angle > 2.0*M_PI) { proj->sprite_angle -= 2.0*M_PI; }
   proj->_sprite = get_cur_sprite(proj); // NOTE: requires proj->sprite_angle be filled in
   if(!proj->_sprite) { return; }
 
   // project horizontally
-  float angle_c = NORMALIZE_ANGLE(_player->get_map_position()->angle_to_point(&map_position) - _player->get_facing_angle());
-  float dist_c  = _player->get_map_position()->distance_to_point(&map_position);
+  float angle_c = NORMALIZE_ANGLE(_camera->get_map_position()->angle_to_point(&map_position) - _camera->get_facing_angle());
+  float dist_c  = _camera->get_map_position()->distance_to_point(&map_position);
   float angle_delta = atan2(proj->_sprite->get_width()/2.0, dist_c);
   proj->angle_l = angle_c + angle_delta;
   proj->angle_r = angle_c - angle_delta;
@@ -101,7 +101,7 @@ void thing::project(projector const *_projector, player const *_player, thing_pr
 
   // project vertically
   float y0, dy;
-  float rel_height = _player->get_view_height() - get_sector()->get_floor_height(); // FIXME: assumes it sits on floor
+  float rel_height = _camera->get_view_height() - get_sector()->get_floor_height(); // FIXME: assumes it sits on floor
   _projector->project_z_to_y(-rel_height, dist_c, &y0, &dy);
   float h = (proj->x_r - proj->x_l) * proj->_sprite->get_height() / proj->_sprite->get_width();
   proj->y_t = y0-h;

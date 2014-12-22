@@ -3,10 +3,10 @@
 #include "wall_projection.h"
 
 // NOTE: assumes dist_* has been set
-void wall_projection::project_vertically(projector const *_projector, player const *_player)
+void wall_projection::project_vertically(camera const *_camera)
 {
-  _projector->project_z_to_y(-_player->get_view_height(), dist_l, &y0_l, &dy_l);
-  _projector->project_z_to_y(-_player->get_view_height(), dist_r, &y0_r, &dy_r);
+  _projector->project_z_to_y(-_camera->get_view_height(), dist_l, &y0_l, &dy_l);
+  _projector->project_z_to_y(-_camera->get_view_height(), dist_r, &y0_r, &dy_r);
 }
 
 void wall_projection::render_1sided(void) const

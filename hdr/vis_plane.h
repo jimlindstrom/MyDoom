@@ -6,7 +6,7 @@
 #include "flat.h"
 #include "games.h"
 #include "projector.h"
-#include "player.h"
+#include "camera.h"
 
 #define VIS_PLANE_FLOOR_TYPE	1
 #define VIS_PLANE_CEILING_TYPE	2
@@ -34,7 +34,7 @@ public:
 
   void update_clip(int16_t x, int16_t yb, int16_t yt);
 
-  void draw(projector const *_projector, player const *_player);
+  void draw(camera const *_camera);
 
 private:
   int16_t height;

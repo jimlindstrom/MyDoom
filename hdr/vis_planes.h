@@ -5,7 +5,7 @@
 #include "vis_plane.h"
 #include "games.h"
 #include "projector.h"
-#include "player.h"
+#include "camera.h"
 
 #define MAX_VIS_PLANES (128)
 
@@ -15,7 +15,7 @@ public:
   vis_planes();
   ~vis_planes();
 
-  void draw_planes(projector const *_projector, player const *_player);
+  void draw_planes(camera const *_camera);
 
   vis_plane *find_or_create(int16_t height, flat const *tex, uint16_t light_level);
   vis_plane *create(int16_t height, flat const *tex, uint16_t light_level);
