@@ -68,7 +68,7 @@ private:
 
   subsector const *_subsector;
 
-  void project(camera const *_camera, thing_projection *proj) const;
+  thing_projection *project(camera const *_camera) const;
   sprite const *get_cur_sprite(thing_projection const *proj) const;
 };
 

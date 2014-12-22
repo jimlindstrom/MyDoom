@@ -61,26 +61,29 @@ uint8_t thing::get_frame_idx(void) const
 
 void thing::render_player_view(camera const *_camera, column_range_list *col_ranges) const
 {
-  thing_projection proj;
+  thing_projection *proj;
 
-  project(_camera, &proj);
-  if(proj.is_visible)  // FIXME: return ptr instead
+  proj = project(_camera);
+  if(!proj)
   {
-    proj.clip(col_ranges);
-    proj.draw();
+    return;
   }
+
+  proj->clip(col_ranges);
+  proj->draw();
+  delete proj;
 }
 
-void thing::project(camera const *_camera, thing_projection *proj) const
+thing_projection *thing::project(camera const *_camera) const
 {
-  proj->is_visible = false;
+  thing_projection *proj = new thing_projection;
 
   // figure out which sprite to use
   proj->sprite_angle = _camera->get_map_position()->angle_to_point(&map_position) - facing_angle + DEG_TO_RAD(90);
   if(proj->sprite_angle <      0.0) { proj->sprite_angle += 2.0*M_PI; }
   if(proj->sprite_angle > 2.0*M_PI) { proj->sprite_angle -= 2.0*M_PI; }
   proj->_sprite = get_cur_sprite(proj); // NOTE: requires proj->sprite_angle be filled in
-  if(!proj->_sprite) { return; }
+  if(!proj->_sprite) { delete proj; return NULL; }
 
   // project horizontally
   float angle_c = NORMALIZE_ANGLE(_camera->get_map_position()->angle_to_point(&map_position) - _camera->get_facing_angle());
@@ -91,8 +94,8 @@ void thing::project(camera const *_camera, thing_projection *proj) const
   proj->horiz_fov_radius = _projector->get_horiz_fov_radius();
   proj->dist_l = dist_c; // FIXME: do some trig here. this is an approximation
   proj->dist_r = dist_c; // FIXME: do some trig here. this is an approximation
-  if(proj->is_backface())    { return; }
-  if(proj->is_outside_fov()) { return; }
+  if(proj->is_backface())    { delete proj; return NULL; }
+  if(proj->is_outside_fov()) { delete proj; return NULL; }
   debug_printf("  rendering \"%s\"\n", defn->description);
   debug_printf("    angles: [%1.f, %.1f, %.1f] dist: %.1f\n", 
               RAD_TO_DEG(proj->angle_l), RAD_TO_DEG(proj->angle_c), RAD_TO_DEG(proj->angle_r), dist_c);
@@ -111,7 +114,7 @@ void thing::project(camera const *_camera, thing_projection *proj) const
   debug_printf("    x:[%.1f,%.1f], h:%.1f, y0:%.1f, dy:%.1f, y:[%.1f,%.1f]\n", proj->x_l, proj->x_r, h, y0, dy, proj->y_t, proj->y_b);
   debug_printf("    aspect ratio: %.3f\n", (proj->x_r - proj->x_l)/(proj->y_b - proj->y_t));
 
-  proj->is_visible = true;
+  return proj;
 }
 
 sprite const *thing::get_cur_sprite(thing_projection const *proj) const
