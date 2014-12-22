@@ -14,8 +14,10 @@ public:
 
   void project_vertically(projector const *_projector, player const *_player);
 
-  void render_1sided(void) const;
+  void render_1sided(void) const; // FIXME: just make a single point and branch. This is ugly...
   void render_2sided(void) const;
+
+// FIXME: make these private
 
   // filled in by column_range_list::clip_segment
   wall_projection *next_range; // FIXME: this should be in a container class like node_child_link
@@ -31,8 +33,8 @@ public:
   vis_planes *vp;
   vis_plane *floor, *ceiling;
   bool clip_floor, clip_ceiling;
-  int16_t sprite_clip_top[MAX_SCREEN_WIDTH];
-  int16_t sprite_clip_bot[MAX_SCREEN_WIDTH];
+  int16_t sprite_clip_top[MAX_SCREEN_WIDTH]; // FIXME: gratuitous. dynamically allocate for (x_r-x_l+1)
+  int16_t sprite_clip_bot[MAX_SCREEN_WIDTH]; // FIXME: gratuitous. dynamically allocate for (x_r-x_l+1)
 
   // filled in by linedef::render
   bool is_one_sided;
