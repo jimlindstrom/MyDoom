@@ -102,7 +102,7 @@ void create_animations(void)
       }
     }
 
-    flat_animations[num_animations].set_name(flats[i].get_name());
+    flat_animations[num_animations].set_name(flats[i].get_name()); // animations are referenced by their LAST frame
     flat_animations[num_animations].set_flat(flat_idx, &flats[i]);
 
     // if we're not already in a defined animation, check whether this is the beginning of a defined animation

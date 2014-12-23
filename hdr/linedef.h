@@ -68,7 +68,7 @@ public:
   int16_t get_ceiling_z(int direction) const;
   int16_t get_floor_z(int direction) const;
 
-  void set_z_values(int direction, clipped_segment_projection *wall) const;
+  void set_z_values(int direction, bool is_outdoor_area, clipped_segment_projection *wall) const;
   void set_textures(int direction, clipped_segment_projection *wall) const;
 
 private:

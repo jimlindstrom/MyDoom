@@ -45,6 +45,7 @@ public:
   bool is_window(void) const;
   bool is_empty_line(void) const;
   bool is_other_single_sided_line(void) const;
+  bool is_outdoor_area(void) const;
 
   bool is_same_floor_plane_on_both_sides(void) const;
   bool is_same_ceiling_plane_on_both_sides(void) const;

@@ -50,7 +50,8 @@ void subsector::render_player_view(camera const *_camera,
   {
     floor   = vp->find_or_create(sec->get_floor_height(),   sec->get_floor_texture(),   sec->get_light_level());
   }
-  if(sec->get_ceiling_height() > _camera->get_view_height())
+  if( (sec->get_ceiling_height() > _camera->get_view_height()) ||
+      sec->get_ceiling_texture()->is_fake_sky() )
   {
     ceiling = vp->find_or_create(sec->get_ceiling_height(), sec->get_ceiling_texture(), sec->get_light_level());
   }

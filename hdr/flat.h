@@ -41,6 +41,8 @@ public:
   void set_name(char const *_name) { strcpy(name, _name); name[8] = 0; }
   char const *get_name(void) const { return name; }
 
+  bool is_fake_sky(void) const { return (strcasecmp(name, "F_SKY1") == 0); } 
+
   void increment(void) { cur_idx = (cur_idx + 1) % num_flats; }
   void set_flat(int n, flat const *f) { flats[n] = f; num_flats = MAX(num_flats, n+1); }
   flat const *get_cur_flat(void) const { return flats[cur_idx]; }

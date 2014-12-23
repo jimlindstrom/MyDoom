@@ -5,6 +5,7 @@
 #include "frame_buf.h"
 #include "palettes.h"
 #include "lighting.h"
+#include "wall_textures.h" // FIXME: shouldn't be needed. Just for temporarily looking up the sky texture
 #include "common.h"
 
 #define UNINITIALIZED -1
@@ -84,64 +85,85 @@ void vis_plane::update_clip(int16_t x, int16_t yb, int16_t yt)
 
 void vis_plane::draw(camera const *_camera)
 {
-  //#define DEBUG_VISPLANES
-  #ifdef DEBUG_VISPLANES
-  color_rgba r( 255, 100, 100, 255);
-  color_rgba g( 100, 255, 100, 255);
-  color_rgba b( 100, 100, 255, 255);
-  color_rgba wh(255, 255, 255, 255);
-  #endif
   int16_t h=games_get_screen_height();
   int16_t w=games_get_screen_width();
-  palette const *pal = palettes_get(0); // FIXME: use the right palette
 
   debug_printf("    visplane (0x%08x) x:[%d,%d]", (uint32_t)this, x_l, x_r);
 
-  float rel_z = _camera->get_view_height() - height;
-  for(int16_t x=MAX(0,x_l); x<=MIN(x_r,w-1); x++)
+  // special effect for drawing sky
+  if(tex->is_fake_sky())
   {
-    if(y_t[x]>=0 || y_b[x]<h)
+    wall_texture const *sky = wall_textures_get_by_name("SKY1");
+    if(!sky) { printf("error: couldn't find sky flat!\n"); exit(0); }
+
+    for(int16_t x=MAX(0,x_l); x<=MIN(x_r,w-1); x++)
     {
-      float view_angle = _projector->unproject_x_to_horiz_angle(x) + _camera->get_facing_angle();
-      float sin_view_angle = sin(view_angle);
-      float cos_view_angle = cos(view_angle);
-      int16_t y_t_c = MAX(0, y_t[x]);
-      int16_t y_b_c = MIN(y_b[x], h-1);
-
-      debug_printf("  x=%d, y:[%d,%d]\n", x, y_t_c, y_b_c);
-      for(int16_t y=y_t_c; y<=y_b_c; y++)
+      if(y_t[x]>=0 || y_b[x]<h)
       {
-        /*
-         * screen_y = -1000*map_z/[(map_x^2)+(map_y^2)]^0.5 + (screen_h/2)
-         * screen_y - (screen_h/2) = -1000*map_z / [(map_x^2)+(map_y^2)]^0.5 
-         * [(map_x^2)+(map_y^2)]^0.5  = -1000*map_z / [screen_y - (screen_h/2)]
-         * (map_x^2)+(map_y^2)  = [-1000*map_z / [screen_y - (screen_h/2)]]^2
-         * (map_x^2) + (map_y^2)  = map_z^2 * 1000^2 / [screen_y - (screen_h/2)]^2
-         */
-        float cur_dist = 1000 * rel_z / (y - (h/2.0));
-        int map_y = (-cur_dist * sin_view_angle) - _camera->get_map_position()->get_y();
-        int map_x = (-cur_dist * cos_view_angle) - _camera->get_map_position()->get_x();
-        float pct_darkened = DIST_TO_PCT_DARKENED(cur_dist);
+        float view_angle = _projector->unproject_x_to_horiz_angle(x) + _camera->get_facing_angle();
+        while(view_angle > (M_PI/2)) { view_angle -= (M_PI/2); }
+        while(view_angle <        0) { view_angle += (M_PI/2); }
+        float sky_x = view_angle * 255.0 / (M_PI/2.0);
 
-        #if 0
-        uint8_t color_idx = tex->get_cur_flat()->get_pixel(map_x % FLAT_WIDTH, map_y % FLAT_HEIGHT);
-        #else
-        uint8_t color_idx = tex->get_cur_flat()->get_pixel(map_x & (FLAT_WIDTH-1), map_y & (FLAT_HEIGHT-1)); // because w,h are powers of 2
-        #endif
-        color_rgba c;
-        c.set_to(pal->get_color(color_idx)); // FIXME: do this up-front
-        c.darken_by(pct_darkened);
-        frame_buf_draw_pixel(x, y, &c);
-        #ifdef DEBUG_VISPLANES
-        if     (y     == y_t_c       ) { frame_buf_draw_pixel(x, y, &r ); }
-        if     ((y-1) == y_t_c       ) { frame_buf_draw_pixel(x, y, &r ); }
-        else if(y     == y_b_c       ) { frame_buf_draw_pixel(x, y, &g ); }
-        else if((y+1) == y_b_c       ) { frame_buf_draw_pixel(x, y, &g ); }
-        else if(x     == MAX(0,x_l)  ) { frame_buf_draw_pixel(x, y, &b ); }
-        else if((x-1) == MAX(0,x_l)  ) { frame_buf_draw_pixel(x, y, &b ); }
-        else if(x     == MIN(x_r,w-1)) { frame_buf_draw_pixel(x, y, &wh); }
-        else if((x+1) == MIN(x_r,w-1)) { frame_buf_draw_pixel(x, y, &wh); }
-        #endif
+        int16_t y_t_c = MAX(0, y_t[x]);
+        int16_t y_b_c = MIN(y_b[x], h-1);
+  
+        debug_printf("  x=%d, y:[%d,%d]\n", x, y_t_c, y_b_c);
+        for(int16_t y=y_t_c; y<=y_b_c; y++)
+        {
+          float sky_y = y * 128.0 / (h-1);
+          color_rgb const *c_rgb = sky->get_pixel(sky_x, sky_y);
+          color_rgba c; c.set_to(c_rgb);
+          frame_buf_draw_pixel(x, y, &c);
+        }
+      }
+    }
+  }
+
+  // regular vis_plane rendering
+  else
+  {
+    int16_t h=games_get_screen_height();
+    int16_t w=games_get_screen_width();
+    palette const *pal = palettes_get(0); // FIXME: use the right palette
+  
+    debug_printf("    visplane (0x%08x) x:[%d,%d]", (uint32_t)this, x_l, x_r);
+  
+    float rel_z = _camera->get_view_height() - height;
+    for(int16_t x=MAX(0,x_l); x<=MIN(x_r,w-1); x++)
+    {
+      if(y_t[x]>=0 || y_b[x]<h)
+      {
+        float view_angle = _projector->unproject_x_to_horiz_angle(x) + _camera->get_facing_angle();
+        float sin_view_angle = sin(view_angle);
+        float cos_view_angle = cos(view_angle);
+        int16_t y_t_c = MAX(0, y_t[x]);
+        int16_t y_b_c = MIN(y_b[x], h-1);
+  
+        debug_printf("  x=%d, y:[%d,%d]\n", x, y_t_c, y_b_c);
+        for(int16_t y=y_t_c; y<=y_b_c; y++)
+        {
+          /*
+           * screen_y = -1000*map_z/[(map_x^2)+(map_y^2)]^0.5 + (screen_h/2)
+           * screen_y - (screen_h/2) = -1000*map_z / [(map_x^2)+(map_y^2)]^0.5 
+           * [(map_x^2)+(map_y^2)]^0.5  = -1000*map_z / [screen_y - (screen_h/2)]
+           * (map_x^2)+(map_y^2)  = [-1000*map_z / [screen_y - (screen_h/2)]]^2
+           * (map_x^2) + (map_y^2)  = map_z^2 * 1000^2 / [screen_y - (screen_h/2)]^2
+           */
+          float cur_dist = 1000 * rel_z / (y - (h/2.0));
+          int map_y = (-cur_dist * sin_view_angle) - _camera->get_map_position()->get_y();
+          int map_x = (-cur_dist * cos_view_angle) - _camera->get_map_position()->get_x();
+          float pct_darkened = DIST_TO_PCT_DARKENED(cur_dist);
+  
+          uint8_t color_idx;
+          //color_idx = tex->get_cur_flat()->get_pixel(map_x % FLAT_WIDTH, map_y % FLAT_HEIGHT);
+          color_idx   = tex->get_cur_flat()->get_pixel(map_x & (FLAT_WIDTH-1), map_y & (FLAT_HEIGHT-1)); // because w,h are powers of 2
+ 
+          color_rgba c;
+          c.set_to(pal->get_color(color_idx)); // FIXME: do this up-front
+          c.darken_by(pct_darkened);
+          frame_buf_draw_pixel(x, y, &c);
+        }
       }
     }
   }

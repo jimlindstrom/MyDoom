@@ -60,7 +60,7 @@ int16_t linedef::get_floor_z(int direction) const
   return get_sidedef(direction)->get_sector()->get_floor_height();
 }
 
-void linedef::set_z_values(int direction, clipped_segment_projection *wall) const
+void linedef::set_z_values(int direction, bool is_outdoor_area, clipped_segment_projection *wall) const
 {
   if(is_one_sided())
   {
@@ -69,8 +69,16 @@ void linedef::set_z_values(int direction, clipped_segment_projection *wall) cons
   }
   else if(is_two_sided())
   {
-    wall->upper.z_t = get_ceiling_z(direction  );
-    wall->upper.z_b = get_ceiling_z(1-direction);
+    if(is_outdoor_area)
+    {
+      wall->upper.z_t = get_ceiling_z(1-direction); // a hack to not draw top when height changes outdoors
+      wall->upper.z_b = get_ceiling_z(1-direction);
+    }
+    else
+    {
+      wall->upper.z_t = get_ceiling_z(direction  );
+      wall->upper.z_b = get_ceiling_z(1-direction);
+    }
   
     wall->mid.z_t   = get_ceiling_z(1-direction);
     wall->mid.z_b   = get_floor_z(  1-direction);

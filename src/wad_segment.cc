@@ -91,6 +91,15 @@ bool wad_segment::is_other_single_sided_line(void) const
   return true;
 }
 
+bool wad_segment::is_outdoor_area(void) const
+{
+  return back_sector &&
+         back_sector ->get_ceiling_texture() &&
+         front_sector->get_ceiling_texture() &&
+         back_sector ->get_ceiling_texture()->is_fake_sky() &&
+         front_sector->get_ceiling_texture()->is_fake_sky();
+}
+
 bool wad_segment::is_same_floor_plane_on_both_sides(void) const
 {
   if(is_singled_sided_line()) { return false; }
@@ -127,7 +136,7 @@ void wad_segment::render_player_view(camera const *_camera, clipped_segment_proj
     clipped_seg_proj[i]->clip_ceiling = seg_proj->clip_ceiling;
 
     // project vertically
-    _linedef->set_z_values(direction, clipped_seg_proj[i]);
+    _linedef->set_z_values(direction, is_outdoor_area(), clipped_seg_proj[i]);
     clipped_seg_proj[i]->project_vertically(_camera);
 
     // set lighting & textures

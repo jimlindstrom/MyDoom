@@ -39,6 +39,8 @@ public:
                   int16_t tx_offset, int16_t ty_offset,
                   float pct_darkened) const;
 
+  color_rgb const *get_pixel(int x, int y) const { return &pixels[y*width + x]; }
+
 
 private:
   char name[9]; // An ASCII string defining the name of the map texture. Only the characters A-Z (uppercase), 

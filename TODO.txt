@@ -3,14 +3,15 @@ In Progress
 
 Queued up
 ---
-- BUG: some floors not being drawn. (under arch in first room. under arch in outside area.)
+- BUG: floor visplanes not always being drawn
+  - Under straight-ahead arch into lower area, when viewed from far side
+  - Under the change-in-height sky-flats out to the right.
 
 - BUG: top of backface lower/upper walls should occlude further-away sprites
 - BUG: certain wall types (doors?) are unnecessarily clipping closer-in sprites
    - I think it's because closed doors are getting treated as windows
 
 - BUG: lighting isn't as stark as in Doom
-- BUG: sky isn't showing up like in Doom
 
 - BUG: wall texture is misaligned in final room.
 - BUG: Some weird glitching: [(1783.3,-2631.2) facing 0.4] -- make a cmdline opt?
