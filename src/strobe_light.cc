@@ -18,18 +18,15 @@ strobe_light::strobe_light(sector *s, uint8_t _min_on_time, uint8_t _max_on_time
   
 void strobe_light::act()
 {
-  printf("strobe light acting.");
   if(frames_left < 1)
   {
     if(light_is_on) // flipping from on to off
     {
-      printf(", switching from on to off\n");
       _sector->set_light_level(min_light_level);
       frames_left = min_off_time + (random() % (max_off_time-min_off_time));
     }
     else // flipping from on to off
     {
-      printf(", switching from off to on\n");
       _sector->set_light_level(max_light_level);
       frames_left = min_on_time + (random() % (max_on_time-min_on_time));
     }
@@ -38,7 +35,6 @@ void strobe_light::act()
   else
   {
     frames_left--;
-    printf(" %d frames left\n", frames_left);
   }
 }
 
@@ -53,7 +49,7 @@ slow_strobe_light::slow_strobe_light(sector *s)
 }
 
 flickering_light::flickering_light(sector *s)
-: strobe_light(s, 1,10, 5,70)
+: strobe_light(s, 5,70, 1,10)
 {
 }
 
