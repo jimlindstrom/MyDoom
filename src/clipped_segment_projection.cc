@@ -1,6 +1,11 @@
+#include <stdio.h>
+
 #include "common.h"
 #include "lighting.h"
 #include "clipped_segment_projection.h"
+
+//#define DEBUG_PRINTING
+#include "debug.h"
 
 // NOTE: assumes dist_*, and [upper/mid/lower].z_* have been set
 void clipped_segment_projection::project_vertically(camera const *_camera)
@@ -105,7 +110,9 @@ void clipped_segment_projection::render_2sided(vis_planes *vp, vis_plane *floor,
       int mid = MIN(ymt-1, vp->get_floor_clip(x)-1);
       if(mid >= clipped_yt)
       {
-        upper.tex->render_col(ldx, upper.get_dz(), x, yt, mid, clipped_yt, mid, dist, upper.tx_offset, upper.ty_offset, pct_darkened);
+        debug_printf("UPPER: ldx:%d, dz:%d x:%d, y:[%.1f,%.1f], clipped_y:[%d,%d], dist:%.1f, t-off:[%d,%d], darkening:%.1f\n", 
+                     ldx, upper.get_dz(), x, yt, ymt-1, clipped_yt, mid, dist, upper.tx_offset, upper.ty_offset, pct_darkened);
+        upper.tex->render_col(ldx, upper.get_dz(), x, yt, ymt-1, clipped_yt, mid, dist, upper.tx_offset, upper.ty_offset, pct_darkened);
         vp->update_ceiling_clip(x, mid);
         sprite_clip_top[x] = mid;
       }
@@ -126,7 +133,7 @@ void clipped_segment_projection::render_2sided(vis_planes *vp, vis_plane *floor,
       int mid = MAX(ymb+1, vp->get_ceiling_clip(x)+1);
       if(clipped_yb >= mid)
       {
-        lower.tex->render_col(ldx, lower.get_dz(), x, mid, yb, mid, clipped_yb, dist, upper.tx_offset, upper.ty_offset, pct_darkened);
+        lower.tex->render_col(ldx, lower.get_dz(), x, ymb+1, yb, mid, clipped_yb, dist, upper.tx_offset, upper.ty_offset, pct_darkened);
         vp->update_floor_clip(x, mid);
         sprite_clip_bot[x] = mid;
       }

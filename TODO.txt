@@ -3,7 +3,6 @@ In Progress
 
 Queued up
 ---
-- BUG: as you walk through doors, they get pegged to screen-bottom?
 - BUG: certian lower textures are cycling nondeterministically
 
 - BUG: top of backface lower/upper walls should occlude further-away sprites
