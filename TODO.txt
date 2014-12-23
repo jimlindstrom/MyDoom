@@ -1,5 +1,8 @@
 In Progress
 ---
+
+Queued up
+---
 - BUG: as you walk through doors, they get pegged to screen-bottom?
 - BUG: certian lower textures are cycling nondeterministically
 
@@ -7,14 +10,14 @@ In Progress
 - BUG: certain wall types (doors?) are unnecessarily clipping closer-in sprites
    - I think it's because closed doors are getting treated as windows
 
-Queued up
----
+- FEATURE: animate wall textures (p_spec.c:101). See: http://doom.wikia.com/wiki/Animated_wall
+- FEATURE: animate flats (p_spec.c:101). See: http://doom.wikia.com/wiki/Animated_flat
+
+- BUG: lighting isn't as stark as in Doom
+- BUG: sky isn't showing up like in Doom
 
 - BUG: wall texture is misaligned in final room.
 - BUG: Some weird glitching: [(1783.3,-2631.2) facing 0.4] -- make a cmdline opt?
-
-- FEATURE: animate wall textures
-- FEATURE: animate flats
 
 - BUG: Player view height seems too high. 
 - FEATURE: head bobbing
@@ -31,6 +34,10 @@ Queued up
 
 - BUG: top of wall is rounded in final room (z projection is wrong)
 
-- FEATURE: ammo
-- FEATURE: shooting
+- Show the hand & weapon
+- Show the stats
+
+- FEATURE: pick up ammo
+- FEATURE: shoot guns
 - FEATURE: things move around
+- FEATURE: things shoot you

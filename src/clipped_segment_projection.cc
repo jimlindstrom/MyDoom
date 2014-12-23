@@ -9,7 +9,7 @@ void clipped_segment_projection::project_vertically(camera const *_camera)
   _projector->project_z_to_y(-_camera->get_view_height(), dist_l, &y0_l, &dy_l);
   _projector->project_z_to_y(-_camera->get_view_height(), dist_r, &y0_r, &dy_r);
 
-  upper.yt_l = y0_l + (upper.z_t * dy_l);
+  upper.yt_l = y0_l + (upper.z_t * dy_l); // it'd be nice if upper, mid, and lower had this as a member fn
   upper.yt_r = y0_r + (upper.z_t * dy_r);
   upper.yb_l = y0_l + (upper.z_b * dy_l);
   upper.yb_r = y0_r + (upper.z_b * dy_r);

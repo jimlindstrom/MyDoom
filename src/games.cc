@@ -20,7 +20,6 @@ static int16_t screen_height = 480;
 static game *cur_game = NULL;
 static episode_map const *cur_map = NULL;
 
-
 void game_init(void)
 {
   wad_file w;

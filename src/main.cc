@@ -5,6 +5,7 @@
 #include <pthread.h>
 
 #include "ui.h"
+#include "game.h"
 #include "games.h"
 #include "tests.h"
 
@@ -51,6 +52,13 @@ int main(int argc, char **argv)
     else if(strcmp(argv[i], "--headless")==0)
     {
       ui_set_headless_mode(true);
+    }
+    else if(strcmp(argv[i], "--player-at")==0)
+    {
+      game_custom_start_pos = true;
+      game_custom_start_x = atof(argv[++i]);
+      game_custom_start_y = atof(argv[++i]);
+      game_custom_start_r = atof(argv[++i]);
     }
   }
 

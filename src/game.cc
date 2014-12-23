@@ -9,6 +9,11 @@
 #include "vis_things.h"
 #include "vis_planes.h"
 
+bool game_custom_start_pos = false;
+float game_custom_start_x;
+float game_custom_start_y;
+float game_custom_start_r;
+
 game::game()
 {
   level = 1;
@@ -52,10 +57,12 @@ void game::init_things(void)
     }
   }
 
-  #if 0
-  vertex v(2873.1,-3068.2);
-  _player.reset_camera(&v, DEG_TO_RAD(150.4));
-  #endif
+
+  if(game_custom_start_pos)
+  {
+    vertex v(game_custom_start_x, game_custom_start_y);
+    _player.reset_camera(&v, DEG_TO_RAD(game_custom_start_r));
+  }
 }
 
 void game::do_frame(void)

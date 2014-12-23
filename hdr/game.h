@@ -8,6 +8,11 @@
 #include "projector.h"
 #include "player.h"
 
+extern bool game_custom_start_pos;
+extern float game_custom_start_x;
+extern float game_custom_start_y;
+extern float game_custom_start_r;
+
 class game
 {
 public:
