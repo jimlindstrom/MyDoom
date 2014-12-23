@@ -3,6 +3,11 @@ In Progress
 
 Queued up
 ---
+- FEATURE: strobe lighting
+- FEATURE: lighting: http://doom.wikia.com/wiki/COLORMAP
+  - FEATURE: change color depending on the direction a wall is facing (r_segs.c:605)
+  - FEATURE: increase lighting where wall lights are
+
 - BUG: floor visplanes not always being drawn
   - Under straight-ahead arch into lower area, when viewed from far side
   - Under the change-in-height sky-flats out to the right.
@@ -10,8 +15,6 @@ Queued up
 - BUG: top of backface lower/upper walls should occlude further-away sprites
 - BUG: certain wall types (doors?) are unnecessarily clipping closer-in sprites
    - I think it's because closed doors are getting treated as windows
-
-- BUG: lighting isn't as stark as in Doom
 
 - BUG: wall texture is misaligned in final room.
 - BUG: Some weird glitching: [(1783.3,-2631.2) facing 0.4] -- make a cmdline opt?
@@ -25,10 +28,6 @@ Queued up
 - FEATURE: trigger use/push actions on linedefs
 - FEATURE: trigger shoot actions on linedefs
 
-- FEATURE: lighting: http://doom.wikia.com/wiki/COLORMAP
-  - FEATURE: change color depending on the direction a wall is facing (r_segs.c:605)
-  - FEATURE: increase lighting where wall lights are
-
 - BUG: top of wall is rounded in final room (z projection is wrong)
 
 - Show the hand & weapon
@@ -39,4 +38,5 @@ Queued up
 - FEATURE: things move around
 - FEATURE: things shoot you
 
+- FEATURE: use different skies in different levels
 - FEATURE: animate wall textures (p_spec.c:101). See: http://doom.wikia.com/wiki/Animated_wall (There aren't many in doom1)

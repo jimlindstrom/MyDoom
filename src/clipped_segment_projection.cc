@@ -48,8 +48,9 @@ void clipped_segment_projection::render_1sided(vis_planes *vp, vis_plane *floor,
     float yt   = mid.yt_l   + (mid.yt_r  - mid.yt_l)*(x-x_l)/(x_r-x_l);
     float yb   = mid.yb_l   + (mid.yb_r  - mid.yb_l)*(x-x_l)/(x_r-x_l);
     float dist = dist_l     + (dist_r    - dist_l  )*(x-x_l)/(x_r-x_l);
-    float pct_darkened = DIST_TO_PCT_DARKENED(dist) * // Darken for distance (FIXME: How does Doom do this?)
-                         (light_level/255.0);         // Darken for sector light level
+    float pct_darkened1 = DIST_TO_PCT_DARKENED(dist); // Darken for distance
+    float pct_darkened2 = ((255-light_level)/255.0);  // Darken for sector light level
+    float pct_darkened = 1.0 - ((1.0-pct_darkened1)*(1.0-pct_darkened2));
 
     int clipped_yt = MAX(yt, vp->get_ceiling_clip(x)+1);
     int clipped_yb = MIN(yb, vp->get_floor_clip(  x)-1);
@@ -87,8 +88,9 @@ void clipped_segment_projection::render_2sided(vis_planes *vp, vis_plane *floor,
     float ymb  = mid  .yb_l   + (mid  .yb_r  - mid  .yb_l)*(x-x_l)/(x_r-x_l);
     float yb   = lower.yb_l   + (lower.yb_r  - lower.yb_l)*(x-x_l)/(x_r-x_l);
     float dist = dist_l       + (dist_r      - dist_l    )*(x-x_l)/(x_r-x_l);
-    float pct_darkened = DIST_TO_PCT_DARKENED(dist) * // Darken for distance (FIXME: How does Doom do this?)
-                         (light_level/255.0);         // Darken for sector light level
+    float pct_darkened1 = DIST_TO_PCT_DARKENED(dist); // Darken for distance
+    float pct_darkened2 = ((255-light_level)/255.0);  // Darken for sector light level
+    float pct_darkened = 1.0 - ((1.0-pct_darkened1)*(1.0-pct_darkened2));
 
     int clipped_yt = MAX(yt, vp->get_ceiling_clip(x)+1);
     int clipped_yb = MIN(yb, vp->get_floor_clip(  x)-1);

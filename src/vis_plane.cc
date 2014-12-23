@@ -153,7 +153,9 @@ void vis_plane::draw(camera const *_camera)
           float cur_dist = 1000 * rel_z / (y - (h/2.0));
           int map_y = (-cur_dist * sin_view_angle) - _camera->get_map_position()->get_y();
           int map_x = (-cur_dist * cos_view_angle) - _camera->get_map_position()->get_x();
-          float pct_darkened = DIST_TO_PCT_DARKENED(cur_dist);
+          float pct_darkened1 = DIST_TO_PCT_DARKENED(cur_dist); // Darken for distance
+          float pct_darkened2 = ((255-light_level)/255.0);  // Darken for sector light level
+          float pct_darkened = 1.0 - ((1.0-pct_darkened1)*(1.0-pct_darkened2));
   
           uint8_t color_idx;
           //color_idx = tex->get_cur_flat()->get_pixel(map_x % FLAT_WIDTH, map_y % FLAT_HEIGHT);
