@@ -126,6 +126,13 @@ void vis_plane::draw(camera const *_camera)
     int16_t h=games_get_screen_height();
     int16_t w=games_get_screen_width();
     palette const *pal = palettes_get(0); // FIXME: use the right palette
+    //#define DEBUG_VISPLANES
+    #ifdef DEBUG_VISPLANES
+    color_rgba r( 255, 100, 100, 255);
+    color_rgba g( 100, 255, 100, 255);
+    color_rgba b( 100, 100, 255, 255);
+    color_rgba wh(255, 255, 255, 255);
+    #endif
   
     debug_printf("    visplane (0x%08x) x:[%d,%d]", (uint32_t)this, x_l, x_r);
   
@@ -158,13 +165,22 @@ void vis_plane::draw(camera const *_camera)
           float pct_darkened = 1.0 - ((1.0-pct_darkened1)*(1.0-pct_darkened2));
   
           uint8_t color_idx;
-          //color_idx = tex->get_cur_flat()->get_pixel(map_x % FLAT_WIDTH, map_y % FLAT_HEIGHT);
-          color_idx   = tex->get_cur_flat()->get_pixel(map_x & (FLAT_WIDTH-1), map_y & (FLAT_HEIGHT-1)); // because w,h are powers of 2
+          color_idx = tex->get_cur_flat()->get_pixel(map_x & (FLAT_WIDTH-1), map_y & (FLAT_HEIGHT-1)); // because w,h are powers of 2
  
           color_rgba c;
-          c.set_to(pal->get_color(color_idx)); // FIXME: do this up-front
+          c.set_to(pal->get_color(color_idx));
           c.darken_by(pct_darkened);
           frame_buf_draw_pixel(x, y, &c);
+          #ifdef DEBUG_VISPLANES
+          if     (y     == y_t_c       ) { frame_buf_draw_pixel(x, y, &r ); }
+          if     ((y-1) == y_t_c       ) { frame_buf_draw_pixel(x, y, &r ); }
+          else if(y     == y_b_c       ) { frame_buf_draw_pixel(x, y, &g ); }
+          else if((y+1) == y_b_c       ) { frame_buf_draw_pixel(x, y, &g ); }
+          else if(x     == MAX(0,x_l)  ) { frame_buf_draw_pixel(x, y, &b ); }
+          else if((x-1) == MAX(0,x_l)  ) { frame_buf_draw_pixel(x, y, &b ); }
+          else if(x     == MIN(x_r,w-1)) { frame_buf_draw_pixel(x, y, &wh); }
+          else if((x+1) == MIN(x_r,w-1)) { frame_buf_draw_pixel(x, y, &wh); }
+          #endif
         }
       }
     }

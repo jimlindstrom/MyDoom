@@ -134,6 +134,9 @@ void wad_segment::render_player_view(camera const *_camera, clipped_segment_proj
     // set clipping info
     clipped_seg_proj[i]->clip_floor   = seg_proj->clip_floor;
     clipped_seg_proj[i]->clip_ceiling = seg_proj->clip_ceiling;
+    debug_printf("    %sfloor && %sclip_floor; %sceil && %sclip_ceil\n",
+                 (floor   ? "" : "!"), (seg_proj->clip_floor   ? "" : "!"),
+                 (ceiling ? "" : "!"), (seg_proj->clip_ceiling ? "" : "!"));
 
     // project vertically
     _linedef->set_z_values(direction, is_outdoor_area(), clipped_seg_proj[i]);
@@ -170,11 +173,13 @@ segment_projection *wad_segment::project(camera const *_camera) const
     delete seg_proj;
     return NULL;
   }
-  debug_printf("  segment %d: (%.1f,%.1f)->(%.1f,%.1f)\n",
-               segment_num,
-               vertex_l->get_x(), vertex_l->get_y(),
-               vertex_r->get_x(), vertex_r->get_y() ); 
-  debug_printf("    angles: [%.1f,%.1f]\n", RAD_TO_DEG(seg_proj->ang_l), RAD_TO_DEG(seg_proj->ang_r));
+  debug_printf("  segment %d", segment_num);
+  debug_printf(" [%d:%s,%s,%s]", 
+               (back_sector ? 2 : 1),
+               _linedef->get_sidedef(direction)->get_upper_texture_name(),
+               _linedef->get_sidedef(direction)->get_mid_texture_name(),
+               _linedef->get_sidedef(direction)->get_lower_texture_name());
+  debug_printf(" angles: [%.1f,%.1f]", RAD_TO_DEG(seg_proj->ang_l), RAD_TO_DEG(seg_proj->ang_r));
 
   // If not a solid line segment, don't consider the columns completely occluded. (continue drawing further-back segments)
   seg_proj->is_opaque = !( is_window() || is_other_single_sided_line() );
@@ -201,6 +206,7 @@ segment_projection *wad_segment::project(camera const *_camera) const
   seg_proj->x_r_c    = _projector->project_horiz_angle_to_x(seg_proj->ang_r_c);
   seg_proj->dist_l_c = origin.distance_to_point(&seg_proj->v_l_c);
   seg_proj->dist_r_c = origin.distance_to_point(&seg_proj->v_r_c);
+  debug_printf(" dist_c: [%.1f,%.1f]\n", seg_proj->dist_l_c, seg_proj->dist_r_c);
 
   // guard against zero-width segments
   if(seg_proj->is_zero_width())

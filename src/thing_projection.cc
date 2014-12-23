@@ -47,11 +47,11 @@ void thing_projection::clip(clipped_segment_projections *clipped_seg_projs)
         // Then check whether it's occluded by any visplanes
         if(clip_dist < thing_dist) // wall is closer than thing
         {
-          if(clipped_seg_proj->upper.tex)
+          if(clipped_seg_proj->upper.tex && (clipped_seg_proj->upper.z_t > clipped_seg_proj->upper.z_b))
           {
             cliptop[x] = MAX(cliptop[x], clipped_seg_proj->get_sprite_clip_top(x));
           }
-          if(clipped_seg_proj->lower.tex)
+          if(clipped_seg_proj->lower.tex && (clipped_seg_proj->lower.z_t > clipped_seg_proj->lower.z_b))
           {
             clipbot[x] = MIN(clipbot[x], clipped_seg_proj->get_sprite_clip_bot(x));
           }

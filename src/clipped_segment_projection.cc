@@ -107,7 +107,7 @@ void clipped_segment_projection::render_2sided(vis_planes *vp, vis_plane *floor,
       if(floor_yt <= floor_yb) { floor  ->update_clip(x, floor_yb, floor_yt); }
     }
 
-    if(upper.tex)
+    if(upper.tex && (upper.z_t > upper.z_b))
     {
       int mid = MIN(ymt-1, vp->get_floor_clip(x)-1);
       if(mid >= clipped_yt)
@@ -130,7 +130,7 @@ void clipped_segment_projection::render_2sided(vis_planes *vp, vis_plane *floor,
       sprite_clip_top[x] = clipped_yt-1;
     }
 
-    if(lower.tex)
+    if(lower.tex && (lower.z_t > lower.z_b))
     {
       int mid = MAX(ymb+1, vp->get_ceiling_clip(x)+1);
       if(clipped_yb >= mid)
