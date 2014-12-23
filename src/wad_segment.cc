@@ -118,21 +118,26 @@ void wad_segment::render_player_view(camera const *_camera, clipped_segment_proj
   debug_printf("    %d clipped wall projections\n", num_csps);
   for(int i=0; i<num_csps; i++)
   {
+    // update visplanes
     if(floor)   { floor   = vp->adjust_or_create(floor,   clipped_seg_proj[i]->x_l, clipped_seg_proj[i]->x_r); }
     if(ceiling) { ceiling = vp->adjust_or_create(ceiling, clipped_seg_proj[i]->x_l, clipped_seg_proj[i]->x_r); }
 
-    clipped_seg_proj[i]->project_vertically(_camera);
-
-    clipped_seg_proj[i]->ldx_l        = seg_proj->get_texture_x_offset(clipped_seg_proj[i]->x_l);
-    clipped_seg_proj[i]->ldx_r        = seg_proj->get_texture_x_offset(clipped_seg_proj[i]->x_r);
-    clipped_seg_proj[i]->light_level  = front_sector->get_light_level();
+    // set clipping info
     clipped_seg_proj[i]->clip_floor   = seg_proj->clip_floor;
     clipped_seg_proj[i]->clip_ceiling = seg_proj->clip_ceiling;
-    clipped_seg_proj[i]->vp           = vp;
-    clipped_seg_proj[i]->floor        = floor;
-    clipped_seg_proj[i]->ceiling      = ceiling;
 
-    _linedef->render(direction, clipped_seg_proj[i]);
+    // project vertically
+    _linedef->set_z_values(direction, clipped_seg_proj[i]);
+    clipped_seg_proj[i]->project_vertically(_camera);
+
+    // set lighting & textures
+    clipped_seg_proj[i]->light_level  = front_sector->get_light_level();
+    clipped_seg_proj[i]->ldx_l        = seg_proj->get_texture_x_offset(clipped_seg_proj[i]->x_l);
+    clipped_seg_proj[i]->ldx_r        = seg_proj->get_texture_x_offset(clipped_seg_proj[i]->x_r);
+    _linedef->set_textures(direction, clipped_seg_proj[i]);
+
+    // render
+    clipped_seg_proj[i]->render(vp, floor, ceiling);
   }
   delete[] clipped_seg_proj;
   delete seg_proj;

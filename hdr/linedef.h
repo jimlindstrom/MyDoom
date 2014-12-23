@@ -68,7 +68,8 @@ public:
   int16_t get_ceiling_z(int direction) const;
   int16_t get_floor_z(int direction) const;
 
-  void render(int direction, clipped_segment_projection *wall) const;
+  void set_z_values(int direction, clipped_segment_projection *wall) const;
+  void set_textures(int direction, clipped_segment_projection *wall) const;
 
 private:
   uint16_t start_vertex_num;
@@ -83,9 +84,6 @@ private:
   sidedef const *right_sidedef;
   vertex const *start_vertex;
   vertex const *end_vertex;
-
-  void calc_1sided_y_values(int direction, clipped_segment_projection *wall) const;
-  void calc_2sided_y_values(  int direction, clipped_segment_projection *wall) const;
 
   int16_t get_upper_ty_peg_offset(int16_t dz, int16_t tex_h) const;
   int16_t get_mid_ty_peg_offset(  int16_t dz, int16_t tex_h) const;

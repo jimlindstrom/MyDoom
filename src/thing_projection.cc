@@ -48,11 +48,11 @@ void thing_projection::clip(clipped_segment_projections *clipped_seg_projs)
         {
           if(clipped_seg_proj->upper.tex)
           {
-            cliptop[x] = MAX(cliptop[x], clipped_seg_proj->sprite_clip_top[x]);
+            cliptop[x] = MAX(cliptop[x], clipped_seg_proj->get_sprite_clip_top(x));
           }
           if(clipped_seg_proj->lower.tex)
           {
-            clipbot[x] = MIN(clipbot[x], clipped_seg_proj->sprite_clip_bot[x]);
+            clipbot[x] = MIN(clipbot[x], clipped_seg_proj->get_sprite_clip_bot(x));
           }
         }
       }
