@@ -23,6 +23,7 @@ public:
   void draw(void);
 
   bool is_visible;
+  int16_t sector_light_level;
   float dist_l, dist_r;
   float angle_l, angle_r;
   float sprite_angle;

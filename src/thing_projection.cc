@@ -4,6 +4,7 @@
 #include "common.h"
 #include "games.h"
 #include "palettes.h"
+#include "lighting.h"
 #include "frame_buf.h"
 #include "thing_projection.h"
 
@@ -77,6 +78,14 @@ void thing_projection::draw(void)
   for(int x=x_l_c; x<=x_r_c; x++)
   {
     int u =   (float)(x - x_l)/(x_r - x_l) * (_sprite->get_width() -1);
+
+    float clip_dist  = dist_l + ( (dist_r - dist_l) *
+                                  (x      - x_l   ) /
+                                  (x_r    - x_l   ) );
+    float pct_darkened1 = DIST_TO_PCT_DARKENED(clip_dist);  // Darken for distance
+    float pct_darkened2 = ((255-sector_light_level)/255.0); // Darken for sector light level
+    float pct_darkened = 1.0 - ((1.0-pct_darkened1)*(1.0-pct_darkened2));
+
     for(int y=cliptop[x]; y<=clipbot[x]; y++)
     {
       int v = (float)(y - y_t)/(y_b - y_t) * (_sprite->get_height()-1);
@@ -85,6 +94,7 @@ void thing_projection::draw(void)
       if(color_idx != TRANSPARENT_COLOR_IDX)
       {
         c.set_to(pal->get_color(color_idx)); // FIXME: do this up-front
+        c.darken_by(pct_darkened);
         frame_buf_overlay_pixel(x, y, &c);
       }
     }

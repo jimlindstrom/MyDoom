@@ -85,6 +85,9 @@ thing_projection *thing::project(camera const *_camera) const
   proj->_sprite = get_cur_sprite(proj); // NOTE: requires proj->sprite_angle be filled in
   if(!proj->_sprite) { delete proj; return NULL; }
 
+  // set lighting
+  proj->sector_light_level = get_sector()->get_light_level();
+
   // project horizontally
   float angle_c = NORMALIZE_ANGLE(_camera->get_map_position()->angle_to_point(&map_position) - _camera->get_facing_angle());
   float dist_c  = _camera->get_map_position()->distance_to_point(&map_position);
