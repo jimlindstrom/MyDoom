@@ -31,7 +31,7 @@ void vis_planes::draw_planes(camera const *_camera)
   }
 }
 
-vis_plane *vis_planes::find_or_create(int16_t height, flat const *tex, uint16_t light_level)
+vis_plane *vis_planes::find_or_create(int16_t height, flat_animation const *tex, uint16_t light_level)
 {
   vis_plane *vp;
 
@@ -42,7 +42,7 @@ vis_plane *vis_planes::find_or_create(int16_t height, flat const *tex, uint16_t 
   return create(height, tex, light_level);
 }
 
-vis_plane *vis_planes::create(int16_t height, flat const *tex, uint16_t light_level)
+vis_plane *vis_planes::create(int16_t height, flat_animation const *tex, uint16_t light_level)
 {
   vis_plane *vp;
   
@@ -58,7 +58,7 @@ vis_plane *vis_planes::create(int16_t height, flat const *tex, uint16_t light_le
   return vp;
 }
 
-vis_plane *vis_planes::find(int16_t height, flat const *tex, uint16_t light_level)
+vis_plane *vis_planes::find(int16_t height, flat_animation const *tex, uint16_t light_level)
 {
   for(uint16_t i=0; i<num_vis_planes; i++)
   {

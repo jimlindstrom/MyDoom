@@ -24,10 +24,10 @@ public:
   uint16_t get_type(void) const { return type; }
   uint16_t get_tag_num(void) const { return tag_num; }
 
-  void set_floor_texture(flat const *f) { floor_texture = f; }
-  void set_ceiling_texture(flat const *f) { ceiling_texture = f; }
-  flat const *get_floor_texture(void) const { return floor_texture; }
-  flat const *get_ceiling_texture(void) const { return ceiling_texture; }
+  void set_floor_texture(flat_animation const *f) { floor_texture = f; }
+  void set_ceiling_texture(flat_animation const *f) { ceiling_texture = f; }
+  flat_animation const *get_floor_texture(void) const { return floor_texture; }
+  flat_animation const *get_ceiling_texture(void) const { return ceiling_texture; }
 
 private:
   int16_t floor_height;
@@ -38,8 +38,8 @@ private:
   uint16_t type;
   uint16_t tag_num;
 
-  flat const *floor_texture;
-  flat const *ceiling_texture;
+  flat_animation const *floor_texture;
+  flat_animation const *ceiling_texture;
 };
 
 #endif

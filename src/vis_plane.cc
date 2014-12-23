@@ -29,14 +29,14 @@ vis_plane::~vis_plane()
 {
 }
 
-void vis_plane::init(int16_t _height, flat const *_tex, uint16_t _light_level)
+void vis_plane::init(int16_t _height, flat_animation const *_tex, uint16_t _light_level)
 {
   height = _height;
   tex = _tex;
   light_level = _light_level;
 }
 
-bool vis_plane::matches(int16_t _height, flat const *_tex, uint16_t _light_level)
+bool vis_plane::matches(int16_t _height, flat_animation const *_tex, uint16_t _light_level)
 {
   return (height == _height) &&
          (tex == _tex) &&
@@ -124,9 +124,9 @@ void vis_plane::draw(camera const *_camera)
         float pct_darkened = DIST_TO_PCT_DARKENED(cur_dist);
 
         #if 0
-        uint8_t color_idx = tex->get_pixel(map_x % FLAT_WIDTH, map_y % FLAT_HEIGHT);
+        uint8_t color_idx = tex->get_cur_flat()->get_pixel(map_x % FLAT_WIDTH, map_y % FLAT_HEIGHT);
         #else
-        uint8_t color_idx = tex->get_pixel(map_x & (FLAT_WIDTH-1), map_y & (FLAT_HEIGHT-1)); // because w,h are powers of 2
+        uint8_t color_idx = tex->get_cur_flat()->get_pixel(map_x & (FLAT_WIDTH-1), map_y & (FLAT_HEIGHT-1)); // because w,h are powers of 2
         #endif
         color_rgba c;
         c.set_to(pal->get_color(color_idx)); // FIXME: do this up-front

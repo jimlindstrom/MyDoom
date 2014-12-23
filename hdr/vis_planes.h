@@ -17,9 +17,9 @@ public:
 
   void draw_planes(camera const *_camera);
 
-  vis_plane *find_or_create(int16_t height, flat const *tex, uint16_t light_level);
-  vis_plane *create(int16_t height, flat const *tex, uint16_t light_level);
-  vis_plane *find(int16_t height, flat const *tex, uint16_t light_level);
+  vis_plane *find_or_create(int16_t height, flat_animation const *tex, uint16_t light_level);
+  vis_plane *create(int16_t height, flat_animation const *tex, uint16_t light_level);
+  vis_plane *find(int16_t height, flat_animation const *tex, uint16_t light_level);
 
   vis_plane *adjust_or_create(vis_plane *vp, int16_t x_l, int16_t x_r);
 

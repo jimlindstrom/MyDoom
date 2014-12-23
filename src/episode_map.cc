@@ -280,7 +280,7 @@ void episode_map::link_sectors_to_flats(void)
 {
   for(int i=0; i<num_sectors; i++)
   {
-    flat const *f;
+    flat_animation const *f;
     char const *name;
 
     name = sectors[i].get_ceiling_texture_name();

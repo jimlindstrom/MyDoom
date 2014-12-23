@@ -5,6 +5,7 @@
 #include "game.h"
 #include "frame_buf.h"
 #include "key_codes.h"
+#include "flats.h"
 #include "clipped_segment_projections.h"
 #include "vis_things.h"
 #include "vis_planes.h"
@@ -69,6 +70,7 @@ void game::do_frame(void)
 {
   printf("frame\n");
 
+  flats_animate();
   _player.move(_map);
 
   printf("  player at (%.1f,%.1f,%.1f) facing %.1f\n", 

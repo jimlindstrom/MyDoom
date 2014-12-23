@@ -6,6 +6,7 @@
 
 bool flats_init(wad_file const *wad);
 void flats_destroy(void);
-flat const *flats_find_by_name(char const *name);
+void flats_animate(void);
+flat_animation const *flats_find_by_name(char const *name);
 
 #endif

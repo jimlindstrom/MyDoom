@@ -17,15 +17,15 @@ public:
   vis_plane();
   ~vis_plane();
 
-  void init(int16_t _height, flat const *_tex, uint16_t _light_level);
+  void init(int16_t _height, flat_animation const *_tex, uint16_t _light_level);
 
-  bool matches(int16_t _height, flat const *_tex, uint16_t _light_level);
+  bool matches(int16_t _height, flat_animation const *_tex, uint16_t _light_level);
 
   bool can_be_extended_to(int16_t new_x_l, int16_t new_x_r);
   void extend_to(int16_t new_x_l, int16_t new_x_r);
 
   int16_t get_height() const { return height; }
-  flat const *get_tex(void) const { return tex; }
+  flat_animation const *get_tex(void) const { return tex; }
   uint16_t get_light_level(void) const { return light_level; }
   int16_t get_x_l(void) const { return x_l; }
   int16_t get_x_r(void) const { return x_r; }
@@ -38,7 +38,7 @@ public:
 
 private:
   int16_t height;
-  flat const *tex;
+  flat_animation const *tex;
   uint16_t light_level;
   int16_t x_l, x_r;
   int16_t y_t[MAX_SCREEN_WIDTH];

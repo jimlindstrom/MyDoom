@@ -4,13 +4,11 @@ In Progress
 Queued up
 ---
 - BUG: certian lower textures are cycling nondeterministically
+- BUG: some floors not being drawn. (under arch in first room. under arch in outside area.)
 
 - BUG: top of backface lower/upper walls should occlude further-away sprites
 - BUG: certain wall types (doors?) are unnecessarily clipping closer-in sprites
    - I think it's because closed doors are getting treated as windows
-
-- FEATURE: animate wall textures (p_spec.c:101). See: http://doom.wikia.com/wiki/Animated_wall
-- FEATURE: animate flats (p_spec.c:101). See: http://doom.wikia.com/wiki/Animated_flat
 
 - BUG: lighting isn't as stark as in Doom
 - BUG: sky isn't showing up like in Doom
@@ -40,3 +38,5 @@ Queued up
 - FEATURE: shoot guns
 - FEATURE: things move around
 - FEATURE: things shoot you
+
+- FEATURE: animate wall textures (p_spec.c:101). See: http://doom.wikia.com/wiki/Animated_wall (There aren't many in doom1)
