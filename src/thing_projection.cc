@@ -38,11 +38,8 @@ void thing_projection::clip(clipped_segment_projections *clipped_seg_projs)
         // First, check whether the thing is nearer than the closest solid wall
         if(thing_dist < clip_dist) // thing is closer than player
         {
-          if(clipped_seg_proj->mid.tex)
-          {
             cliptop[x] = y_t_c;
             clipbot[x] = y_b_c;
-          }
         }
         // Then check whether it's occluded by any visplanes
         if(clip_dist < thing_dist) // wall is closer than thing
