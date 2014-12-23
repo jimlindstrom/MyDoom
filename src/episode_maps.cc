@@ -60,7 +60,7 @@ void episode_maps_destroy(void)
   if(episode_maps) { delete[] episode_maps; }
 }
 
-episode_map const *episode_maps_get_by_name(char const *name)
+episode_map *episode_maps_get_by_name(char const *name)
 {
   for(int i=0; i<num_episode_maps; i++)
   {

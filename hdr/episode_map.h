@@ -19,6 +19,7 @@
 #include "clipped_segment_projections.h"
 #include "vis_planes.h"
 #include "vis_things.h"
+#include "actor.h"
 
 class episode_map
 {
@@ -39,6 +40,8 @@ public:
                           vis_planes *vp, vis_things *vt) const;
 
   bool can_move(vertex const *old_position, vertex const *new_position, float *floor_height) const;
+
+  void direct_actors(void);
 
 private:
   char *name;
@@ -70,6 +73,10 @@ private:
   reject_table reject_tbl;
   block_map    _block_map;
 
+  #define MAX_NUM_ACTORS 100
+  actor *actors[MAX_NUM_ACTORS];
+  int num_actors;
+
   bool read_things(wad_lump const *lump);
   bool read_linedefs(wad_lump const *lump);
   bool read_sidedefs(wad_lump const *lump);
@@ -88,6 +95,8 @@ private:
   void link_things_to_children(void);
 
   node *root_node(void) const { return &nodes[num_nodes-1]; }
+
+  void add_actor(actor *a);
 };
 
 #endif

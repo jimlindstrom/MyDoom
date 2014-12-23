@@ -19,7 +19,7 @@ public:
   game();
   ~game();
 
-  void set_map(episode_map const *__map) { _map = __map; }
+  void set_map(episode_map *__map) { _map = __map; }
   void set_screen_resolution(int w, int h);
 
   void init_things(void);
@@ -39,7 +39,7 @@ private:
   int screen_width;
   int screen_height;
   int level;
-  episode_map const *_map;
+  episode_map *_map;
   player _player;
 
   fps_tracker _fps_tracker;

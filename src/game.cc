@@ -71,6 +71,7 @@ void game::do_frame(void)
   printf("frame\n");
 
   flats_animate();
+  _map->direct_actors();
   _player.move(_map);
 
   printf("  player at (%.1f,%.1f,%.1f) facing %.1f\n", 

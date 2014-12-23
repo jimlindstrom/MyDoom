@@ -3,11 +3,7 @@ In Progress
 
 Queued up
 ---
-- FEATURE: things should get darker with distance, too
-- FEATURE: strobe lighting
-- FEATURE: lighting: http://doom.wikia.com/wiki/COLORMAP
-  - FEATURE: change color depending on the direction a wall is facing (r_segs.c:605)
-  - FEATURE: increase lighting where wall lights are
+- FEATURE: change color depending on the direction a wall is facing (r_segs.c:605)
 
 - BUG: floor visplanes not always being drawn
   - Under straight-ahead arch into lower area, when viewed from far side

@@ -18,7 +18,7 @@
 static int16_t screen_width  = 768;
 static int16_t screen_height = 480;
 static game *cur_game = NULL;
-static episode_map const *cur_map = NULL;
+static episode_map *cur_map = NULL;
 
 void game_init(void)
 {

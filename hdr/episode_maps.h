@@ -6,6 +6,6 @@
 
 bool episode_maps_init(wad_file const *wad);
 void episode_maps_destroy(void);
-episode_map const *episode_maps_get_by_name(char const *name);
+episode_map *episode_maps_get_by_name(char const *name);
 
 #endif

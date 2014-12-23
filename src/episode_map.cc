@@ -6,6 +6,8 @@
 #include "overhead_map.h"
 #include "wall_textures.h"
 #include "flats.h"
+#include "actor.h"
+#include "strobe_light.h"
 
 episode_map::episode_map()
 {
@@ -17,6 +19,7 @@ episode_map::episode_map()
   subsectors = NULL;
   nodes      = NULL;
   sectors    = NULL;
+  num_actors = 0;
 }
 
 episode_map::~episode_map()
@@ -225,9 +228,32 @@ bool episode_map::read_sectors(wad_lump const *lump)
   {
     sector_ptr = lump->get_data() + (i*SECTOR_NUM_BYTES);
     sectors[i].read_from_lump_data(sector_ptr);
-    /*printf("sector %d: floor height: %d, ceil height: %d, clearance: %d\n",
-           i, sectors[i].get_floor_height(), sectors[i].get_ceiling_height(),
-           sectors[i].get_clearance());*/
+    switch(sectors[i].get_type())
+    {
+      case SECTOR_TYPE_NORMAL: 			break;
+
+      case SECTOR_TYPE_GLOWING_LIGHT: 		printf("not implemented: SECTOR_TYPE_GLOWING_LIGHT\n"); break;
+      case SECTOR_TYPE_FLICKERING_LIGHTS: 	add_actor(new flickering_light(&sectors[i])); break;
+      case SECTOR_TYPE_FIRE_FLICKER: 		printf("not implemented: SECTOR_TYPE_FIRE_FLICKER\n"); break;
+
+      case SECTOR_TYPE_STROBE_SLOW: 		add_actor(new slow_strobe_light(&sectors[i])); break;
+      case SECTOR_TYPE_STROBE_FAST: 		add_actor(new fast_strobe_light(&sectors[i])); break;
+      case SECTOR_TYPE_SYNC_STROBE_SLOW: 	printf("not implemented: SECTOR_TYPE_SYNC_STROBE_SLOW\n"); break;
+      case SECTOR_TYPE_SYNC_STROBE_FAST: 	printf("not implemented: SECTOR_TYPE_SYNC_STROBE_FAST\n"); break;
+      case SECTOR_TYPE_STROBE_FAST_DEATH_SLIME: add_actor(new fast_strobe_light(&sectors[i]));break;
+
+      case SECTOR_TYPE_HELLSLIME_DAMAGE: 	printf("not implemented: SECTOR_TYPE_HELLSLIME_DAMAGE\n"); break;
+      case SECTOR_TYPE_NUKAGE_DAMAGE: 		printf("not implemented: SECTOR_TYPE_NUKAGE_DAMAGE\n"); break;
+      case SECTOR_TYPE_SUPER_HELLSLIME_DAMAGE:	printf("not implemented: SECTOR_TYPE_SUPER_HELLSLIME_DAMAGE\n"); break;
+      case SECTOR_TYPE_EXIT_SUPER_DAMAGE: 	printf("not implemented: SECTOR_TYPE_EXIT_SUPER_DAMAGE\n"); break;
+
+      case SECTOR_TYPE_SECRET_SECTOR: 		printf("not implemented: SECTOR_TYPE_SECRET_SECTOR\n"); break;
+
+      case SECTOR_TYPE_DOOR_CLOSE_IN_30_SEC: 	printf("not implemented: SECTOR_TYPE_DOOR_CLOSE_IN_30_SEC\n"); break;
+      case SECTOR_TYPE_DOOR_RAISE_IN_5_MIN: 	printf("not implemented: SECTOR_TYPE_DOOR_RAISE_IN_5_MIN\n"); break;
+
+      default: printf("ERROR: unhandled sector type %d\n", sectors[i].get_type()); exit(0);
+    }
   }
 
   return true;
@@ -501,5 +527,23 @@ bool episode_map::can_move(vertex const *old_position, vertex const *new_positio
   *floor_height = new_ss->get_sector()->get_floor_height(); // FIXME: this is wrong...
 
   return true;
+}
+
+void episode_map::add_actor(actor *a)
+{
+  if((num_actors+1) >= MAX_NUM_ACTORS)
+  {
+    printf("ERROR: actor overflow\n");
+    exit(0);
+  }
+  actors[num_actors++] = a;
+}
+
+void episode_map::direct_actors(void)
+{
+  for(int i=0; i<num_actors; i++)
+  {
+     actors[i]->act();
+  }
 }
 
