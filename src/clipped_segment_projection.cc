@@ -133,7 +133,9 @@ void clipped_segment_projection::render_2sided(vis_planes *vp, vis_plane *floor,
       int mid = MAX(ymb+1, vp->get_ceiling_clip(x)+1);
       if(clipped_yb >= mid)
       {
-        lower.tex->render_col(ldx, lower.get_dz(), x, ymb+1, yb, mid, clipped_yb, dist, upper.tx_offset, upper.ty_offset, pct_darkened);
+        debug_printf("LOWER: ldx:%d, dz:%d x:%d, y:[%.1f,%.1f], clipped_y:[%d,%d], dist:%.1f, t-off:[%d,%d], darkening:%.1f\n", 
+                     ldx, lower.get_dz(), x, ymb+1, yb, mid, clipped_yb, dist, lower.tx_offset, lower.ty_offset, pct_darkened);
+        lower.tex->render_col(ldx, lower.get_dz(), x, ymb+1, yb, mid, clipped_yb, dist, lower.tx_offset, lower.ty_offset, pct_darkened);
         vp->update_floor_clip(x, mid);
         sprite_clip_bot[x] = mid;
       }

@@ -3,7 +3,6 @@ In Progress
 
 Queued up
 ---
-- BUG: certian lower textures are cycling nondeterministically
 - BUG: some floors not being drawn. (under arch in first room. under arch in outside area.)
 
 - BUG: top of backface lower/upper walls should occlude further-away sprites
