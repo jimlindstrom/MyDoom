@@ -4,6 +4,7 @@
 #include "wad_file.h"
 #include "wad_lump.h"
 
+#include "thing_instance.h"
 #include "thing.h"
 #include "linedef.h"
 #include "sidedef.h"
@@ -30,24 +31,27 @@ public:
   bool read_from_lump(wad_file const *wad, wad_lump const *lump);
 
   char const *get_name(void) const { return name; }
-  int get_num_things(void) const { return num_things; }
-  thing const *get_nth_thing(int n) const { return &things[n]; }
+  int get_num_thing_instances(void) const { return num_thing_instances; }
+  thing_instance const *get_nth_thing_instance(int n) const { return &thing_instances[n]; }
 
   void draw_overhead_map(overhead_map *omap) const;
 
   void render_player_view(camera const *_camera,
                           clipped_segment_projections *clipped_seg_projs, 
-                          vis_planes *vp, vis_things *vt) const;
+                          vis_planes *vp, 
+                          thing * const things[], int num_things, vis_things *vt) const;
 
   bool can_move(vertex const *old_position, vertex const *new_position, float *floor_height) const;
 
   void direct_actors(void);
 
+  node *root_node(void) const { return &nodes[num_nodes-1]; }
+
 private:
   char *name;
 
-  int num_things;
-  thing *things;
+  int num_thing_instances;
+  thing_instance *thing_instances;
 
   int num_linedefs;
   linedef *linedefs;
@@ -77,7 +81,7 @@ private:
   actor *actors[MAX_NUM_ACTORS];
   int num_actors;
 
-  bool read_things(wad_lump const *lump);
+  bool read_thing_instances(wad_lump const *lump);
   bool read_linedefs(wad_lump const *lump);
   bool read_sidedefs(wad_lump const *lump);
   bool read_vertexes(wad_lump const *lump);
@@ -92,9 +96,6 @@ private:
   void link_segments_to_children(void);
   void link_linedefs_to_children(void);
   void link_sidedefs_to_children(void);
-  void link_things_to_children(void);
-
-  node *root_node(void) const { return &nodes[num_nodes-1]; }
 
   void add_actor(actor *a);
 };

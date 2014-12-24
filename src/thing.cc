@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "thing.h"
+#include "thing_definitions.h"
 #include "subsector.h"
 #include "palettes.h"
 #include "games.h"
@@ -11,9 +12,17 @@
 //#define DEBUG_PRINTING
 #include "debug.h"
 
-thing::thing()
+thing::thing(thing_instance const *instance)
 {
   frame_ctr = 0;
+
+  map_position.set_to(instance->get_map_position());
+  facing_angle = instance->get_facing_angle();
+  thing_type   = instance->get_thing_type();
+  _is_deaf     = instance->is_deaf();
+
+  defn         = thing_definition_lookup(thing_type);
+  animation    = sprites_lookup_animation(defn->sprite_prefix);
 }
 
 thing::~thing()
@@ -21,25 +30,6 @@ thing::~thing()
 }
 
 sector const *thing::get_sector(void) const { return _subsector->get_sector(); }
-
-bool thing::read_from_lump_data(uint8_t const *lump_data)
-{
-  map_position.set_x(*(( int16_t*)lump_data)); lump_data += 2;
-  map_position.set_y(*(( int16_t*)lump_data)); lump_data += 2;
-  facing_angle     = (*(( int16_t*)lump_data))/256.0 ; lump_data += 2;
-  thing_type       = *((uint16_t*)lump_data) ; lump_data += 2;
-  flags            = *((uint16_t*)lump_data) ; lump_data += 2;
-
-  // convert angle from degrees to radians
-  facing_angle = DEG_TO_RAD(facing_angle+90);
-
-  // get the definition (description, etc.)
-  defn = thing_definition_lookup(thing_type);
-
-  animation = sprites_lookup_animation(defn->sprite_prefix);
-
-  return true;
-}
 
 uint8_t thing::get_frame_idx(void) const
 {

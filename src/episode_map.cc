@@ -11,27 +11,27 @@
 
 episode_map::episode_map()
 {
-  name       = NULL;
-  things     = NULL;
-  linedefs   = NULL;
-  vertexes   = NULL;
-  segments   = NULL;
-  subsectors = NULL;
-  nodes      = NULL;
-  sectors    = NULL;
-  num_actors = 0;
+  name            = NULL;
+  thing_instances = NULL;
+  linedefs        = NULL;
+  vertexes        = NULL;
+  segments        = NULL;
+  subsectors      = NULL;
+  nodes           = NULL;
+  sectors         = NULL;
+  num_actors      = 0;
 }
 
 episode_map::~episode_map()
 {
-  if(name)       { delete[] name;       }
-  if(things )    { delete[] things;     }
-  if(linedefs)   { delete[] linedefs;   }
-  if(vertexes)   { delete[] vertexes;   }
-  if(segments)   { delete[] segments;   }
-  if(subsectors) { delete[] subsectors; }
-  if(nodes)      { delete[] nodes;      }
-  if(sectors)    { delete[] sectors;    }
+  if(name)            { delete[] name;            }
+  if(thing_instances) { delete[] thing_instances; }
+  if(linedefs)        { delete[] linedefs;        }
+  if(vertexes)        { delete[] vertexes;        }
+  if(segments)        { delete[] segments;        }
+  if(subsectors)      { delete[] subsectors;      }
+  if(nodes)           { delete[] nodes;           }
+  if(sectors)         { delete[] sectors;         }
 }
 
 bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
@@ -47,7 +47,7 @@ bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
   {
     if(strcmp(cur_lump->get_name(),"THINGS")==0)
     {
-      if(!read_things(cur_lump)) { return false; }
+      if(!read_thing_instances(cur_lump)) { return false; }
     }
     else if(strcmp(cur_lump->get_name(),"LINEDEFS")==0)
     {
@@ -98,21 +98,20 @@ bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
   link_sidedefs_to_children();
   link_linedefs_to_children();
   link_segments_to_children();
-  link_things_to_children();
 
   return true;
 }
 
-bool episode_map::read_things(wad_lump const *lump)
+bool episode_map::read_thing_instances(wad_lump const *lump)
 {
-  uint8_t const *thing_ptr;
-  num_things = lump->get_num_bytes() / THING_NUM_BYTES;
-  things = new thing[num_things];
+  uint8_t const *thing_instance_ptr;
+  num_thing_instances = lump->get_num_bytes() / THING_INSTANCE_NUM_BYTES;
+  thing_instances = new thing_instance[num_thing_instances];
 
-  for(int i=0; i<num_things; i++)
+  for(int i=0; i<num_thing_instances; i++)
   {
-    thing_ptr = lump->get_data() + (i*THING_NUM_BYTES);
-    things[i].read_from_lump_data(thing_ptr);
+    thing_instance_ptr = lump->get_data() + (i*THING_INSTANCE_NUM_BYTES);
+    thing_instances[i].read_from_lump_data(thing_instance_ptr);
   }
 
   return true;
@@ -473,15 +472,6 @@ void episode_map::link_sidedefs_to_children(void)
   }
 }
 
-void episode_map::link_things_to_children(void)
-{
-  for(int i=0; i<num_things; i++)
-  {
-    things[i].set_subsector(root_node()->get_subsector_containing(things[i].get_map_position())); // FIXME: useful?
-    // for each thing, look up its sprites
-  }
-}
-
 void episode_map::draw_overhead_map(overhead_map *omap) const
 {
   color_rgba blu(  0,   0, 255, 255);
@@ -504,9 +494,10 @@ void episode_map::draw_overhead_map(overhead_map *omap) const
 
 void episode_map::render_player_view(camera const *_camera,
                                      clipped_segment_projections *clipped_seg_projs, 
-                                     vis_planes *vp, vis_things *vt) const
+                                     vis_planes *vp, 
+                                     thing * const things[], int num_things, vis_things *vt) const
 {
-  root_node()->render_player_view(_camera, clipped_seg_projs, vp, &things[0], num_things, vt);
+  root_node()->render_player_view(_camera, clipped_seg_projs, vp, things, num_things, vt);
 }
 
 bool episode_map::can_move(vertex const *old_position, vertex const *new_position, float *floor_height) const
@@ -546,4 +537,3 @@ void episode_map::direct_actors(void)
      actors[i]->act();
   }
 }
-

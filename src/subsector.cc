@@ -40,7 +40,7 @@ void subsector::set_nth_segment(int n, wad_segment const *_segment)
 void subsector::render_player_view(camera const *_camera,
                                    clipped_segment_projections *clipped_seg_projs, 
                                    vis_planes *vp, 
-                                   thing *things, int16_t num_things, vis_things *vt) const
+                                   thing * const things[], int16_t num_things, vis_things *vt) const
 {
   debug_printf(" subsector %d\n", subsector_num);
 
@@ -63,9 +63,9 @@ void subsector::render_player_view(camera const *_camera,
 
   for(int i=0; i<num_things; i++)
   {
-    if(things[i].get_subsector() == this)
+    if(things[i]->get_subsector() == this)
     {
-      vt->add_thing(&things[i]);
+      vt->add_thing(things[i]);
     }
   }
 }

@@ -53,7 +53,7 @@ public:
   void render_player_view(camera const *_camera,
                           clipped_segment_projections *clipped_seg_projs, 
                           vis_planes *vp, 
-                          thing *things, int16_t num_things, vis_things *vt) const;
+                          thing * const things[], int16_t num_things, vis_things *vt) const;
 
   bool undrawn_columns_toward_bbox(bbox const *_bbox, clipped_segment_projections *clipped_seg_projs, camera const *_camera) const;
 

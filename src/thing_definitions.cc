@@ -4,6 +4,18 @@
 
 #include "thing_definitions.h"
 
+/*typedef struct
+{
+  uint16_t type_num_dec;
+  char     type_num_hex[5];  	-- doesn't need to be persisted
+  char     version[3];		-- doesn't need to be persisted
+  uint16_t radius;
+  char     sprite_prefix[6];
+  char     sequence[8];
+  char     klass[8];
+  char     description[40];
+} thing_definition;*/
+
 static thing_definition artifacts[] = 
 {
   {2023,	"7E7",	"R",	20,	"PSTR",	"A",		"AP",	"Berserk"},
@@ -26,7 +38,7 @@ static thing_definition power_ups[] =
   {2012,	"7DC",	"S",	20,	"MEDI",	"A",	"P3",	"Medikit"},
   {2025,	"7E9",	"S",	20,	"SUIT",	"A",	"P",	"Radiation suit"},
   {2011,	"7DB",	"S",	20,	"STIM",	"A",	"P3",	"Stimpack"},
-  {0xffff,	"",	"",	0,	"",	"",		"",	"END OF LIST"},
+  {0xffff,	"",	"",	0,	"",	"",	"",	"END OF LIST"},
 };
 
 
@@ -39,7 +51,7 @@ static thing_definition weapons[] =
   {2003,	"7D3",	"S",	20,	"LAUN",	"A",	"WP1",	"Rocket launcher"},
   {2001,	"7D1",	"S",	20,	"SHOT",	"A",	"WP1",	"Shotgun"},
   {8,		"52",	"2",	20,	"SGN2",	"A",	"WP1",	"Super shotgun"},
-  {0xffff,	"",	"",	0,	"",	"",		"",	"END OF LIST"},
+  {0xffff,	"",	"",	0,	"",	"",	"",	"END OF LIST"},
 };
 
 static thing_definition ammo[] = 
@@ -52,7 +64,7 @@ static thing_definition ammo[] =
   {17,		"11",	"R",	20,	"CELP",	"A",	"P1",	"Cell charge pack"},
   {2010,	"7DA",	"S",	20,	"ROCK",	"A",	"P1",	"Rocket"},
   {2008,	"7D8",	"S",	20,	"SHEL",	"A",	"P1",	"Shotgun shells"},
-  {0xffff,	"",	"",	0,	"",	"",		"",	"END OF LIST"},
+  {0xffff,	"",	"",	0,	"",	"",	"",	"END OF LIST"},
 };
 
 static thing_definition keys[] = 
@@ -63,7 +75,7 @@ static thing_definition keys[] =
   {38,		"26",	"R",	20,	"RSKU",	"AB",	"P",	"Red skull key"},
   {6,		"6",	"S",	20,	"YKEY",	"AB",	"P",	"Yellow keycard"},
   {39,		"27",	"R",	20,	"YSKU",	"AB",	"P",	"Yellow skull key"},
-  {0xffff,	"",	"",	0,	"",	"",		"",	"END OF LIST"},
+  {0xffff,	"",	"",	0,	"",	"",	"",	"END OF LIST"},
 };
 
 static thing_definition monsters[] = 
@@ -87,7 +99,7 @@ static thing_definition monsters[] =
   {58,		"3A",	"S",	30,	"SARG",	"+",	"MO",	"Spectre"},
   {7,		"7",	"R",	128,	"SPID",	"+",	"MO",	"Spider Mastermind"},
   {84,		"54",	"2",	20,	"SSWV",	"+",	"MO",	"Wolfenstein SS"},
-  {0xffff,	"",	"",	0,	"",	"",		"",	"END OF LIST"},
+  {0xffff,	"",	"",	0,	"",	"",	"",	"END OF LIST"},
 };
 
 static thing_definition obstacles[] = 
@@ -132,7 +144,7 @@ static thing_definition obstacles[] =
   {85,		"55",	"2",	16,	"TLMP",	"ABCD",	"O",	"Tall techno floor lamp"},
   {48,		"30",	"S",	16,	"ELEC",	"A",	"O",	"Tall techno pillar"},
   {26,		"1A",	"R",	16,	"POL6",	"AB",	"O",	"Twitching impaled human"},
-  {0xffff,	"",	"",	0,	"",	"",		"",	"END OF LIST"},
+  {0xffff,	"",	"",	0,	"",	"",	"",	"END OF LIST"},
 };
 
 static thing_definition decorations[] = 
@@ -156,7 +168,7 @@ static thing_definition decorations[] =
   {80,		"50",	"2",	16,	"POB2",	"A",	"",	"Pool of blood"},
   {24,		"18",	"S",	16,	"POL5",	"A",	"",	"Pool of blood and flesh"},
   {81,		"51",	"2",	16,	"BRS1",	"A",	"",	"Pool of brains"},
-  {0xffff,	"",	"",	0,	"",	"",		"",	"END OF LIST"},
+  {0xffff,	"",	"",	0,	"",	"",	"",	"END OF LIST"},
 };
 
 static thing_definition other_things[] = 
@@ -170,7 +182,7 @@ static thing_definition other_things[] =
   {89,		"59",	"2",	20,	"none2","-",	"",	"Spawn shooter"},
   {87,		"57",	"2",	0,	"none3","-",	"",	"Spawn spot"},
   {14,		"E",	"S",	20,	"none4","-",	"",	"Teleport landing"},
-  {0xffff,	"",	"",	0,	"",	"",		"",	"END OF LIST"},
+  {0xffff,	"",	"",	0,	"",	"",	"",	"END OF LIST"},
 };
 
 static thing_definition *defn_lists[] = 

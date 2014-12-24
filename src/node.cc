@@ -52,7 +52,7 @@ bool node::read_from_lump_data(uint8_t const *lump_data)
 void node::render_player_view(camera const *_camera,
                               clipped_segment_projections *clipped_seg_projs, 
                               vis_planes *vp, 
-                              thing *things, int16_t num_things, vis_things *vt) const
+                              thing * const things[], int16_t num_things, vis_things *vt) const
 {
   node_child_link const *closer_child;
   node_child_link const *farther_child;

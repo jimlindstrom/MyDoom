@@ -9,22 +9,32 @@
 #include "clipped_segment_projections.h"
 #include "vis_things.h"
 #include "vis_planes.h"
+#include "thing_factory.h"
 
 //#define DEBUG_PRINTING
 #include "debug.h"
 
-bool game_custom_start_pos = false;
+bool  game_custom_start_pos = false;
 float game_custom_start_x;
 float game_custom_start_y;
 float game_custom_start_r;
 
 game::game()
 {
-  level = 1;
+  level = 3;
+  num_things = 0;
+  for(int i=0; i<MAX_NUM_THINGS; i++)
+  {
+    things[i] = NULL;
+  }
 }
 
 game::~game()
 {
+  for(int i=0; i<MAX_NUM_THINGS; i++)
+  {
+    if(things[i]) { delete things[i]; }
+  }
 }
 
 void game::set_screen_resolution(int w, int h)
@@ -37,27 +47,26 @@ void game::set_screen_resolution(int w, int h)
 void game::init_things(void)
 {
   int i;
-  thing const *cur_thing;
+  thing_instance const *cur_thing_instance;
 
-  for(i=0; i<_map->get_num_things(); i++)
+  for(i=0; i<_map->get_num_thing_instances(); i++)
   {
-    cur_thing = _map->get_nth_thing(i);
-    if(cur_thing->is_on_in_level_n(level))
+    cur_thing_instance = _map->get_nth_thing_instance(i);
+    if(cur_thing_instance->is_on_in_level_n(level) &&
+      !cur_thing_instance->is_not_single_player())
     {
-      switch(cur_thing->get_thing_type())
+      switch(cur_thing_instance->get_thing_type())
       {
         case THING_PLAYER_1_START_TYPE:
-          _player.reset_camera(cur_thing->get_map_position(), cur_thing->get_facing_angle());
+          _player.reset_camera(cur_thing_instance->get_map_position(), cur_thing_instance->get_facing_angle());
           break;
   
-        default:
-          // ignore
+        default: // for everything else, spawn a thing
+          thing *_thing = thing_factory::create(_map->get_nth_thing_instance(i));
+          _thing->set_subsector(_map->root_node()->get_subsector_containing(_thing->get_map_position()));
+          spawn_thing(_thing);
           break;
       }
-    }
-    else
-    {
-      // FIXME: need to make sure this doesn't happen...
     }
   }
 
@@ -107,7 +116,7 @@ void game::render_player_view(void)
   vis_planes _vis_planes;
   vis_things _vis_things;
 
-  _map->render_player_view(_player.get_camera(), &clipped_seg_projs, &_vis_planes, &_vis_things);
+  _map->render_player_view(_player.get_camera(), &clipped_seg_projs, &_vis_planes, things, num_things, &_vis_things);
   _vis_planes.draw_planes( _player.get_camera());
   _vis_things.draw_things( _player.get_camera(), &clipped_seg_projs);
   _player.draw_weapon();
@@ -217,3 +226,37 @@ void game::handle_key_up(int key_code)
   }
 }
 
+void game::spawn_thing(thing *_thing)
+{
+  if((num_things+1) >= MAX_NUM_THINGS)
+  {
+    printf("ERROR: thing overflow\n");
+    exit(0);
+  }
+  things[num_things++] = _thing;
+}
+
+void game::kill_thing(thing *_thing)
+{
+  for(int i=0; i<num_things; i++)
+  {
+    if(things[i] == _thing)
+    {
+      delete things[i];
+      if(num_things == 1)
+      {
+        things[i] = NULL;
+      }
+      else
+      {
+        things[i] = things[num_things-1];
+        things[num_things-1] = NULL;
+      }
+      num_things--;
+      return;
+    }
+  }
+
+  printf("ERROR: trying to kill thing, but couldn't find it\n");
+  exit(0);
+}

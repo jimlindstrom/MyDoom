@@ -34,6 +34,9 @@ public:
 
   uint32_t get_frame_count(void) const { return _fps_tracker.get_frame_count(); }
 
+  void spawn_thing(thing *_thing);
+  void kill_thing(thing *_thing);
+
 private:
   bool done;
   int screen_width;
@@ -41,6 +44,10 @@ private:
   int level;
   episode_map *_map;
   player _player;
+
+  #define MAX_NUM_THINGS 200
+  thing *things[MAX_NUM_THINGS];
+  int num_things;
 
   fps_tracker _fps_tracker;
 
