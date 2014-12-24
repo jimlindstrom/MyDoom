@@ -21,6 +21,8 @@ player::player()
   floor_height    = 0;  // floor height (abs)
   rel_view_height = 35; // eyeball height (rel) above floor
   _camera.set_view_height(floor_height + rel_view_height);
+
+  selected_weapon_idx = 0;
 }
 
 player::~player()
@@ -80,3 +82,28 @@ void player::move(episode_map const *_map)
     _camera.set_view_height(floor_height + rel_view_height);
   }
 }
+
+void player::set_weapon(int idx, weapon *w)
+{
+  weapons[idx] = w;
+}
+
+void player::select_weapon(int idx)
+{
+  selected_weapon_idx = idx;
+}
+
+void player::draw_weapon(void) const
+{
+  if(weapons[selected_weapon_idx]) { weapons[selected_weapon_idx]->draw(); }
+}
+
+void player::fire_weapon(void)
+{
+  if(weapons[selected_weapon_idx] &&
+     weapons[selected_weapon_idx]->get_ammo() > 0)
+  {
+    weapons[selected_weapon_idx]->set_state(WEAPON_STATE_ATTACK);
+  }
+}
+

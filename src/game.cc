@@ -58,6 +58,16 @@ void game::init_things(void)
     }
   }
 
+  _player.set_weapon(0, new barehands());
+  _player.set_weapon(1, new pistol());
+  _player.set_weapon(2, new shotgun());
+  _player.set_weapon(3, new chaingun());
+  _player.set_weapon(4, new missile_launcher());
+  //_player.set_weapon(5, new plasma_rifle());
+  //_player.set_weapon(6, new bfg_9000());
+  _player.set_weapon(7, new chainsaw());
+  //_player.set_weapon(8, new super_shotgun());
+  _player.select_weapon(1);
 
   if(game_custom_start_pos)
   {
@@ -96,6 +106,7 @@ void game::render_player_view(void)
   _map->render_player_view(_player.get_camera(), &clipped_seg_projs, &_vis_planes, &_vis_things);
   _vis_planes.draw_planes( _player.get_camera());
   _vis_things.draw_things( _player.get_camera(), &clipped_seg_projs);
+  _player.draw_weapon();
 }
 
 void game::render_overhead_map(void)
@@ -118,12 +129,22 @@ void game::handle_key_down(int key_code)
 
   switch(key_code)
   {
-    case KEY_RIGHTARROW: _player.set_is_turning_right(true); break;
-    case KEY_LEFTARROW:  _player.set_is_turning_left(true); break;
-    case KEY_UPARROW:    _player.set_is_moving_forward(true); break;
-    case KEY_DOWNARROW:  _player.set_is_moving_backward(true); break;
-    case ',':            _player.set_is_strafing_left(true); break;
-    case '.':            _player.set_is_strafing_right(true); break;
+    case KEY_RIGHTARROW:_player.set_is_turning_right(true); break;
+    case KEY_LEFTARROW:	_player.set_is_turning_left(true); break;
+    case KEY_UPARROW:	_player.set_is_moving_forward(true); break;
+    case KEY_DOWNARROW:	_player.set_is_moving_backward(true); break;
+    case ',':		_player.set_is_strafing_left(true); break;
+    case '.':		_player.set_is_strafing_right(true); break;
+
+    case '1': 		_player.select_weapon(0); break;
+    case '2': 		_player.select_weapon(1); break;
+    case '3': 		_player.select_weapon(2); break;
+    case '4': 		_player.select_weapon(3); break;
+    case '5': 		_player.select_weapon(4); break;
+    case '6': 		_player.select_weapon(5); break;
+    case '7': 		_player.select_weapon(6); break;
+    case '8': 		_player.select_weapon(7); break;
+    case '9': 		_player.select_weapon(8); break;
 
     case KEY_ESCAPE: break;
     case KEY_ENTER: break;
@@ -145,7 +166,7 @@ void game::handle_key_down(int key_code)
     case KEY_EQUALS: break;
     case KEY_MINUS: break;
     case KEY_RSHIFT: break;
-    case KEY_RCTRL: break;
+    case KEY_RCTRL: 	_player.fire_weapon(); break;
     case KEY_RALT: break;
 
     case 'q': handle_quit(); break;

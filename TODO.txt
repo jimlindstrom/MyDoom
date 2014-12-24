@@ -1,5 +1,6 @@
 In Progress
 ---
+- FEATURE: shoot guns
 
 Queued up
 ---
@@ -25,7 +26,6 @@ Queued up
 - Show the stats
 
 - FEATURE: pick up ammo
-- FEATURE: shoot guns
 - FEATURE: things move around
 - FEATURE: things shoot you
 

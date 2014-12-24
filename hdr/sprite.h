@@ -22,6 +22,8 @@ public:
   uint8_t get_frame_idx(uint8_t orientation) const { return frame_idx[orientation]; }
   uint8_t get_rotation_idx(uint8_t orientation) const { return rotation_idx[orientation]; }
 
+  void draw(int16_t screen_x, int16_t screen_y, float scale) const;
+
 private:
   char name_prefix[5]; // 4 chars + NULL
   uint8_t frame_idx[2];
