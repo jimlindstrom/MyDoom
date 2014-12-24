@@ -48,7 +48,7 @@ void sprite_state_machine::handle_event(int event_id)
   }
   else
   {
-    debug_printf("\"%s\": handle_event() transitioning to NULL state\n", name);
+    printf("WARNING: state machine \"%s\": handle_event() transitioning to NULL state\n", name);
     cur_state = NULL; // done
   }
 }
