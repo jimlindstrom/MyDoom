@@ -1,6 +1,5 @@
 In Progress
 ---
-- FEATURE: shoot guns
 
 Queued up
 ---

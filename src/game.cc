@@ -61,13 +61,13 @@ void game::init_things(void)
   _player.set_weapon(0, new barehands());
   _player.set_weapon(1, new pistol());
   _player.set_weapon(2, new shotgun());
-  _player.set_weapon(3, new chaingun());
-  _player.set_weapon(4, new missile_launcher());
+  //_player.set_weapon(3, new chaingun());
+  //_player.set_weapon(4, new missile_launcher());
   //_player.set_weapon(5, new plasma_rifle());
   //_player.set_weapon(6, new bfg_9000());
-  _player.set_weapon(7, new chainsaw());
+  //_player.set_weapon(7, new chainsaw());
   //_player.set_weapon(8, new super_shotgun());
-  _player.select_weapon(1);
+  _player.select_weapon(2);
 
   if(game_custom_start_pos)
   {
@@ -81,6 +81,7 @@ void game::do_frame(void)
   printf("frame\n");
 
   flats_animate();
+  _player.animate_weapon();
   _map->direct_actors();
   _player.move(_map);
 

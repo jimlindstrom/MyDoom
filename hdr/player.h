@@ -22,6 +22,7 @@ public:
   void select_weapon(int idx);
   void draw_weapon(void) const;
   void fire_weapon(void);
+  void animate_weapon(void);
 
   void set_is_turning_right(  bool val) { is_turning_right   = val; }
   void set_is_turning_left(   bool val) { is_turning_left    = val; }
