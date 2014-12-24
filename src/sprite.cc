@@ -38,9 +38,6 @@ void sprite::set_rotation_idx(uint8_t orientation, uint8_t _rotation_idx)
 
 void sprite::draw(int16_t screen_x, int16_t screen_y, float scale) const
 {
-  int16_t h=games_get_screen_height();
-  int16_t w=games_get_screen_width();
-
   palette const *pal = palettes_get(0); // FIXME
   color_rgba c;
 
@@ -48,11 +45,16 @@ void sprite::draw(int16_t screen_x, int16_t screen_y, float scale) const
   {
     for(int y=0; y<(float)(scale*get_height()); y++)
     {
-      uint8_t color_idx = get_pixel(x/scale, y/scale);
-      if(color_idx != TRANSPARENT_COLOR_IDX)
+      uint16_t sprite_x = x/scale;
+      uint16_t sprite_y = y/scale;
+      if(sprite_x < get_width() && sprite_y < get_height())
       {
-        c.set_to(pal->get_color(color_idx));
-        frame_buf_overlay_pixel(screen_x+x, screen_y+y, &c);
+        uint8_t color_idx = get_pixel(sprite_x, sprite_y);
+        if(color_idx != TRANSPARENT_COLOR_IDX)
+        {
+          c.set_to(pal->get_color(color_idx));
+          frame_buf_overlay_pixel(screen_x+x, screen_y+y, &c);
+        }
       }
     }
   }

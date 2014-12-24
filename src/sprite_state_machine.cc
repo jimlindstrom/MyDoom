@@ -94,6 +94,7 @@ sprite_state_machine_transition *sprite_state_machine::find_transition(int state
 sprite const *sprite_state_machine::get_cur_sprite(int angle_idx) const
 {
   if(!cur_state) { return NULL; }
-
+  if(!cur_state->anim) { return NULL; }
+  if(!cur_state->anim->get_frame(cur_state->frame_idx)) { return NULL; }
   return cur_state->anim->get_frame(cur_state->frame_idx)->get_sprite(angle_idx);
 }

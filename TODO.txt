@@ -3,10 +3,7 @@ In Progress
 
 Queued up
 ---
-- FEATURE: change color depending on the direction a wall is facing (r_segs.c:605)
-
 - BUG: top of backface lower/upper walls should occlude further-away sprites
-
 - BUG: wall texture is misaligned in final room.
 - BUG: Some weird glitching: [(1783.3,-2631.2) facing 0.4] -- make a cmdline opt?
 
@@ -19,14 +16,16 @@ Queued up
 - FEATURE: trigger use/push actions on linedefs
 - FEATURE: trigger shoot actions on linedefs
 
+- FEATURE: change color depending on the direction a wall is facing (r_segs.c:605)
 - BUG: top of wall is rounded in final room (z projection is wrong)
 
-- Show the hand & weapon
 - Show the stats
 
 - FEATURE: pick up ammo
 - FEATURE: things move around
 - FEATURE: things shoot you
+- FEATURE: damage & kill things
+- BUG: only show things that are level-appropriate
 
 - FEATURE: use different skies in different levels
 - FEATURE: animate wall textures (p_spec.c:101). See: http://doom.wikia.com/wiki/Animated_wall (There aren't many in doom1)

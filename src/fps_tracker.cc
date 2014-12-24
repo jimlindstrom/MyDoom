@@ -3,6 +3,9 @@
 
 #include "fps_tracker.h"
 
+//#define DEBUG_PRINTING
+#include "debug.h"
+
 fps_tracker::fps_tracker()
 {
   frame_time_idx = 0;
@@ -26,7 +29,7 @@ void fps_tracker::tick(void)
   if(delta_sec>0.00001 && delta_sec<10.0)
   {
     fps = (double)num_frames / delta_sec;
-    printf("  %.2f frames/sec (%d frames in %.3fsec)\n", fps, (FRAME_TIMES_COUNT-1), delta_sec);
+    debug_printf("  %.2f frames/sec (%d frames in %.3fsec)\n", fps, (FRAME_TIMES_COUNT-1), delta_sec);
   }
 
   frame_time_idx = ((frame_time_idx+1) % FRAME_TIMES_COUNT);

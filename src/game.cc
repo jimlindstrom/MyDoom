@@ -10,6 +10,9 @@
 #include "vis_things.h"
 #include "vis_planes.h"
 
+//#define DEBUG_PRINTING
+#include "debug.h"
+
 bool game_custom_start_pos = false;
 float game_custom_start_x;
 float game_custom_start_y;
@@ -61,11 +64,11 @@ void game::init_things(void)
   _player.set_weapon(0, new barehands());
   _player.set_weapon(1, new pistol());
   _player.set_weapon(2, new shotgun());
-  //_player.set_weapon(3, new chaingun());
-  //_player.set_weapon(4, new missile_launcher());
+  _player.set_weapon(3, new chaingun());
+  _player.set_weapon(4, new missile_launcher());
   //_player.set_weapon(5, new plasma_rifle());
   //_player.set_weapon(6, new bfg_9000());
-  //_player.set_weapon(7, new chainsaw());
+  _player.set_weapon(7, new chainsaw());
   //_player.set_weapon(8, new super_shotgun());
   _player.select_weapon(2);
 
@@ -78,14 +81,14 @@ void game::init_things(void)
 
 void game::do_frame(void)
 {
-  printf("frame\n");
+  debug_printf("frame\n");
 
   flats_animate();
   _player.animate_weapon();
   _map->direct_actors();
   _player.move(_map);
 
-  printf("  player at (%.1f,%.1f,%.1f) facing %.1f\n", 
+  debug_printf("  player at (%.1f,%.1f,%.1f) facing %.1f\n", 
          _player.get_camera()->get_map_position()->get_x(), 
          _player.get_camera()->get_map_position()->get_y(), 
          _player.get_camera()->get_view_height(),
@@ -172,7 +175,7 @@ void game::handle_key_down(int key_code)
 
     case 'q': handle_quit(); break;
 
-    default: printf("unhandled key: %d ('%c')\n", key_code, key_code); break;
+    default: debug_printf("unhandled key: %d ('%c')\n", key_code, key_code); break;
   }
 }
 
