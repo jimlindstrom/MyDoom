@@ -59,8 +59,8 @@ bool wad_header::is_valid(void)
     return false;
   }
 
-  if( (infotableofs <        1) || 
-      (infotableofs > 10000000) ) // arbitrary guess at sane number
+  if( (infotableofs <         1) || 
+      (infotableofs > 100000000) ) // arbitrary guess at sane number
   {
     printf("WARNING: WAD header infotableofs (%d) seems invalid\n", infotableofs);
     return false;

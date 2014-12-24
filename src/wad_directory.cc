@@ -42,13 +42,13 @@ void wad_directory::print(void)
 
 bool wad_directory::is_valid(void)
 {
-  if(filepos > 10000000)
+  if(filepos > 100000000)
   {
     printf("WARNING: WAD directory has invalid filepos: %d\n", size);
     return false;
   }
 
-  if(size > 10000000)
+  if(size > 100000000)
   {
     printf("WARNING: WAD directory has invalid size: %d\n", size);
     return false;

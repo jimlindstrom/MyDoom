@@ -20,12 +20,15 @@ static int16_t screen_height = 480;
 static game *cur_game = NULL;
 static episode_map *cur_map = NULL;
 
+char wad_filename[100] = "data/Doom1.WAD";
+
 void game_init(void)
 {
   wad_file w;
 
   printf("Reading WAD file.\n");
-  w.read("data/Doom1.WAD");
+  //w.read("data/Doom1.WAD");
+  w.read(wad_filename);
 
   printf("Initializing...\n");
   if(!palettes_init(&w) || 

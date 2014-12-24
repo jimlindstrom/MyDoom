@@ -24,4 +24,6 @@ int16_t games_get_screen_width(void);
 int16_t games_get_screen_height(void);
 uint32_t games_get_frame_counter(void);
 
+extern char wad_filename[];
+
 #endif

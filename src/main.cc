@@ -49,6 +49,10 @@ int main(int argc, char **argv)
       tests_run();
       return 0;
     }
+    else if(strcmp(argv[i], "--wad")==0)
+    {
+      strcpy(wad_filename, argv[++i]);
+    }
     else if(strcmp(argv[i], "--headless")==0)
     {
       ui_set_headless_mode(true);

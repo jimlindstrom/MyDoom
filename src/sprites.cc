@@ -10,7 +10,7 @@
 static int32_t num_sprites = 0;
 static sprite *sprites = NULL;
 
-#define MAX_ANIMATIONS 100
+#define MAX_ANIMATIONS 200
 static sprite_animation animations[MAX_ANIMATIONS];
 static int32_t num_animations = 0;
 
