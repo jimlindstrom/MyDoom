@@ -3,7 +3,7 @@ CFLAGS=-g -O2 -Wall -DNORMALUNIX -DLINUX -m32 -Ihdr/
 LDFLAGS=
 LIBS=-framework Cocoa
 
-BIN=test
+BIN=mydoom
 
 CC_SOURCES=$(wildcard src/*.cc)
 CC_OBJECTS=$(subst src, obj, $(patsubst %.cc, %.occ, $(CC_SOURCES)))

@@ -102,7 +102,7 @@ void create_animations(void)
       }
     }
 
-    flat_animations[num_animations].set_name(flats[i].get_name()); // animations are referenced by their LAST frame
+    flat_animations[num_animations].set_name(flats[i].get_name());
     flat_animations[num_animations].set_flat(flat_idx, &flats[i]);
 
     // if we're not already in a defined animation, check whether this is the beginning of a defined animation
@@ -144,9 +144,12 @@ flat_animation const *flats_find_by_name(char const *name)
 {
   for(int i=0; i<num_animations; i++)
   {
-    if(strcasecmp(flat_animations[i].get_name(), name) == 0)
+    for(int j=0; j<flat_animations[i].get_num_flats(); j++)
     {
-      return &flat_animations[i];
+      if(strcasecmp(flat_animations[i].get_nth_flat(j)->get_name(), name) == 0)
+      {
+        return &flat_animations[i];
+      }
     }
   }
 
