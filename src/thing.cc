@@ -134,3 +134,6 @@ sprite const *thing::get_cur_sprite(thing_projection const *proj) const
   return cur_sprite;
 }
 
+void thing::tick(void)
+{
+}

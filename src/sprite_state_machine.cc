@@ -34,10 +34,10 @@ sprite_state_machine::~sprite_state_machine()
   if(name) { delete[] name; }
 }
 
-void sprite_state_machine::handle_event(int event_id)
+bool sprite_state_machine::handle_event(int event_id)
 {
   debug_printf("\"%s\": handle_event(%d)\n", name, event_id);
-  if(!cur_state) { return; }
+  if(!cur_state) { return false; }
 
   sprite_state_machine_transition *t = find_transition(cur_state->state_id, event_id);
   if(t)
@@ -45,12 +45,12 @@ void sprite_state_machine::handle_event(int event_id)
     debug_printf("\"%s\": handle_event() transitioning to %d\n", name, t->next_state_id);
     cur_state     = find_state(t->next_state_id);
     cur_tick      = 0;
+    return true;
   }
-  else
-  {
-    printf("WARNING: state machine \"%s\": handle_event() transitioning to NULL state\n", name);
-    cur_state = NULL; // done
-  }
+
+  printf("WARNING: state machine \"%s\": handle_event() transitioning to NULL state\n", name);
+  cur_state = NULL; // done
+  return false;
 }
 
 void sprite_state_machine::tick(void)

@@ -116,33 +116,37 @@
  * WEAPON CLASSES
  ******************************************************************************/
 
+class game; // forward declaration
+
 class weapon : public sprite_state_machine
 {
 public:
-  weapon(char const *name,
+  weapon(game *__game,
+         char const *name,
          int initial_state_id,
          sprite_state_machine_state *_states,
          sprite_state_machine_transition *_transitions) 
-    : sprite_state_machine(name, initial_state_id, _states,  _transitions) { }
+    : sprite_state_machine(name, initial_state_id, _states,  _transitions) { _game = __game; }
   void draw(void) const;
 
   int16_t get_ammo(void) const { return ammo; }
   void set_ammo(int16_t a) { ammo = a; }
 
-private:
+protected:
 
   int16_t ammo;
+  game *_game;
 };
 
-class barehands         : public weapon { public: barehands();        };
-class pistol            : public weapon { public: pistol();           };
-class shotgun           : public weapon { public: shotgun();          };
-class chaingun          : public weapon { public: chaingun();         };
-class missile_launcher  : public weapon { public: missile_launcher(); };
-class plasma_rifle      : public weapon { public: plasma_rifle();     };
-class bfg_9000          : public weapon { public: bfg_9000();         };
-class chainsaw          : public weapon { public: chainsaw();         };
-class super_shotgun     : public weapon { public: super_shotgun();    };
+class barehands         : public weapon { public: barehands(game *g);        bool handle_event(int event_id); };
+class pistol            : public weapon { public: pistol(game *g);           bool handle_event(int event_id); };
+class shotgun           : public weapon { public: shotgun(game *g);          bool handle_event(int event_id); };
+class chaingun          : public weapon { public: chaingun(game *g);         bool handle_event(int event_id); };
+class missile_launcher  : public weapon { public: missile_launcher(game *g); bool handle_event(int event_id); };
+class plasma_rifle      : public weapon { public: plasma_rifle(game *g);     bool handle_event(int event_id); };
+class bfg_9000          : public weapon { public: bfg_9000(game *g);         bool handle_event(int event_id); };
+class chainsaw          : public weapon { public: chainsaw(game *g);         bool handle_event(int event_id); };
+class super_shotgun     : public weapon { public: super_shotgun(game *g);    bool handle_event(int event_id); };
 
 #define NUM_WEAPONS 9 
 

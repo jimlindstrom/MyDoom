@@ -31,8 +31,8 @@ public:
                        sprite_state_machine_transition *_transitions);
   ~sprite_state_machine();
 
-  void handle_event(int event_id);
-  void tick(void);
+  virtual bool handle_event(int event_id);
+  virtual void tick(void);
 
 protected:
   char *name;

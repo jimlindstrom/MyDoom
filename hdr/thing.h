@@ -18,6 +18,7 @@ class subsector; // forward declaration
 class thing
 {
 public:
+  thing() { }
   thing(thing_instance const *instance);
   ~thing();
 
@@ -35,7 +36,9 @@ public:
 
   void render_player_view(camera const *_camera, clipped_segment_projections *clipped_seg_projs) const;
 
-private:
+  virtual void tick(void);
+
+protected:
   vertex map_position;
   float facing_angle;
   uint16_t thing_type;

@@ -1,6 +1,8 @@
 #include "weapon.h"
 #include "sprites.h"
 #include "games.h"
+#include "projectiles.h"
+#include "game.h"
 
 /******************************************************************************
  * WEAPON CLASS
@@ -60,9 +62,19 @@ static sprite_state_machine_transition barehands_transitions[] = {
   {false, 0, 0, 0}
 };
 
-barehands::barehands() 
-: weapon("barehands", STATE_BAREHANDS_READY, barehands_states, barehands_transitions)
+barehands::barehands(game *g) 
+: weapon(g, "barehands", STATE_BAREHANDS_READY, barehands_states, barehands_transitions)
 {
+}
+
+bool barehands::handle_event(int event_id)
+{
+  bool successful_transition = weapon::handle_event(event_id);
+  if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
+  {
+    printf("punch!\n");
+  }
+  return successful_transition;
 }
 
 /******************************************************************************
@@ -100,9 +112,19 @@ static sprite_state_machine_transition pistol_transitions[] = {
   {false, 0, 0, 0}
 };
 
-pistol::pistol() 
-: weapon("pistol", STATE_PISTOL_READY, pistol_states, pistol_transitions)
+pistol::pistol(game *g) 
+: weapon(g, "pistol", STATE_PISTOL_READY, pistol_states, pistol_transitions)
 {
+}
+
+bool pistol::handle_event(int event_id)
+{
+  bool successful_transition = weapon::handle_event(event_id);
+  if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
+  {
+    printf("fire!\n");
+  }
+  return successful_transition;
 }
 
 /******************************************************************************
@@ -156,9 +178,19 @@ static sprite_state_machine_transition shotgun_transitions[] = {
   {false, 0, 0, 0}
 };
 
-shotgun::shotgun() 
-: weapon("shotgun", STATE_SHOTGUN_READY, shotgun_states, shotgun_transitions)
+shotgun::shotgun(game *g) 
+: weapon(g, "shotgun", STATE_SHOTGUN_READY, shotgun_states, shotgun_transitions)
 {
+}
+
+bool shotgun::handle_event(int event_id)
+{
+  bool successful_transition = weapon::handle_event(event_id);
+  if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
+  {
+    printf("fire!\n");
+  }
+  return successful_transition;
 }
 
 /******************************************************************************
@@ -196,9 +228,19 @@ static sprite_state_machine_transition chaingun_transitions[] = {
   {false, 0, 0, 0}
 };
 
-chaingun::chaingun() 
-: weapon("chaingun", STATE_CHAINGUN_READY, chaingun_states, chaingun_transitions)
+chaingun::chaingun(game *g) 
+: weapon(g, "chaingun", STATE_CHAINGUN_READY, chaingun_states, chaingun_transitions)
 {
+}
+
+bool chaingun::handle_event(int event_id)
+{
+  bool successful_transition = weapon::handle_event(event_id);
+  if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
+  {
+    printf("fire!\n");
+  }
+  return successful_transition;
 }
 
 /******************************************************************************
@@ -240,9 +282,22 @@ static sprite_state_machine_transition missile_launcher_transitions[] = {
   {false, 0, 0, 0}
 };
 
-missile_launcher::missile_launcher() 
-: weapon("missile_launcher", STATE_MISSILE_LAUNCHER_READY, missile_launcher_states, missile_launcher_transitions)
+missile_launcher::missile_launcher(game *g) 
+: weapon(g, "missile_launcher", STATE_MISSILE_LAUNCHER_READY, missile_launcher_states, missile_launcher_transitions)
 {
+}
+
+bool missile_launcher::handle_event(int event_id)
+{
+  bool successful_transition = weapon::handle_event(event_id);
+  if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
+  {
+    printf("fire missile!\n");
+    thing *_thing = new missile(_game->get_player()->get_camera()->get_map_position(), 
+                                _game->get_player()->get_camera()->get_facing_angle());
+    _game->spawn_thing(_thing);
+  }
+  return successful_transition;
 }
 
 /******************************************************************************
@@ -278,9 +333,22 @@ static sprite_state_machine_transition plasma_rifle_transitions[] = {
   {false, 0, 0, 0}
 };
 
-plasma_rifle::plasma_rifle() 
-: weapon("plasma_rifle", STATE_PLASMA_RIFLE_READY, plasma_rifle_states, plasma_rifle_transitions)
+plasma_rifle::plasma_rifle(game *g) 
+: weapon(g, "plasma_rifle", STATE_PLASMA_RIFLE_READY, plasma_rifle_states, plasma_rifle_transitions)
 {
+}
+
+bool plasma_rifle::handle_event(int event_id)
+{
+  bool successful_transition = weapon::handle_event(event_id);
+  if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
+  {
+    printf("fire plamsa!\n");
+    thing *_thing = new plasma(_game->get_player()->get_camera()->get_map_position(), 
+                               _game->get_player()->get_camera()->get_facing_angle());
+    _game->spawn_thing(_thing);
+  }
+  return successful_transition;
 }
 
 /******************************************************************************
@@ -320,9 +388,19 @@ static sprite_state_machine_transition bfg_9000_transitions[] = {
   {false, 0, 0, 0}
 };
 
-bfg_9000::bfg_9000() 
-: weapon("bfg_9000", STATE_BFG_9000_READY, bfg_9000_states, bfg_9000_transitions)
+bfg_9000::bfg_9000(game *g) 
+: weapon(g, "bfg_9000", STATE_BFG_9000_READY, bfg_9000_states, bfg_9000_transitions)
 {
+}
+
+bool bfg_9000::handle_event(int event_id)
+{
+  bool successful_transition = weapon::handle_event(event_id);
+  if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
+  {
+    printf("fire!\n");
+  }
+  return successful_transition;
 }
 
 /******************************************************************************
@@ -358,9 +436,19 @@ static sprite_state_machine_transition chainsaw_transitions[] = {
   {false, 0, 0, 0}
 };
 
-chainsaw::chainsaw() 
-: weapon("chainsaw", STATE_CHAINSAW_READY1, chainsaw_states, chainsaw_transitions)
+chainsaw::chainsaw(game *g) 
+: weapon(g, "chainsaw", STATE_CHAINSAW_READY1, chainsaw_states, chainsaw_transitions)
 {
+}
+
+bool chainsaw::handle_event(int event_id)
+{
+  bool successful_transition = weapon::handle_event(event_id);
+  if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
+  {
+    printf("fire!\n");
+  }
+  return successful_transition;
 }
 
 /******************************************************************************
@@ -422,8 +510,18 @@ static sprite_state_machine_transition super_shotgun_transitions[] = {
   {false, 0, 0, 0}
 };
 
-super_shotgun::super_shotgun() 
-: weapon("super_shotgun", STATE_SUPER_SHOTGUN_READY, super_shotgun_states, super_shotgun_transitions)
+super_shotgun::super_shotgun(game *g) 
+: weapon(g, "super_shotgun", STATE_SUPER_SHOTGUN_READY, super_shotgun_states, super_shotgun_transitions)
 {
+}
+
+bool super_shotgun::handle_event(int event_id)
+{
+  bool successful_transition = weapon::handle_event(event_id);
+  if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
+  {
+    printf("fire!\n");
+  }
+  return successful_transition;
 }
 

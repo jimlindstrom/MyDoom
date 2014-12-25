@@ -100,11 +100,11 @@ void player::draw_weapon(void) const
 
 void player::fire_weapon(void)
 {
-  if(weapons[selected_weapon_idx] &&
-     weapons[selected_weapon_idx]->get_ammo() > 0)
-  {
+  //if(weapons[selected_weapon_idx] &&
+  //   weapons[selected_weapon_idx]->get_ammo() > 0)
+  //{
     weapons[selected_weapon_idx]->handle_event(EVENT_WEAPON_FIRE);
-  }
+  //}
 }
 
 void player::animate_weapon(void)

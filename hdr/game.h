@@ -22,6 +22,8 @@ public:
   void set_map(episode_map *__map) { _map = __map; }
   void set_screen_resolution(int w, int h);
 
+  player const *get_player(void) const { return &_player; }
+
   void init_things(void);
 
   void do_frame(void);

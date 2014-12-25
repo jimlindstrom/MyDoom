@@ -1,9 +1,16 @@
 In Progress
 ---
-- FEATURE: spawn new things (plasma missiles)
 
 Queued up
 ---
+- BUG: sprites are invisible from certain directions
+- BUG: sprites aren't oriented the right direction
+
+- FEATURE: collision detection: http://doom.wikia.com/wiki/Blockmap
+- FEATURE: projectiles blow up when they hit something solid
+- FEATURE: projectiles damage enemies
+- FEATURE: enemies walk around
+
 - BUG: top of backface lower/upper walls should occlude further-away sprites
 - BUG: wall texture is misaligned in final room.
 - BUG: Some weird glitching: [(1783.3,-2631.2) facing 0.4]
@@ -11,7 +18,6 @@ Queued up
 - BUG: Player view height seems too high. 
 - FEATURE: head bobbing
 
-- FEATURE: collision detection: http://doom.wikia.com/wiki/Blockmap
 
 - FEATURE: trigger walkover actions on linedefs
 - FEATURE: trigger use/push actions on linedefs
@@ -23,7 +29,6 @@ Queued up
 - Show the stats
 
 - FEATURE: pick up ammo
-- FEATURE: things move around
 - FEATURE: things shoot you
 - FEATURE: damage & kill things
 

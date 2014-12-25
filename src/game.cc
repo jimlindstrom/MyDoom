@@ -63,22 +63,21 @@ void game::init_things(void)
   
         default: // for everything else, spawn a thing
           thing *_thing = thing_factory::create(_map->get_nth_thing_instance(i));
-          _thing->set_subsector(_map->root_node()->get_subsector_containing(_thing->get_map_position()));
           spawn_thing(_thing);
           break;
       }
     }
   }
 
-  _player.set_weapon(0, new barehands());
-  _player.set_weapon(1, new pistol());
-  _player.set_weapon(2, new shotgun());
-  _player.set_weapon(3, new chaingun());
-  _player.set_weapon(4, new missile_launcher());
-  _player.set_weapon(5, new plasma_rifle());
-  _player.set_weapon(6, new bfg_9000());
-  _player.set_weapon(7, new chainsaw());
-  _player.set_weapon(8, new super_shotgun());
+  _player.set_weapon(0, new barehands(this));
+  _player.set_weapon(1, new pistol(this));
+  _player.set_weapon(2, new shotgun(this));
+  _player.set_weapon(3, new chaingun(this));
+  _player.set_weapon(4, new missile_launcher(this));
+  _player.set_weapon(5, new plasma_rifle(this));
+  _player.set_weapon(6, new bfg_9000(this));
+  _player.set_weapon(7, new chainsaw(this));
+  _player.set_weapon(8, new super_shotgun(this));
   _player.select_weapon(2);
 
   if(game_custom_start_pos)
@@ -95,6 +94,7 @@ void game::do_frame(void)
   flats_animate();
   _player.animate_weapon();
   _map->direct_actors();
+  for(int i=0; i<num_things; i++) { things[i]->tick(); }
   _player.move(_map);
 
   debug_printf("  player at (%.1f,%.1f,%.1f) facing %.1f\n", 
@@ -233,6 +233,7 @@ void game::spawn_thing(thing *_thing)
     printf("ERROR: thing overflow\n");
     exit(0);
   }
+  _thing->set_subsector(_map->root_node()->get_subsector_containing(_thing->get_map_position()));
   things[num_things++] = _thing;
 }
 
