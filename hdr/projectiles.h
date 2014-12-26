@@ -7,7 +7,7 @@ class plasma : public thing
 {
 public:
   plasma(vertex const *_pos, float _facing_angle);
-  ~plasma();
+  ~plasma() { }
 
   void tick(void);
 };
@@ -16,7 +16,7 @@ class missile : public thing
 {
 public:
   missile(vertex const *_pos, float _facing_angle);
-  ~missile();
+  ~missile() { }
 
   void tick(void);
 };

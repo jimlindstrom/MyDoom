@@ -174,14 +174,14 @@ static thing_definition decorations[] =
 static thing_definition other_things[] = 
 {
   {88,		"58",	"2",	16,	"BBRN",	"+",	"O1",	"Boss Brain"},
-  {11,		"B",	"S",	20,	"none",	"-",	"",	"Deathmatch start"},
+  {11,		"B",	"S",	20,	"",	"-",	"",	"Deathmatch start"},
   {1,		"1",	"S",	16,	"PLAY",	"+",	"",	"Player 1 start"},
   {2,		"2",	"S",	16,	"PLAY",	"+",	"",	"Player 2 start"},
   {3,		"3",	"S",	16,	"PLAY",	"+",	"",	"Player 3 start"},
   {4,		"4",	"S",	16,	"PLAY",	"+",	"",	"Player 4 start"},
-  {89,		"59",	"2",	20,	"none2","-",	"",	"Spawn shooter"},
-  {87,		"57",	"2",	0,	"none3","-",	"",	"Spawn spot"},
-  {14,		"E",	"S",	20,	"none4","-",	"",	"Teleport landing"},
+  {89,		"59",	"2",	20,	"",	"-",	"",	"Spawn shooter"},
+  {87,		"57",	"2",	0,	"",	"-",	"",	"Spawn spot"},
+  {14,		"E",	"S",	20,	"",	"-",	"",	"Teleport landing"},
   {0xffff,	"",	"",	0,	"",	"",	"",	"END OF LIST"},
 };
 

@@ -27,7 +27,6 @@ void game_init(void)
   wad_file w;
 
   printf("Reading WAD file.\n");
-  //w.read("data/Doom1.WAD");
   w.read(wad_filename);
 
   printf("Initializing...\n");

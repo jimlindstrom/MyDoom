@@ -1,8 +1,15 @@
 #ifndef __THING_DEFINITIONS_H
 #define __THING_DEFINITIONS_H
 
-// FIXME: why special-case this one?
 #define THING_PLAYER_1_START_TYPE	1
+#define THING_PLAYER_2_START_TYPE	2
+#define THING_PLAYER_3_START_TYPE	3
+#define THING_PLAYER_4_START_TYPE	4
+#define THING_DEATHMATCH_START_TYPE	11
+#define THING_TELEPORT_LANDING_TYPE	14
+#define THING_SPAWN_SPOT_TYPE		87
+#define THING_SPAWN_SHOOTER_TYPE	89
+
 
 // FIXME: these string lengths could likely be tuned down a bit.
 typedef struct

@@ -3,9 +3,6 @@ In Progress
 
 Queued up
 ---
-- BUG: sprites are invisible from certain directions
-- BUG: sprites aren't oriented the right direction
-
 - FEATURE: collision detection: http://doom.wikia.com/wiki/Blockmap
 - FEATURE: projectiles blow up when they hit something solid
 - FEATURE: projectiles damage enemies

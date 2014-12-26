@@ -20,7 +20,7 @@ sprite::~sprite()
 
 void sprite::set_name_prefix(char const *_name_prefix)
 {
-  strcpy(name_prefix, _name_prefix); 
+  strncpy(name_prefix, _name_prefix, 4); 
   name_prefix[4]=0;
 }
 

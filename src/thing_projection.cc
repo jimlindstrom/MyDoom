@@ -75,6 +75,7 @@ void thing_projection::draw(void)
   for(int x=x_l_c; x<=x_r_c; x++)
   {
     int u =   (float)(x - x_l)/(x_r - x_l) * (_sprite->get_width() -1);
+    int flipped_u = is_flipped ? (_sprite->get_width() - u - 1) : u;
 
     float clip_dist  = dist_l + ( (dist_r - dist_l) *
                                   (x      - x_l   ) /
@@ -87,7 +88,7 @@ void thing_projection::draw(void)
     {
       int v = (float)(y - y_t)/(y_b - y_t) * (_sprite->get_height()-1);
 
-      uint8_t color_idx = _sprite->get_pixel(u, v); // FIXME: do this up-front
+      uint8_t color_idx = _sprite->get_pixel(flipped_u, v); // FIXME: do this up-front
       if(color_idx != TRANSPARENT_COLOR_IDX)
       {
         c.set_to(pal->get_color(color_idx)); // FIXME: do this up-front

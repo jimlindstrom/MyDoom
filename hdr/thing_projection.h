@@ -36,6 +36,7 @@ public:
   int16_t y_t_c, y_b_c;
 
   sprite const *_sprite;
+  bool is_flipped;
 
   int16_t cliptop[MAX_SCREEN_WIDTH];
   int16_t clipbot[MAX_SCREEN_WIDTH];

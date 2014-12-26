@@ -20,7 +20,7 @@ class thing
 public:
   thing() { }
   thing(thing_instance const *instance);
-  ~thing();
+  virtual ~thing();
 
   vertex const *get_map_position(void) const { return &map_position; }
   float get_facing_angle(void) const { return facing_angle; }
@@ -38,6 +38,9 @@ public:
 
   virtual void tick(void);
 
+  thing_projection *project(camera const *_camera) const;
+  float get_rotation_angle(camera const *_camera) const;
+
 protected:
   vertex map_position;
   float facing_angle;
@@ -50,9 +53,8 @@ protected:
   uint16_t frame_ctr;
 
   subsector const *_subsector;
-
-  thing_projection *project(camera const *_camera) const;
-  sprite const *get_cur_sprite(thing_projection const *proj) const;
 };
+
+void thing_tests(void);
 
 #endif

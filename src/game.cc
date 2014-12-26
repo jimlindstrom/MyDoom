@@ -61,6 +61,16 @@ void game::init_things(void)
           _player.reset_camera(cur_thing_instance->get_map_position(), cur_thing_instance->get_facing_angle());
           break;
   
+        case THING_PLAYER_2_START_TYPE:
+        case THING_PLAYER_3_START_TYPE:
+        case THING_PLAYER_4_START_TYPE:
+        case THING_DEATHMATCH_START_TYPE:
+        case THING_TELEPORT_LANDING_TYPE:
+        case THING_SPAWN_SPOT_TYPE:
+        case THING_SPAWN_SHOOTER_TYPE:
+          // Ignore these
+          break;
+  
         default: // for everything else, spawn a thing
           thing *_thing = thing_factory::create(_map->get_nth_thing_instance(i));
           spawn_thing(_thing);
