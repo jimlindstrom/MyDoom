@@ -56,6 +56,8 @@ void ui_run_cocoa_app(void) // doesn't return until window is closed
 
   printf("Running app\n");
   [NSApp run];
+
+  [view release];
 }
 
 void ui_resize_window(int new_width, int new_height)
@@ -82,11 +84,12 @@ void ui_draw_image(unsigned char *image_data, int width, int height)
                                                             width*height*4,
                                                             NULL);
   CGRect myBoundingBox = CGRectMake(0, 0, window_width, window_height);
+  CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
   CGImageRef imageRef = CGImageCreate(width, height,                 /* width & height */
                                       8,                             /* bits per component */
                                       32,                            /* bits per pixel */
                                       4*width,                       /* bytes per row */
-                                      CGColorSpaceCreateDeviceRGB(), /* color space */
+                                      colorSpace,                    /* color space */
                                       kCGBitmapByteOrderDefault,     /* bitmap info */
                                       provider,                      /* provider */
                                       NULL,                          /* decode */
@@ -96,6 +99,7 @@ void ui_draw_image(unsigned char *image_data, int width, int height)
   CGContextDrawImage(window_context, myBoundingBox, imageRef);
   [window flushWindow];
 
+  CGColorSpaceRelease(colorSpace);
   CGDataProviderRelease(provider);
   CGImageRelease(imageRef);
 }
