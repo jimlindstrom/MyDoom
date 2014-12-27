@@ -23,6 +23,7 @@ public:
   bool  is_opaque;               // true if solid wall or closed door.
   bool  clip_floor, clip_ceiling;// in vis_planes
 
+  float  view_ang;               // wall rotation, relative to 0 being exactly perpendicular with viewer
   float  ang_l,    ang_r;        // raw angles to left and right vertex
   vertex v_l_c,    v_r_c;        // vertex where left and right side end, or are clipped by horizontal FOV
   float  u_l_c,    u_r_c;        // percentage from l->r where v_l_c and v_r_c fall along the segent

@@ -143,6 +143,7 @@ void wad_segment::render_player_view(camera const *_camera, clipped_segment_proj
     clipped_seg_proj[i]->project_vertically(_camera);
 
     // set lighting & textures
+    clipped_seg_proj[i]->view_ang     = seg_proj->view_ang;
     clipped_seg_proj[i]->light_level  = front_sector->get_light_level();
     clipped_seg_proj[i]->ldx_l        = seg_proj->get_texture_x_offset(clipped_seg_proj[i]->x_l);
     clipped_seg_proj[i]->ldx_r        = seg_proj->get_texture_x_offset(clipped_seg_proj[i]->x_r);
@@ -200,6 +201,7 @@ segment_projection *wad_segment::project(camera const *_camera) const
 
   // step 3: Project it
   vertex origin(0,0);
+  seg_proj->view_ang = seg_proj->v_l_c.angle_to_point(&seg_proj->v_r_c);
   seg_proj->ang_l_c  = origin.angle_to_point(&seg_proj->v_l_c); 
   seg_proj->ang_r_c  = origin.angle_to_point(&seg_proj->v_r_c); 
   seg_proj->x_l_c    = _projector->project_horiz_angle_to_x(seg_proj->ang_l_c);

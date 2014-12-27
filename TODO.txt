@@ -19,7 +19,6 @@ Queued up
 - FEATURE: trigger use/push actions on linedefs
 - FEATURE: trigger shoot actions on linedefs
 
-- FEATURE: change color depending on the direction a wall is facing (r_segs.c:605)
 - BUG: top of wall is rounded in final room (z projection is wrong)
 
 - Show the stats

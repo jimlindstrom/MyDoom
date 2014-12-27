@@ -50,7 +50,8 @@ void clipped_segment_projection::render_1sided(vis_planes *vp, vis_plane *floor,
     float dist = dist_l     + (dist_r    - dist_l  )*(x-x_l)/(x_r-x_l);
     float pct_darkened1 = DIST_TO_PCT_DARKENED(dist); // Darken for distance
     float pct_darkened2 = ((255-light_level)/255.0);  // Darken for sector light level
-    float pct_darkened = 1.0 - ((1.0-pct_darkened1)*(1.0-pct_darkened2));
+    float pct_darkened3 = 0.2-(0.2*cos(2.0*view_ang));    // Darken for rotated away
+    float pct_darkened = 1.0 - ((1.0-pct_darkened1)*(1.0-pct_darkened2)*(1.0-pct_darkened3));
 
     int clipped_yt = MAX(yt, vp->get_ceiling_clip(x)+1);
     int clipped_yb = MIN(yb, vp->get_floor_clip(  x)-1);
@@ -90,7 +91,8 @@ void clipped_segment_projection::render_2sided(vis_planes *vp, vis_plane *floor,
     float dist = dist_l       + (dist_r      - dist_l    )*(x-x_l)/(x_r-x_l);
     float pct_darkened1 = DIST_TO_PCT_DARKENED(dist); // Darken for distance
     float pct_darkened2 = ((255-light_level)/255.0);  // Darken for sector light level
-    float pct_darkened = 1.0 - ((1.0-pct_darkened1)*(1.0-pct_darkened2));
+    float pct_darkened3 = 0.2-(0.2*cos(2.0*view_ang));    // Darken for rotated away
+    float pct_darkened = 1.0 - ((1.0-pct_darkened1)*(1.0-pct_darkened2)*(1.0-pct_darkened3));
 
     int clipped_yt = MAX(yt, vp->get_ceiling_clip(x)+1);
     int clipped_yb = MIN(yb, vp->get_floor_clip(  x)-1);

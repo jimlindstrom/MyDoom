@@ -28,6 +28,7 @@ public:
   float   ldx_l,  ldx_r;   // linedef x val (aka texture x value at left and right)
 
   // filled in by segment::render()
+  float view_ang;          // in radians
   uint16_t light_level;    // 0..255
   bool clip_floor, clip_ceiling;
 
