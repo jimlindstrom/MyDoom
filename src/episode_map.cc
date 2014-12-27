@@ -9,6 +9,9 @@
 #include "actor.h"
 #include "strobe_light.h"
 
+//#define DEBUG_PRINTING
+#include "debug.h"
+
 episode_map::episode_map()
 {
   name            = NULL;
@@ -45,6 +48,7 @@ bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
   cur_lump = wad->get_next_lump(lump);
   while(!done)
   {
+    debug_printf("reading %s\n", cur_lump->get_name());
     if(strcmp(cur_lump->get_name(),"THINGS")==0)
     {
       if(!read_thing_instances(cur_lump)) { return false; }
@@ -79,11 +83,11 @@ bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
     }
     else if(strcmp(cur_lump->get_name(),"REJECT")==0)
     {
-      reject_tbl.read_from_lump(lump, num_sectors);
+      reject_tbl.read_from_lump(cur_lump, num_sectors);
     }
     else if(strcmp(cur_lump->get_name(),"BLOCKMAP")==0)
     {
-      _block_map.read_from_lump(lump, num_sectors);
+      _block_map.read_from_lump(cur_lump, num_sectors);
     }
     else
     {
@@ -98,6 +102,7 @@ bool episode_map::read_from_lump(wad_file const *wad, wad_lump const *lump)
   link_sidedefs_to_children();
   link_linedefs_to_children();
   link_segments_to_children();
+  link_blocks_to_children();
 
   return true;
 }
@@ -231,25 +236,25 @@ bool episode_map::read_sectors(wad_lump const *lump)
     {
       case SECTOR_TYPE_NORMAL: 			break;
 
-      case SECTOR_TYPE_GLOWING_LIGHT: 		printf("not implemented: SECTOR_TYPE_GLOWING_LIGHT\n"); break;
+      case SECTOR_TYPE_GLOWING_LIGHT: 		debug_printf("not implemented: SECTOR_TYPE_GLOWING_LIGHT\n"); break;
       case SECTOR_TYPE_FLICKERING_LIGHTS: 	add_actor(new flickering_light(&sectors[i])); break;
-      case SECTOR_TYPE_FIRE_FLICKER: 		printf("not implemented: SECTOR_TYPE_FIRE_FLICKER\n"); break;
+      case SECTOR_TYPE_FIRE_FLICKER: 		debug_printf("not implemented: SECTOR_TYPE_FIRE_FLICKER\n"); break;
 
       case SECTOR_TYPE_STROBE_SLOW: 		add_actor(new slow_strobe_light(&sectors[i])); break;
       case SECTOR_TYPE_STROBE_FAST: 		add_actor(new fast_strobe_light(&sectors[i])); break;
-      case SECTOR_TYPE_SYNC_STROBE_SLOW: 	printf("not implemented: SECTOR_TYPE_SYNC_STROBE_SLOW\n"); break;
-      case SECTOR_TYPE_SYNC_STROBE_FAST: 	printf("not implemented: SECTOR_TYPE_SYNC_STROBE_FAST\n"); break;
+      case SECTOR_TYPE_SYNC_STROBE_SLOW: 	debug_printf("not implemented: SECTOR_TYPE_SYNC_STROBE_SLOW\n"); break;
+      case SECTOR_TYPE_SYNC_STROBE_FAST: 	debug_printf("not implemented: SECTOR_TYPE_SYNC_STROBE_FAST\n"); break;
       case SECTOR_TYPE_STROBE_FAST_DEATH_SLIME: add_actor(new fast_strobe_light(&sectors[i]));break;
 
-      case SECTOR_TYPE_HELLSLIME_DAMAGE: 	printf("not implemented: SECTOR_TYPE_HELLSLIME_DAMAGE\n"); break;
-      case SECTOR_TYPE_NUKAGE_DAMAGE: 		printf("not implemented: SECTOR_TYPE_NUKAGE_DAMAGE\n"); break;
-      case SECTOR_TYPE_SUPER_HELLSLIME_DAMAGE:	printf("not implemented: SECTOR_TYPE_SUPER_HELLSLIME_DAMAGE\n"); break;
-      case SECTOR_TYPE_EXIT_SUPER_DAMAGE: 	printf("not implemented: SECTOR_TYPE_EXIT_SUPER_DAMAGE\n"); break;
+      case SECTOR_TYPE_HELLSLIME_DAMAGE: 	debug_printf("not implemented: SECTOR_TYPE_HELLSLIME_DAMAGE\n"); break;
+      case SECTOR_TYPE_NUKAGE_DAMAGE: 		debug_printf("not implemented: SECTOR_TYPE_NUKAGE_DAMAGE\n"); break;
+      case SECTOR_TYPE_SUPER_HELLSLIME_DAMAGE:	debug_printf("not implemented: SECTOR_TYPE_SUPER_HELLSLIME_DAMAGE\n"); break;
+      case SECTOR_TYPE_EXIT_SUPER_DAMAGE: 	debug_printf("not implemented: SECTOR_TYPE_EXIT_SUPER_DAMAGE\n"); break;
 
-      case SECTOR_TYPE_SECRET_SECTOR: 		printf("not implemented: SECTOR_TYPE_SECRET_SECTOR\n"); break;
+      case SECTOR_TYPE_SECRET_SECTOR: 		debug_printf("not implemented: SECTOR_TYPE_SECRET_SECTOR\n"); break;
 
-      case SECTOR_TYPE_DOOR_CLOSE_IN_30_SEC: 	printf("not implemented: SECTOR_TYPE_DOOR_CLOSE_IN_30_SEC\n"); break;
-      case SECTOR_TYPE_DOOR_RAISE_IN_5_MIN: 	printf("not implemented: SECTOR_TYPE_DOOR_RAISE_IN_5_MIN\n"); break;
+      case SECTOR_TYPE_DOOR_CLOSE_IN_30_SEC: 	debug_printf("not implemented: SECTOR_TYPE_DOOR_CLOSE_IN_30_SEC\n"); break;
+      case SECTOR_TYPE_DOOR_RAISE_IN_5_MIN: 	debug_printf("not implemented: SECTOR_TYPE_DOOR_RAISE_IN_5_MIN\n"); break;
 
       default: printf("ERROR: unhandled sector type %d\n", sectors[i].get_type()); exit(0);
     }
@@ -472,6 +477,28 @@ void episode_map::link_sidedefs_to_children(void)
   }
 }
 
+void episode_map::link_blocks_to_children(void)
+{
+  for(int col=0; col<_block_map.get_num_cols(); col++)
+  {
+    for(int row=0; row<_block_map.get_num_rows(); row++)
+    {
+      block_map_cell *cell = _block_map.get_cell_rw(col, row);
+      for(int linedef_num=0; linedef_num<cell->get_num_linedefs(); linedef_num++)
+      {
+        uint16_t linedef_idx = cell->get_linedef_num(linedef_num);
+        if(linedef_idx >= num_linedefs)
+        {
+          printf("ERROR: block list references linedef %d >= %d\n", linedef_idx, num_linedefs);
+          exit(0);
+        }
+        linedef *cur_linedef = &linedefs[linedef_idx];
+        cell->set_linedef(linedef_num, cur_linedef);
+      }
+    }
+  }
+}
+
 void episode_map::draw_overhead_map(overhead_map *omap) const
 {
   color_rgba blu(  0,   0, 255, 255);
@@ -500,21 +527,52 @@ void episode_map::render_player_view(camera const *_camera,
   root_node()->render_player_view(_camera, clipped_seg_projs, vp, things, num_things, vt);
 }
 
-bool episode_map::can_move(vertex const *old_position, vertex const *new_position, float *floor_height) const
+bool episode_map::can_move(vertex const *old_position, vertex const *new_position, float obj_radius, float *floor_height) const
 {
-  subsector const *old_ss;
-  subsector const *new_ss;
+  // FIXME: take into account closed doors
+  // FIXME: take into account high steps / pedestals (too high to step into)
+  // FIXME: take into account cabinets (mid-texture gaps with too little dy for the player's height
+  // FIXME: take into account being on the border between two cells?
 
-  old_ss = root_node()->get_subsector_containing(old_position);
-  new_ss = root_node()->get_subsector_containing(new_position);
-
-  if(old_ss != new_ss) // FIXME: do collision detection...
+  // loop through everything for center and then the radius at 0,90,180,270
+  for(int i=0; i<5; i++)
   {
-    // check all linedefs in new/old SS. 
-    // see if they're crossed by this vector
-    // if so, check whether they block players
+    vertex v1(old_position), v2(new_position);
+    switch(i)
+    {
+      case 0: break; 
+      case 1: v1.set_x(v1.get_x()+obj_radius); v2.set_x(v2.get_x()+obj_radius); break;
+      case 2: v1.set_x(v1.get_x()-obj_radius); v2.set_x(v2.get_x()-obj_radius); break;
+      case 3: v1.set_y(v1.get_y()+obj_radius); v2.set_y(v2.get_y()+obj_radius); break;
+      case 4: v1.set_y(v1.get_y()-obj_radius); v2.set_y(v2.get_y()-obj_radius); break;
+    }
+    segment move_path(&v1, &v2);
+
+    block_map_cell *cell;
+    cell = _block_map.get_cell_by_map_pos(&v1);
+    if(cell)
+    {
+      for(int i=0; i<cell->get_num_linedefs(); i++)
+      {
+        linedef const *cur_linedef = cell->get_linedef(i);
+    
+        // does movement intersect line?
+        segment line_seg(cur_linedef->get_start_vertex(), cur_linedef->get_end_vertex());
+        vertex intersect_point;
+        float intersect_pct1, intersect_pct2; // parameter (0..1) across the segment and the vector
+        if(line_seg.get_intersection_with_segment(&move_path, &intersect_point, &intersect_pct1, &intersect_pct2) &&
+           (0.0 <= intersect_pct1) && (intersect_pct1 <= 1.0) &&
+           (0.0 <= intersect_pct2) && (intersect_pct2 <= 1.0) )
+        {
+          if(cur_linedef->is_one_sided())   { return false; }
+          if(cur_linedef->blocks_players()) { return false; }
+        }
+      }
+    }
   }
 
+  subsector const *new_ss;
+  new_ss = root_node()->get_subsector_containing(new_position);
   *floor_height = new_ss->get_sector()->get_floor_height(); // FIXME: this is wrong...
 
   return true;

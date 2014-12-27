@@ -71,6 +71,8 @@ public:
   void set_z_values(int direction, bool is_outdoor_area, clipped_segment_projection *wall) const;
   void set_textures(int direction, clipped_segment_projection *wall) const;
 
+  bool is_point_on_left(vertex const *v) const;
+
 private:
   uint16_t start_vertex_num;
   uint16_t end_vertex_num;

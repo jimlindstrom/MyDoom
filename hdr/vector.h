@@ -23,7 +23,7 @@ public:
 
   float get_length(void) const;
   float get_slope(void) const;
-  void get_slope_and_y_intercept(float *slope, float *y_intercept) const;
+  void  get_slope_and_y_intercept(float *slope, float *y_intercept) const;
 
 protected:
   vertex const *vertex_1;

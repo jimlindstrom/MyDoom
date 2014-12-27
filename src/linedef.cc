@@ -158,3 +158,13 @@ void linedef::set_textures(int direction, clipped_segment_projection *wall) cons
     }
   }
 }
+
+bool linedef::is_point_on_left(vertex const *v) const
+{
+  float term1 = (end_vertex->get_x() - start_vertex->get_x()) * (v->get_y() - start_vertex->get_y());
+  float term2 = (end_vertex->get_y() - start_vertex->get_y()) * (v->get_x() - start_vertex->get_x());
+  int position = term1 - term2;
+  return (position > 0);
+}
+ 
+

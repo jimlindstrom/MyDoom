@@ -13,6 +13,9 @@ public:
   segment(vertex const *vl, vertex const *vr);
   ~segment();
 
+  vertex const *get_vertex_l(void) const { return vertex_l; }
+  vertex const *get_vertex_r(void) const { return vertex_r; }
+
   void set_vertex_l(vertex const *v) { vertex_l = v; }
   void set_vertex_r(vertex const *v) { vertex_r = v; }
   void add_vertex_l(vertex       *v) { vertex_l = _vertex_l = v; } // will be garbage-collected later
@@ -26,6 +29,7 @@ public:
   void get_slope_and_y_intercept(float *slope, float *y_intercept) const;
 
   bool get_intersection_with_vector(vector const *vec, vertex *ver, float *u) const; // u=0 -> left vertex, u=1 -> right vertex
+  bool get_intersection_with_segment(segment const *s2, vertex *ver, float *u1, float *u2) const;
 
   void clip_to_vectors(vector const *l_l_delta, vector const *l_r_delta,
                        vertex *v_l_c, vertex *v_r_c,

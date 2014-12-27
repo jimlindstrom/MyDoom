@@ -41,7 +41,7 @@ public:
                           vis_planes *vp, 
                           thing * const things[], int num_things, vis_things *vt) const;
 
-  bool can_move(vertex const *old_position, vertex const *new_position, float *floor_height) const;
+  bool can_move(vertex const *old_position, vertex const *new_position, float radius, float *floor_height) const;
 
   void direct_actors(void);
 
@@ -96,6 +96,7 @@ private:
   void link_segments_to_children(void);
   void link_linedefs_to_children(void);
   void link_sidedefs_to_children(void);
+  void link_blocks_to_children(void);
 
   void add_actor(actor *a);
 };

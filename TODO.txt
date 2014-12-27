@@ -3,7 +3,7 @@ In Progress
 
 Queued up
 ---
-- FEATURE: collision detection: http://doom.wikia.com/wiki/Blockmap
+- FEATURE: collision detection vs. things (vs just lines)
 - FEATURE: projectiles blow up when they hit something solid
 - FEATURE: projectiles damage enemies
 - FEATURE: enemies walk around
@@ -14,7 +14,6 @@ Queued up
 
 - BUG: Player view height seems too high. 
 - FEATURE: head bobbing
-
 
 - FEATURE: trigger walkover actions on linedefs
 - FEATURE: trigger use/push actions on linedefs

@@ -8,6 +8,8 @@
 #include "frame_buf.h"
 #include "games.h"
 
+#define RANGE_CHECKING
+
 sprite::sprite()
  : picture_data()
 {
@@ -26,12 +28,18 @@ void sprite::set_name_prefix(char const *_name_prefix)
 
 void sprite::set_frame_idx(uint8_t orientation, uint8_t _frame_idx)
 {
+  #ifdef RANGE_CHECKING
+  if(orientation>1) { printf("ERROR: sprite::set_frame_idx() orientation>1\n"); exit(0); }
+  #endif
   frame_idx[orientation] = _frame_idx; 
   num_orientations = MAX(num_orientations, orientation+1);
 }
 
 void sprite::set_rotation_idx(uint8_t orientation, uint8_t _rotation_idx)
 {
+  #ifdef RANGE_CHECKING
+  if(orientation>1) { printf("ERROR: sprite::set_frame_idx() orientation>1\n"); exit(0); }
+  #endif
   rotation_idx[orientation] = _rotation_idx;
   num_orientations = MAX(num_orientations, orientation+1);
 }

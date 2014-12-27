@@ -7,6 +7,9 @@
 #include "wad_file.h"
 #include "wall_texture.h"
 
+//#define DEBUG_PRINTING
+#include "debug.h"
+
 static int32_t num_wall_textures = 0;
 static wall_texture *wall_textures = NULL;
 
@@ -30,14 +33,14 @@ bool wall_textures_init(wad_file const *wad)
     sprintf(lumpname, "TEXTURE%d", j);
     if((lump = wad->find_lump_by_name(lumpname)))
     {
-      printf("reading textures from %s\n", lumpname);
+      debug_printf("reading textures from %s\n", lumpname);
       if(!tlump.read_from_lump_data(lump->get_data())) { return false; }
       num_wall_textures += tlump.get_num_textures();
     }
   }
 
   // alloc mem
-  printf("allocating room for %d textures\n", num_wall_textures);
+  debug_printf("allocating room for %d textures\n", num_wall_textures);
   wall_textures = new wall_texture[num_wall_textures];
 
   // now loop through again and read the textures

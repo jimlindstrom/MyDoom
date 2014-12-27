@@ -20,6 +20,7 @@ segment::segment()
 
 segment::segment(vertex const *vl, vertex const *vr)
 {
+  _vertex_r = _vertex_l = NULL;
   vertex_l = vl;
   vertex_r = vr;
 }
@@ -109,6 +110,25 @@ bool segment::get_intersection_with_vector(vector const *vec, vertex *ver, float
       return false; // parallel lines
     }
   }
+}
+
+bool segment::get_intersection_with_segment(segment const *s2, vertex *ver, float *u1, float *u2) const
+{
+  vector vec(s2->get_vertex_l(), s2->get_vertex_r());
+  if(get_intersection_with_vector(&vec, ver, u1))
+  {
+    if(s2->get_vertex_r() == s2->get_vertex_l())
+    {
+      *u2 = (ver->get_y() - s2->get_vertex_l()->get_y()) / (s2->get_vertex_r()->get_y() - s2->get_vertex_l()->get_y());
+      return true;
+    }
+    else
+    {
+      *u2 = (ver->get_x() - s2->get_vertex_l()->get_x()) / (s2->get_vertex_r()->get_x() - s2->get_vertex_l()->get_x());
+      return true;
+    }
+  }
+  return false;
 }
 
 void segment::clip_to_vectors(vector const *clip_l, vector const *clip_r,

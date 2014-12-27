@@ -76,7 +76,9 @@ void player::move(episode_map const *_map)
     new_position.set_y(new_position.get_y() + (6*sin(_camera.get_facing_angle()+(M_PI/2.0))));
   }
 
-  if(_map->can_move(_camera.get_map_position(), &new_position, &floor_height))
+  float player_radius = 16.0; // FIXME...
+  if((is_moving_forward || is_moving_backward || is_strafing_right || is_strafing_left) && 
+     _map->can_move(_camera.get_map_position(), &new_position, player_radius, &floor_height))
   {
     _camera.set_map_position(&new_position);
     _camera.set_view_height(floor_height + rel_view_height);

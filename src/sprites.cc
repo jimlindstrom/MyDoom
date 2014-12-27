@@ -7,10 +7,10 @@
 #include "wad_file.h"
 #include "sprite.h"
 
-#define DEBUG_PRINTING
+//#define DEBUG_PRINTING
 #include "debug.h"
 
-static int32_t num_sprites = 0;
+static uint32_t num_sprites = 0;
 static sprite *sprites = NULL;
 
 #define MAX_ANIMATIONS 200
