@@ -1,10 +1,10 @@
 In Progress
 ---
+- FEATURE: projectiles blow up when they hit something solid
 
 Queued up
 ---
 - FEATURE: collision detection vs. things (vs just lines)
-- FEATURE: projectiles blow up when they hit something solid
 - FEATURE: projectiles damage enemies
 - FEATURE: enemies walk around
 

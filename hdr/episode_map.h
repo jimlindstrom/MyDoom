@@ -5,7 +5,7 @@
 #include "wad_lump.h"
 
 #include "thing_instance.h"
-#include "thing.h"
+#include "map_object.h"
 #include "linedef.h"
 #include "sidedef.h"
 #include "vertex.h"
@@ -19,7 +19,7 @@
 #include "camera.h"
 #include "clipped_segment_projections.h"
 #include "vis_planes.h"
-#include "vis_things.h"
+#include "vis_map_objects.h"
 #include "actor.h"
 
 class episode_map
@@ -39,13 +39,14 @@ public:
   void render_player_view(camera const *_camera,
                           clipped_segment_projections *clipped_seg_projs, 
                           vis_planes *vp, 
-                          thing * const things[], int num_things, vis_things *vt) const;
+                          map_object * const map_objects[], int num_map_objects, vis_map_objects *vt) const;
 
-  bool can_move(vertex const *old_position, vertex const *new_position, float radius, float *floor_height) const;
+  bool can_move(vertex const *old_position, vertex const *new_position, float radius) const;
+  int16_t get_floor_height_at(vertex const *position) const;
 
   void direct_actors(void);
 
-  node *root_node(void) const { return &nodes[num_nodes-1]; }
+  node *root_node(void) const { return &nodes[num_nodes-1]; } // FIXME: it'd probably be better to hide this and expose the needed methods
 
 private:
   char *name;

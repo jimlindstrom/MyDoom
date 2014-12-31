@@ -7,9 +7,9 @@
 #include "key_codes.h"
 #include "flats.h"
 #include "clipped_segment_projections.h"
-#include "vis_things.h"
+#include "vis_map_objects.h"
 #include "vis_planes.h"
-#include "thing_factory.h"
+#include "map_object_factory.h"
 
 //#define DEBUG_PRINTING
 #include "debug.h"
@@ -22,18 +22,19 @@ float game_custom_start_r;
 game::game()
 {
   level = 3;
-  num_things = 0;
-  for(int i=0; i<MAX_NUM_THINGS; i++)
+
+  num_map_objects = 0;
+  for(int i=0; i<MAX_NUM_MAP_OBJECTS; i++)
   {
-    things[i] = NULL;
+    map_objects[i] = NULL;
   }
 }
 
 game::~game()
 {
-  for(int i=0; i<MAX_NUM_THINGS; i++)
+  for(int i=0; i<MAX_NUM_MAP_OBJECTS; i++)
   {
-    if(things[i]) { delete things[i]; }
+    if(map_objects[i]) { delete map_objects[i]; }
   }
 }
 
@@ -44,7 +45,7 @@ void game::set_screen_resolution(int w, int h)
   _projector->set_screen_size(w, h);
 }
 
-void game::init_things(void)
+void game::init_map_objects(void)
 {
   int i;
   thing_instance const *cur_thing_instance;
@@ -71,9 +72,12 @@ void game::init_things(void)
           // Ignore these
           break;
   
-        default: // for everything else, spawn a thing
-          thing *_thing = thing_factory::create(_map->get_nth_thing_instance(i));
-          spawn_thing(_thing);
+        default: // for everything else, first try spawning a map object, or (legacy fall-back) spawn a thing
+          map_object *_map_object = map_object_factory::create(_map->get_nth_thing_instance(i));
+          if(_map_object)
+          {
+            spawn_map_object(_map_object);
+          }
           break;
       }
     }
@@ -97,6 +101,14 @@ void game::init_things(void)
   }
 }
 
+void game::tick_map_objects(void)
+{
+  for(int i=0; i<num_map_objects; i++)
+  {
+    map_objects[i]->tick(this, _map);
+  }
+}
+
 void game::do_frame(void)
 {
   debug_printf("frame\n");
@@ -104,7 +116,7 @@ void game::do_frame(void)
   flats_animate();
   _player.animate_weapon();
   _map->direct_actors();
-  for(int i=0; i<num_things; i++) { things[i]->tick(); }
+  tick_map_objects();
   _player.move(_map);
 
   debug_printf("  player at (%.1f,%.1f,%.1f) facing %.1f\n", 
@@ -124,11 +136,11 @@ void game::render_player_view(void)
 {
   clipped_segment_projections clipped_seg_projs;
   vis_planes _vis_planes;
-  vis_things _vis_things;
+  vis_map_objects _vis_map_objects;
 
-  _map->render_player_view(_player.get_camera(), &clipped_seg_projs, &_vis_planes, things, num_things, &_vis_things);
+  _map->render_player_view(_player.get_camera(), &clipped_seg_projs, &_vis_planes, map_objects, num_map_objects, &_vis_map_objects);
   _vis_planes.draw_planes( _player.get_camera());
-  _vis_things.draw_things( _player.get_camera(), &clipped_seg_projs);
+  _vis_map_objects.draw_map_objects( _player.get_camera(), &clipped_seg_projs);
   _player.draw_weapon();
 }
 
@@ -236,38 +248,39 @@ void game::handle_key_up(int key_code)
   }
 }
 
-void game::spawn_thing(thing *_thing)
+void game::spawn_map_object(map_object *_map_object)
 {
-  if((num_things+1) >= MAX_NUM_THINGS)
+  if((num_map_objects+1) >= MAX_NUM_MAP_OBJECTS)
   {
-    printf("ERROR: thing overflow\n");
+    printf("ERROR: map_object overflow\n");
     exit(0);
   }
-  _thing->set_subsector(_map->root_node()->get_subsector_containing(_thing->get_map_position()));
-  things[num_things++] = _thing;
+  _map_object->set_subsector(_map->root_node()->get_subsector_containing(_map_object->get_map_position()));
+  map_objects[num_map_objects++] = _map_object;
 }
 
-void game::kill_thing(thing *_thing)
+void game::kill_map_object(map_object *_map_object)
 {
-  for(int i=0; i<num_things; i++)
+  for(int i=0; i<num_map_objects; i++)
   {
-    if(things[i] == _thing)
+    if(map_objects[i] == _map_object)
     {
-      delete things[i];
-      if(num_things == 1)
+      delete map_objects[i];
+      if(num_map_objects == 1)
       {
-        things[i] = NULL;
+        map_objects[i] = NULL;
       }
       else
       {
-        things[i] = things[num_things-1];
-        things[num_things-1] = NULL;
+        map_objects[i] = map_objects[num_map_objects-1];
+        map_objects[num_map_objects-1] = NULL;
       }
-      num_things--;
+      num_map_objects--;
       return;
     }
   }
 
-  printf("ERROR: trying to kill thing, but couldn't find it\n");
+  printf("ERROR: trying to kill map_object, but couldn't find it\n");
   exit(0);
 }
+

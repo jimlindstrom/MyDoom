@@ -1,7 +1,6 @@
 #include "weapon.h"
 #include "sprites.h"
 #include "games.h"
-#include "projectiles.h"
 #include "game.h"
 
 /******************************************************************************
@@ -293,9 +292,9 @@ bool missile_launcher::handle_event(int event_id)
   if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
   {
     printf("fire missile!\n");
-    thing *_thing = new missile(_game->get_player()->get_camera()->get_map_position(), 
+    /*thing *_thing = new missile(_game->get_player()->get_camera()->get_map_position(), 
                                 _game->get_player()->get_camera()->get_facing_angle());
-    _game->spawn_thing(_thing);
+    _game->spawn_thing(_thing);*/
   }
   return successful_transition;
 }
@@ -344,9 +343,9 @@ bool plasma_rifle::handle_event(int event_id)
   if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
   {
     printf("fire plamsa!\n");
-    thing *_thing = new plasma(_game->get_player()->get_camera()->get_map_position(), 
+    /*thing *_thing = new plasma(_game->get_player()->get_camera()->get_map_position(), 
                                _game->get_player()->get_camera()->get_facing_angle());
-    _game->spawn_thing(_thing);
+    _game->spawn_thing(_thing);*/
   }
   return successful_transition;
 }

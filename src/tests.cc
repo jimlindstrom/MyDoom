@@ -7,7 +7,7 @@
 #include "projector.h"
 #include "segment.h"
 #include "vector.h"
-#include "thing.h"
+#include "map_object.h"
 
 static int num_tests_passed;
 static int num_tests_failed;
@@ -23,7 +23,7 @@ void tests_run(void)
   clipped_segment_projections_test();
   segment_tests();
   vector_tests();
-  thing_tests();
+  map_object_tests();
 
   printf("\n---\n\n");
   if(num_tests_failed > 0)

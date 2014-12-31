@@ -7,6 +7,7 @@
 #include "episode_map.h"
 #include "projector.h"
 #include "player.h"
+#include "map_object.h"
 
 extern bool game_custom_start_pos;
 extern float game_custom_start_x;
@@ -24,7 +25,7 @@ public:
 
   player const *get_player(void) const { return &_player; }
 
-  void init_things(void);
+  void init_map_objects(void);
 
   void do_frame(void);
 
@@ -36,8 +37,8 @@ public:
 
   uint32_t get_frame_count(void) const { return _fps_tracker.get_frame_count(); }
 
-  void spawn_thing(thing *_thing);
-  void kill_thing(thing *_thing);
+  void spawn_map_object(map_object *_map_object);
+  void kill_map_object(map_object *_map_object);
 
 private:
   bool done;
@@ -47,14 +48,15 @@ private:
   episode_map *_map;
   player _player;
 
-  #define MAX_NUM_THINGS 200
-  thing *things[MAX_NUM_THINGS];
-  int num_things;
+  #define MAX_NUM_MAP_OBJECTS 200
+  map_object *map_objects[MAX_NUM_MAP_OBJECTS];
+  int num_map_objects;
 
   fps_tracker _fps_tracker;
 
   void render_player_view(void);
   void render_overhead_map(void);
+  void tick_map_objects(void);
 };
 
 #endif

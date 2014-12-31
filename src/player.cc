@@ -78,9 +78,10 @@ void player::move(episode_map const *_map)
 
   float player_radius = 16.0; // FIXME...
   if((is_moving_forward || is_moving_backward || is_strafing_right || is_strafing_left) && 
-     _map->can_move(_camera.get_map_position(), &new_position, player_radius, &floor_height))
+     _map->can_move(_camera.get_map_position(), &new_position, player_radius))
   {
     _camera.set_map_position(&new_position);
+    floor_height = _map->get_floor_height_at(&new_position);
     _camera.set_view_height(floor_height + rel_view_height);
   }
 }

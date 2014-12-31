@@ -1,3 +1,35 @@
+REAL DOOM
+======================================================================================
+
+Object model
+--------------------------------------------------------------------------------------
+- info.h:
+	- spritenum_t: an enumeration of all sprite IDs (e.g., SPR_TLMP)
+	- sprnames[]: an array that maps sprite IDs to sprite prefixes. (e.g., 
+	  SPR_TROO => "TROO")
+
+	- statenum_t: an enumeration of all state IDs (e.g., S_TECHLAMP)
+	- state_t: has a spritenum_t, tick counts, an action, and a next state
+	- states[]: an array of state_t's
+
+	- mobjtype_t: an enumeration of object type IDs (e.g., MT_PLAYER)
+	- mobjinfo_t: the definition of a map object. height, radius, state IDs for
+	  normal state, pain state, dead state, etc.
+	- mobjinfo[]: an array of mobjinfo_t's.
+
+
+Notes
+----
+	- I'd really like person to become a thing, and not be treated any differently
+		- has a normal "think" function
+		- shows up in the map, for collision detection purposes
+	- And I'd really like thing to be some kind of state machine, so it doesn't 
+	  have to count frames, etc.
+
+
+MYDOOM
+======================================================================================
+
 Object model
 --------------------------------------------------------------------------------------
 - thing_definition (FIXME: prune. And expand from mobjinfo_t)

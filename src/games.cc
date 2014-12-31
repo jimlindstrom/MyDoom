@@ -20,7 +20,7 @@ static int16_t screen_height = 480;
 static game *cur_game = NULL;
 static episode_map *cur_map = NULL;
 
-char wad_filename[100] = "data/Doom1.WAD";
+char wad_filename[100] = "data/doom_ultimate.wad";
 
 void game_init(void)
 {
@@ -72,7 +72,7 @@ void game_run(void)
   cur_game->set_map(cur_map);
   cur_game->set_screen_resolution(screen_width, screen_height);
 
-  cur_game->init_things();
+  cur_game->init_map_objects();
 
   while(!cur_game->is_done())
   {

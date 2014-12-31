@@ -9,8 +9,8 @@
 #include "camera.h"
 #include "clipped_segment_projections.h"
 #include "vis_planes.h"
-#include "vis_things.h"
-#include "thing.h"
+#include "vis_map_objects.h"
+#include "map_object.h"
 
 #define SUBSECTOR_NUM_BYTES 4 // size on disk (in the lump)
 
@@ -33,7 +33,7 @@ public:
   void render_player_view(camera const *_camera,
                           clipped_segment_projections *clipped_seg_projs, 
                           vis_planes *vp, 
-                          thing * const things[], int16_t num_things, vis_things *vt) const;
+                          map_object * const map_objects[], int16_t num_map_objects, vis_map_objects *vmo) const;
 
   uint16_t subsector_num;
 private:

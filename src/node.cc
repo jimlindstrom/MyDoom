@@ -52,7 +52,7 @@ bool node::read_from_lump_data(uint8_t const *lump_data)
 void node::render_player_view(camera const *_camera,
                               clipped_segment_projections *clipped_seg_projs, 
                               vis_planes *vp, 
-                              thing * const things[], int16_t num_things, vis_things *vt) const
+                              map_object * const map_objects[], int16_t num_map_objects, vis_map_objects *vmo) const
 {
   node_child_link const *closer_child;
   node_child_link const *farther_child;
@@ -80,8 +80,8 @@ void node::render_player_view(camera const *_camera,
   }
 
   // render the closer_child
-  if(closer_child->is_node())    { closer_child ->_node     ->render_player_view(_camera, clipped_seg_projs, vp, things, num_things, vt); }
-  else                           { closer_child ->_subsector->render_player_view(_camera, clipped_seg_projs, vp, things, num_things, vt); }
+  if(closer_child->is_node())    { closer_child ->_node     ->render_player_view(_camera, clipped_seg_projs, vp, map_objects, num_map_objects, vmo); }
+  else                           { closer_child ->_subsector->render_player_view(_camera, clipped_seg_projs, vp, map_objects, num_map_objects, vmo); }
   
   // render the farther_child, only if bbox overlaps or if open space in between
   debug_printf("node %d (far side)\n", node_num);
@@ -99,8 +99,8 @@ void node::render_player_view(camera const *_camera,
     { 
       debug_printf("  undrawn cols toward far bbox\n"); 
     }
-    if(farther_child->is_node()) { farther_child->_node     ->render_player_view(_camera, clipped_seg_projs, vp, things, num_things, vt); }
-    else                         { farther_child->_subsector->render_player_view(_camera, clipped_seg_projs, vp, things, num_things, vt); }
+    if(farther_child->is_node()) { farther_child->_node     ->render_player_view(_camera, clipped_seg_projs, vp, map_objects, num_map_objects, vmo); }
+    else                         { farther_child->_subsector->render_player_view(_camera, clipped_seg_projs, vp, map_objects, num_map_objects, vmo); }
   }
   else { debug_printf("  skipping.\n"); }
 }

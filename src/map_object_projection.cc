@@ -6,12 +6,12 @@
 #include "palettes.h"
 #include "lighting.h"
 #include "frame_buf.h"
-#include "thing_projection.h"
+#include "map_object_projection.h"
 
 //#define DEBUG_PRINTING
 #include "debug.h"
 
-void thing_projection::clip(clipped_segment_projections *clipped_seg_projs)
+void map_object_projection::clip(clipped_segment_projections *clipped_seg_projs)
 {
   int16_t screen_h = games_get_screen_height();
   int16_t screen_w = games_get_screen_width();
@@ -34,15 +34,15 @@ void thing_projection::clip(clipped_segment_projections *clipped_seg_projs)
         float clip_dist  = clipped_seg_proj->dist_l + ( (clipped_seg_proj->dist_r - clipped_seg_proj->dist_l) *
                                                         (x                        - clipped_seg_proj->x_l   ) /
                                                         (clipped_seg_proj->x_r    - clipped_seg_proj->x_l   ) );
-        float thing_dist = dist_l + (dist_r - dist_l)*(x - x_l)/(x_r - x_l);
-        // First, check whether the thing is nearer than the closest solid wall
-        if(thing_dist < clip_dist) // thing is closer than player
+        float map_object_dist = dist_l + (dist_r - dist_l)*(x - x_l)/(x_r - x_l);
+        // First, check whether the map_object is nearer than the closest solid wall
+        if(map_object_dist < clip_dist) // map_object is closer than player
         {
             cliptop[x] = y_t_c;
             clipbot[x] = y_b_c;
         }
         // Then check whether it's occluded by any visplanes
-        if(clip_dist < thing_dist) // wall is closer than thing
+        if(clip_dist < map_object_dist) // wall is closer than map_object
         {
           if(clipped_seg_proj->upper.tex && (clipped_seg_proj->upper.z_t > clipped_seg_proj->upper.z_b))
           {
@@ -66,7 +66,7 @@ void thing_projection::clip(clipped_segment_projections *clipped_seg_projs)
   }
 }
 
-void thing_projection::draw(void)
+void map_object_projection::draw(void)
 {
   palette const *pal = palettes_get(0); // FIXME
   color_rgba c;

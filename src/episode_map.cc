@@ -522,12 +522,12 @@ void episode_map::draw_overhead_map(overhead_map *omap) const
 void episode_map::render_player_view(camera const *_camera,
                                      clipped_segment_projections *clipped_seg_projs, 
                                      vis_planes *vp, 
-                                     thing * const things[], int num_things, vis_things *vt) const
+                                     map_object * const map_objects[], int num_map_objects, vis_map_objects *vmo) const
 {
-  root_node()->render_player_view(_camera, clipped_seg_projs, vp, things, num_things, vt);
+  root_node()->render_player_view(_camera, clipped_seg_projs, vp, map_objects, num_map_objects, vmo);
 }
 
-bool episode_map::can_move(vertex const *old_position, vertex const *new_position, float obj_radius, float *floor_height) const
+bool episode_map::can_move(vertex const *old_position, vertex const *new_position, float obj_radius) const
 {
   // FIXME: take into account closed doors
   // FIXME: take into account high steps / pedestals (too high to step into)
@@ -571,11 +571,13 @@ bool episode_map::can_move(vertex const *old_position, vertex const *new_positio
     }
   }
 
-  subsector const *new_ss;
-  new_ss = root_node()->get_subsector_containing(new_position);
-  *floor_height = new_ss->get_sector()->get_floor_height(); // FIXME: this is wrong...
-
   return true;
+}
+
+int16_t episode_map::get_floor_height_at(vertex const *position) const
+{
+  subsector const *ss = root_node()->get_subsector_containing(position);
+  return ss->get_sector()->get_floor_height();
 }
 
 void episode_map::add_actor(actor *a)

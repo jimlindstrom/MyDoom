@@ -1,5 +1,5 @@
-#ifndef __THING_PROJECTION_H
-#define __THING_PROJECTION_H
+#ifndef __MAP_OBJECT_PROJECTION_H
+#define __MAP_OBJECT_PROJECTION_H
 
 #include <stdint.h>
 
@@ -7,10 +7,10 @@
 #include "sprite.h"
 #include "games.h"
 
-class thing_projection
+class map_object_projection
 {
 public:
-  thing_projection()
+  map_object_projection()
   {
     for(int i=0; i<MAX_SCREEN_WIDTH; i++) { cliptop[i] = MAX_SCREEN_HEIGHT; clipbot[i]=-1; }
   }

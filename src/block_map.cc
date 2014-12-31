@@ -106,7 +106,7 @@ bool block_map::read_from_lump(wad_lump const *lump, uint16_t _num_sectors)
     for(int j=0; j<cur_num_linedefs; j++, ptr += 2)
     {
       uint16_t linedef_num = *((uint16_t *)ptr);
-      if(linedef_num > 1500) // some relatively sane but high number
+      if(linedef_num > 2000) // some relatively sane but high number
       {
         printf("WARNING: cell %d's %d'th linedef %d\n", i, j, linedef_num);
       }
