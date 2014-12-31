@@ -16,11 +16,11 @@ typedef enum
   // Blocks.
   MF_SOLID		= 2,
   // Can be hit.
-  MF_SHOOTABLE	= 4,
+  MF_SHOOTABLE		= 4,
   // Don't use the sector links (invisible but touchable).
   MF_NOSECTOR		= 8,
   // Don't use the blocklinks (inert but displayable)
-  MF_NOBLOCKMAP	= 16,                    
+  MF_NOBLOCKMAP		= 16,                    
 
   // Not to be activated by sound, deaf monster.
   MF_AMBUSH		= 32,
@@ -34,7 +34,7 @@ typedef enum
   // Don't apply gravity (every tic),
   //  that is, object will float, keeping current height
   //  or changing it actively.
-  MF_NOGRAVITY	= 512,
+  MF_NOGRAVITY		= 512,
 
   // Movement flags.
   // This allows jumps from high places.
@@ -73,11 +73,11 @@ typedef enum
   // On kill, count this enemy object
   //  towards intermission kill total.
   // Happy gathering.
-  MF_COUNTKILL	= 0x400000,
+  MF_COUNTKILL		= 0x400000,
   
   // On picking up, count this item object
   //  towards intermission item total.
-  MF_COUNTITEM	= 0x800000,
+  MF_COUNTITEM		= 0x800000,
 
   // Special handling: skull in flight.
   // Neither a cacodemon nor a missile.
@@ -1128,6 +1128,7 @@ public:
   virtual ~map_object();
 
   camera const *get_camera(void) const { return &_camera; }
+  void reset_camera(vertex const *pos, float ang) { _camera.set_map_position(pos); _camera.set_facing_angle(ang); }
 
   void set_subsector(subsector const *ss) { _subsector = ss; }
   subsector const *get_subsector(void) const { return _subsector; }

@@ -103,7 +103,7 @@ bool map_object::lookup_next_state(map_obj_state_id next_state_id, map_obj_meta_
 {
   map_obj_state const *states;
 
-  for(states=defn->normal_states; states->is_valid; states++)
+  for(states=defn->normal_states; states && states->is_valid; states++)
   {
     if(states->cur_state_id == next_state_id)
     {
@@ -111,7 +111,7 @@ bool map_object::lookup_next_state(map_obj_state_id next_state_id, map_obj_meta_
     }
   }
 
-  for(states=defn->see_states; states->is_valid; states++)
+  for(states=defn->see_states; states && states->is_valid; states++)
   {
     if(states->cur_state_id == next_state_id)
     {
@@ -119,7 +119,7 @@ bool map_object::lookup_next_state(map_obj_state_id next_state_id, map_obj_meta_
     }
   }
 
-  for(states=defn->pain_states; states->is_valid; states++)
+  for(states=defn->pain_states; states && states->is_valid; states++)
   {
     if(states->cur_state_id == next_state_id)
     {
@@ -127,7 +127,7 @@ bool map_object::lookup_next_state(map_obj_state_id next_state_id, map_obj_meta_
     }
   }
 
-  for(states=defn->melee_states; states->is_valid; states++)
+  for(states=defn->melee_states; states && states->is_valid; states++)
   {
     if(states->cur_state_id == next_state_id)
     {
@@ -135,7 +135,7 @@ bool map_object::lookup_next_state(map_obj_state_id next_state_id, map_obj_meta_
     }
   }
 
-  for(states=defn->missile_states; states->is_valid; states++)
+  for(states=defn->missile_states; states && states->is_valid; states++)
   {
     if(states->cur_state_id == next_state_id)
     {
@@ -143,7 +143,7 @@ bool map_object::lookup_next_state(map_obj_state_id next_state_id, map_obj_meta_
     }
   }
 
-  for(states=defn->death_states; states->is_valid; states++)
+  for(states=defn->death_states; states && states->is_valid; states++)
   {
     if(states->cur_state_id == next_state_id)
     {
@@ -151,7 +151,7 @@ bool map_object::lookup_next_state(map_obj_state_id next_state_id, map_obj_meta_
     }
   }
 
-  for(states=defn->xdeath_states; states->is_valid; states++)
+  for(states=defn->xdeath_states; states && states->is_valid; states++)
   {
     if(states->cur_state_id == next_state_id)
     {
@@ -159,7 +159,7 @@ bool map_object::lookup_next_state(map_obj_state_id next_state_id, map_obj_meta_
     }
   }
 
-  for(states=defn->raise_states; states->is_valid; states++)
+  for(states=defn->raise_states; states && states->is_valid; states++)
   {
     if(states->cur_state_id == next_state_id)
     {

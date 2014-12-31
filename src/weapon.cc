@@ -2,6 +2,8 @@
 #include "sprites.h"
 #include "games.h"
 #include "game.h"
+#include "projectile.h"
+#include "map_obj_defn_projectiles.h"
 
 /******************************************************************************
  * WEAPON CLASS
@@ -291,10 +293,10 @@ bool missile_launcher::handle_event(int event_id)
   bool successful_transition = weapon::handle_event(event_id);
   if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
   {
-    printf("fire missile!\n");
-    /*thing *_thing = new missile(_game->get_player()->get_camera()->get_map_position(), 
-                                _game->get_player()->get_camera()->get_facing_angle());
-    _game->spawn_thing(_thing);*/
+    map_object *missile = new projectile(_game->get_player()->get_camera()->get_map_position(), 
+                                         _game->get_player()->get_camera()->get_facing_angle(),
+                                         &rocket_defn);
+    _game->spawn_map_object(missile);
   }
   return successful_transition;
 }
@@ -342,10 +344,10 @@ bool plasma_rifle::handle_event(int event_id)
   bool successful_transition = weapon::handle_event(event_id);
   if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
   {
-    printf("fire plamsa!\n");
-    /*thing *_thing = new plasma(_game->get_player()->get_camera()->get_map_position(), 
-                               _game->get_player()->get_camera()->get_facing_angle());
-    _game->spawn_thing(_thing);*/
+    map_object *plasma = new projectile(_game->get_player()->get_camera()->get_map_position(), 
+                                        _game->get_player()->get_camera()->get_facing_angle(),
+                                        &plasma_defn);
+    _game->spawn_map_object(plasma);
   }
   return successful_transition;
 }
@@ -397,7 +399,10 @@ bool bfg_9000::handle_event(int event_id)
   bool successful_transition = weapon::handle_event(event_id);
   if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
   {
-    printf("fire!\n");
+    map_object *blast = new projectile(_game->get_player()->get_camera()->get_map_position(), 
+                                       _game->get_player()->get_camera()->get_facing_angle(),
+                                       &bfg_defn);
+    _game->spawn_map_object(blast);
   }
   return successful_transition;
 }

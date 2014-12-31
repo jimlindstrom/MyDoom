@@ -10,6 +10,7 @@
 #include "vis_map_objects.h"
 #include "vis_planes.h"
 #include "map_object_factory.h"
+#include "map_obj_defn_beings.h"
 
 //#define DEBUG_PRINTING
 #include "debug.h"
@@ -18,8 +19,6 @@ bool  game_custom_start_pos = false;
 float game_custom_start_x;
 float game_custom_start_y;
 float game_custom_start_r;
-
-extern map_obj_defn player_defn;
 
 game::game()
 {
