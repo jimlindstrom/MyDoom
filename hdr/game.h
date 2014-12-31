@@ -14,6 +14,8 @@ extern float game_custom_start_x;
 extern float game_custom_start_y;
 extern float game_custom_start_r;
 
+#define MAX_NUM_MAP_OBJECTS 200
+
 class game
 {
 public:
@@ -23,7 +25,7 @@ public:
   void set_map(episode_map *__map) { _map = __map; }
   void set_screen_resolution(int w, int h);
 
-  player const *get_player(void) const { return &_player; }
+  player const *get_player(void) const { return _player; }
 
   void init_map_objects(void);
 
@@ -41,22 +43,19 @@ public:
   void kill_map_object(map_object *_map_object);
 
 private:
-  bool done;
-  int screen_width;
-  int screen_height;
-  int level;
-  episode_map *_map;
-  player _player;
-
-  #define MAX_NUM_MAP_OBJECTS 200
-  map_object *map_objects[MAX_NUM_MAP_OBJECTS];
-  int num_map_objects;
-
-  fps_tracker _fps_tracker;
-
   void render_player_view(void);
   void render_overhead_map(void);
   void tick_map_objects(void);
+
+  bool         done;
+  int          screen_width;
+  int          screen_height;
+  int          level;
+  episode_map *_map;
+  player      *_player;
+  map_object  *map_objects[MAX_NUM_MAP_OBJECTS];
+  int          num_map_objects;
+  fps_tracker  _fps_tracker;
 };
 
 #endif

@@ -76,7 +76,7 @@ map_obj_defn player_defn =
   player_die_states,    // deathstate
   player_xdie_states,   // xdeathstate
   //sfx_pldeth,         // deathsound
-  0,                    // speed
+  8,                    // speed (FIXME: This was 0. Why?)
   16,                   // radius
   56,                   // height
   100,                  // mass

@@ -36,7 +36,7 @@ void vis_map_objects::calc_distances(camera const *_camera)
 {
   for(int i=0; i<num_vis_map_objects; i++)
   {
-    dists[i] = _camera->get_map_position()->distance_to_point(map_objects[i]->get_map_position());
+    dists[i] = _camera->get_map_position()->distance_to_point(map_objects[i]->get_camera()->get_map_position());
   }
 }
 

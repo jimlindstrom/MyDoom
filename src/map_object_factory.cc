@@ -1,4 +1,5 @@
 #include "map_object_factory.h"
+#include "player.h"
 
 map_object *map_object_factory::create(thing_instance const *ti)
 {

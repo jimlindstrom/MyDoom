@@ -19,6 +19,8 @@ float game_custom_start_x;
 float game_custom_start_y;
 float game_custom_start_r;
 
+extern map_obj_defn player_defn;
+
 game::game()
 {
   level = 3;
@@ -59,7 +61,8 @@ void game::init_map_objects(void)
       switch(cur_thing_instance->get_thing_type())
       {
         case THING_PLAYER_1_START_TYPE:
-          _player.reset_camera(cur_thing_instance->get_map_position(), cur_thing_instance->get_facing_angle());
+          _player = new player(cur_thing_instance->get_map_position(), cur_thing_instance->get_facing_angle(), &player_defn);
+          spawn_map_object(_player);
           break;
   
         case THING_PLAYER_2_START_TYPE:
@@ -83,21 +86,21 @@ void game::init_map_objects(void)
     }
   }
 
-  _player.set_weapon(0, new barehands(this));
-  _player.set_weapon(1, new pistol(this));
-  _player.set_weapon(2, new shotgun(this));
-  _player.set_weapon(3, new chaingun(this));
-  _player.set_weapon(4, new missile_launcher(this));
-  _player.set_weapon(5, new plasma_rifle(this));
-  _player.set_weapon(6, new bfg_9000(this));
-  _player.set_weapon(7, new chainsaw(this));
-  _player.set_weapon(8, new super_shotgun(this));
-  _player.select_weapon(2);
+  _player->set_weapon(0, new barehands(this));
+  _player->set_weapon(1, new pistol(this));
+  _player->set_weapon(2, new shotgun(this));
+  _player->set_weapon(3, new chaingun(this));
+  _player->set_weapon(4, new missile_launcher(this));
+  _player->set_weapon(5, new plasma_rifle(this));
+  _player->set_weapon(6, new bfg_9000(this));
+  _player->set_weapon(7, new chainsaw(this));
+  _player->set_weapon(8, new super_shotgun(this));
+  _player->select_weapon(2);
 
   if(game_custom_start_pos)
   {
     vertex v(game_custom_start_x, game_custom_start_y);
-    _player.reset_camera(&v, DEG_TO_RAD(game_custom_start_r));
+    _player->reset_camera(&v, DEG_TO_RAD(game_custom_start_r));
   }
 }
 
@@ -114,16 +117,14 @@ void game::do_frame(void)
   debug_printf("frame\n");
 
   flats_animate();
-  _player.animate_weapon();
   _map->direct_actors();
   tick_map_objects();
-  _player.move(_map);
 
   debug_printf("  player at (%.1f,%.1f,%.1f) facing %.1f\n", 
-         _player.get_camera()->get_map_position()->get_x(), 
-         _player.get_camera()->get_map_position()->get_y(), 
-         _player.get_camera()->get_view_height(),
-         RAD_TO_DEG(_player.get_camera()->get_facing_angle()));
+         _player->get_camera()->get_map_position()->get_x(), 
+         _player->get_camera()->get_map_position()->get_y(), 
+         _player->get_camera()->get_view_height(),
+         RAD_TO_DEG(_player->get_camera()->get_facing_angle()));
 
   frame_buf_clear();
   render_player_view();
@@ -138,10 +139,10 @@ void game::render_player_view(void)
   vis_planes _vis_planes;
   vis_map_objects _vis_map_objects;
 
-  _map->render_player_view(_player.get_camera(), &clipped_seg_projs, &_vis_planes, map_objects, num_map_objects, &_vis_map_objects);
-  _vis_planes.draw_planes( _player.get_camera());
-  _vis_map_objects.draw_map_objects( _player.get_camera(), &clipped_seg_projs);
-  _player.draw_weapon();
+  _map->render_player_view(_player->get_camera(), &clipped_seg_projs, &_vis_planes, map_objects, num_map_objects, &_vis_map_objects);
+  _vis_planes.draw_planes( _player->get_camera());
+  _vis_map_objects.draw_map_objects( _player->get_camera(), &clipped_seg_projs);
+  _player->draw_weapon();
 }
 
 void game::render_overhead_map(void)
@@ -156,7 +157,7 @@ void game::render_overhead_map(void)
   omap.draw_bbox();
 
   _map->draw_overhead_map(&omap); 
-  _player.draw_overhead_map_marker(&omap);
+  _player->draw_overhead_map_marker(&omap);
 }
 
 void game::handle_key_down(int key_code)
@@ -164,22 +165,22 @@ void game::handle_key_down(int key_code)
 
   switch(key_code)
   {
-    case KEY_RIGHTARROW:_player.set_is_turning_right(true); break;
-    case KEY_LEFTARROW:	_player.set_is_turning_left(true); break;
-    case KEY_UPARROW:	_player.set_is_moving_forward(true); break;
-    case KEY_DOWNARROW:	_player.set_is_moving_backward(true); break;
-    case ',':		_player.set_is_strafing_left(true); break;
-    case '.':		_player.set_is_strafing_right(true); break;
+    case KEY_RIGHTARROW:_player->set_is_turning_right(true); break;
+    case KEY_LEFTARROW:	_player->set_is_turning_left(true); break;
+    case KEY_UPARROW:	_player->set_is_moving_forward(true); break;
+    case KEY_DOWNARROW:	_player->set_is_moving_backward(true); break;
+    case ',':		_player->set_is_strafing_left(true); break;
+    case '.':		_player->set_is_strafing_right(true); break;
 
-    case '1': 		_player.select_weapon(0); break;
-    case '2': 		_player.select_weapon(1); break;
-    case '3': 		_player.select_weapon(2); break;
-    case '4': 		_player.select_weapon(3); break;
-    case '5': 		_player.select_weapon(4); break;
-    case '6': 		_player.select_weapon(5); break;
-    case '7': 		_player.select_weapon(6); break;
-    case '8': 		_player.select_weapon(7); break;
-    case '9': 		_player.select_weapon(8); break;
+    case '1': 		_player->select_weapon(0); break;
+    case '2': 		_player->select_weapon(1); break;
+    case '3': 		_player->select_weapon(2); break;
+    case '4': 		_player->select_weapon(3); break;
+    case '5': 		_player->select_weapon(4); break;
+    case '6': 		_player->select_weapon(5); break;
+    case '7': 		_player->select_weapon(6); break;
+    case '8': 		_player->select_weapon(7); break;
+    case '9': 		_player->select_weapon(8); break;
 
     case KEY_ESCAPE: break;
     case KEY_ENTER: break;
@@ -201,7 +202,7 @@ void game::handle_key_down(int key_code)
     case KEY_EQUALS: break;
     case KEY_MINUS: break;
     case KEY_RSHIFT: break;
-    case KEY_RCTRL: 	_player.fire_weapon(); break;
+    case KEY_RCTRL: 	_player->fire_weapon(); break;
     case KEY_RALT: break;
 
     case 'q': handle_quit(); break;
@@ -214,12 +215,12 @@ void game::handle_key_up(int key_code)
 {
   switch(key_code)
   {
-    case KEY_RIGHTARROW: _player.set_is_turning_right(false); break;
-    case KEY_LEFTARROW:  _player.set_is_turning_left(false); break;
-    case KEY_UPARROW:    _player.set_is_moving_forward(false); break;
-    case KEY_DOWNARROW:  _player.set_is_moving_backward(false); break;
-    case ',':            _player.set_is_strafing_left(false); break;
-    case '.':            _player.set_is_strafing_right(false); break;
+    case KEY_RIGHTARROW: _player->set_is_turning_right(false); break;
+    case KEY_LEFTARROW:  _player->set_is_turning_left(false); break;
+    case KEY_UPARROW:    _player->set_is_moving_forward(false); break;
+    case KEY_DOWNARROW:  _player->set_is_moving_backward(false); break;
+    case ',':            _player->set_is_strafing_left(false); break;
+    case '.':            _player->set_is_strafing_right(false); break;
 
     case KEY_ESCAPE: break;
     case KEY_ENTER: break;
@@ -255,7 +256,7 @@ void game::spawn_map_object(map_object *_map_object)
     printf("ERROR: map_object overflow\n");
     exit(0);
   }
-  _map_object->set_subsector(_map->root_node()->get_subsector_containing(_map_object->get_map_position()));
+  _map_object->set_subsector(_map->root_node()->get_subsector_containing(_map_object->get_camera()->get_map_position()));
   map_objects[num_map_objects++] = _map_object;
 }
 

@@ -13,8 +13,10 @@ map_object::map_object(vertex const *_map_position, float _facing_angle, map_obj
 
   change_to_meta_state(META_STATE_NORMAL);
 
-  map_position.set_to(_map_position);
-  facing_angle  = _facing_angle;
+  _camera.set_map_position(_map_position);
+  _camera.set_facing_angle(_facing_angle);
+  // FIXME: set camera view height...
+
   velocity      = 0; // FIXME: override this for projectiles
 }
 
@@ -28,11 +30,11 @@ void map_object::tick(game *_game, episode_map *_map)
   if(velocity > 0)
   {
     vertex new_position;
-    new_position.set_x(map_position.get_x() + (velocity*cos(facing_angle)));
-    new_position.set_y(map_position.get_y() + (velocity*sin(facing_angle)));
-    if(_map->can_move(&map_position, &new_position, defn->radius))
+    new_position.set_x(_camera.get_map_position()->get_x() + (velocity*cos(_camera.get_facing_angle())));
+    new_position.set_y(_camera.get_map_position()->get_y() + (velocity*sin(_camera.get_facing_angle())));
+    if(_map->can_move(_camera.get_map_position(), &new_position, defn->radius))
     {
-      map_position.set_to(&new_position);
+      _camera.set_map_position(&new_position);
     }
     /*else
     {
@@ -173,12 +175,12 @@ sector const *map_object::get_sector(void) const
   return _subsector->get_sector();
 }
 
-void map_object::render_player_view(camera const *_camera, clipped_segment_projections *clipped_seg_projs) const
+void map_object::render_player_view(camera const *view_camera, clipped_segment_projections *clipped_seg_projs) const
 {
   if(!cur_state) { return; } 
   map_object_projection *proj;
 
-  proj = project(_camera);
+  proj = project(view_camera);
   if(!proj)
   {
     return;
@@ -189,12 +191,12 @@ void map_object::render_player_view(camera const *_camera, clipped_segment_proje
   delete proj;
 }
 
-map_object_projection *map_object::project(camera const *_camera) const
+map_object_projection *map_object::project(camera const *view_camera) const
 {
   map_object_projection *proj = new map_object_projection;
 
   // figure out sprite rotation angle
-  proj->sprite_angle = get_rotation_angle(_camera) ;
+  proj->sprite_angle = get_rotation_angle(view_camera) ;
   int sprite_angle_idx = round(proj->sprite_angle / DEG_TO_RAD(45.0));
   sprite_angle_idx = (sprite_angle_idx+8+8)%8;
   proj->is_flipped = false;
@@ -261,8 +263,8 @@ map_object_projection *map_object::project(camera const *_camera) const
   proj->sector_light_level = get_sector()->get_light_level();
 
   // project horizontally
-  float angle_c = NORMALIZE_ANGLE(_camera->get_map_position()->angle_to_point(&map_position) - _camera->get_facing_angle());
-  float dist_c  = _camera->get_map_position()->distance_to_point(&map_position);
+  float angle_c = NORMALIZE_ANGLE(view_camera->get_map_position()->angle_to_point(_camera.get_map_position()) - view_camera->get_facing_angle());
+  float dist_c  = view_camera->get_map_position()->distance_to_point(_camera.get_map_position());
   float angle_delta = atan2(proj->_sprite->get_width()/2.0, dist_c);
   proj->angle_l = angle_c + angle_delta;
   proj->angle_r = angle_c - angle_delta;
@@ -279,7 +281,7 @@ map_object_projection *map_object::project(camera const *_camera) const
 
   // project vertically
   float y0, dy;
-  float rel_height = _camera->get_view_height() - get_sector()->get_floor_height(); // FIXME: assumes it sits on floor
+  float rel_height = view_camera->get_view_height() - get_sector()->get_floor_height(); // FIXME: assumes it sits on floor
   _projector->project_z_to_y(-rel_height, dist_c, &y0, &dy);
   float h = (proj->x_r - proj->x_l) * proj->_sprite->get_height() / proj->_sprite->get_width();
   proj->y_t = y0-h;
@@ -292,11 +294,11 @@ map_object_projection *map_object::project(camera const *_camera) const
   return proj;
 }
 
-float map_object::get_rotation_angle(camera const *_camera) const
+float map_object::get_rotation_angle(camera const *view_camera) const
 {
   float rot_angle = DEG_TO_RAD(180) 
-                  + _camera->get_map_position()->angle_to_point(&map_position)
-                  - facing_angle
+                  + view_camera->get_map_position()->angle_to_point(_camera.get_map_position())
+                  - _camera.get_facing_angle()
                   + 0.001;
   while(rot_angle <       0.0) { rot_angle += 2.0*M_PI; }
   while(rot_angle >= 2.0*M_PI) { rot_angle -= 2.0*M_PI; }

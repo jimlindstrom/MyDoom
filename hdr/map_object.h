@@ -9,24 +9,92 @@
 #include "map_object_projection.h"
 #include "clipped_segment_projections.h"
 
-// FIXME: make these unique
-#define MF_COUNTITEM	0x00000001
-#define MF_COUNTKILL	0x00000001
-#define MF_DROPOFF	0x00000001
-#define MF_FLOAT	0x00000001
-#define MF_MISSILE	0x00000001
-#define MF_NOBLOCKMAP	0x00000001
-#define MF_NOBLOOD	0x00000001
-#define MF_NOCLIP	0x00000001
-#define MF_NOGRAVITY	0x00000001
-#define MF_NOSECTOR	0x00000001
-#define MF_NOTDMATCH	0x00000001
-#define MF_PICKUP	0x00000001
-#define MF_SHADOW	0x00000001
-#define MF_SHOOTABLE	0x00000001
-#define MF_SOLID	0x00000001
-#define MF_SPAWNCEILING	0x00000001
-#define MF_SPECIAL	0x00000001
+typedef enum
+{
+  // Call P_SpecialThing when touched.
+  MF_SPECIAL		= 1,
+  // Blocks.
+  MF_SOLID		= 2,
+  // Can be hit.
+  MF_SHOOTABLE	= 4,
+  // Don't use the sector links (invisible but touchable).
+  MF_NOSECTOR		= 8,
+  // Don't use the blocklinks (inert but displayable)
+  MF_NOBLOCKMAP	= 16,                    
+
+  // Not to be activated by sound, deaf monster.
+  MF_AMBUSH		= 32,
+  // Will try to attack right back.
+  MF_JUSTHIT		= 64,
+  // Will take at least one step before attacking.
+  MF_JUSTATTACKED	= 128,
+  // On level spawning (initial position),
+  //  hang from ceiling instead of stand on floor.
+  MF_SPAWNCEILING	= 256,
+  // Don't apply gravity (every tic),
+  //  that is, object will float, keeping current height
+  //  or changing it actively.
+  MF_NOGRAVITY	= 512,
+
+  // Movement flags.
+  // This allows jumps from high places.
+  MF_DROPOFF		= 0x400,
+  // For players, will pick up items.
+  MF_PICKUP		= 0x800,
+  // Player cheat. ???
+  MF_NOCLIP		= 0x1000,
+  // Player: keep info about sliding along walls.
+  MF_SLIDE		= 0x2000,
+  // Allow moves to any height, no gravity.
+  // For active floaters, e.g. cacodemons, pain elementals.
+  MF_FLOAT		= 0x4000,
+  // Don't cross lines
+  //   ??? or look at heights on teleport.
+  MF_TELEPORT		= 0x8000,
+  // Don't hit same species, explode on block.
+  // Player missiles as well as fireballs of various kinds.
+  MF_MISSILE		= 0x10000,	
+  // Dropped by a demon, not level spawned.
+  // E.g. ammo clips dropped by dying former humans.
+  MF_DROPPED		= 0x20000,
+  // Use fuzzy draw (shadow demons or spectres),
+  //  temporary player invisibility powerup.
+  MF_SHADOW		= 0x40000,
+  // Flag: don't bleed when shot (use puff),
+  //  barrels and shootable furniture shall not bleed.
+  MF_NOBLOOD		= 0x80000,
+  // Don't stop moving halfway off a step,
+  //  that is, have dead bodies slide down all the way.
+  MF_CORPSE		= 0x100000,
+  // Floating to a height for a move, ???
+  //  don't auto float to target's height.
+  MF_INFLOAT		= 0x200000,
+
+  // On kill, count this enemy object
+  //  towards intermission kill total.
+  // Happy gathering.
+  MF_COUNTKILL	= 0x400000,
+  
+  // On picking up, count this item object
+  //  towards intermission item total.
+  MF_COUNTITEM	= 0x800000,
+
+  // Special handling: skull in flight.
+  // Neither a cacodemon nor a missile.
+  MF_SKULLFLY		= 0x1000000,
+
+  // Don't spawn this object
+  //  in death match mode (e.g. key cards).
+  MF_NOTDMATCH    	= 0x2000000,
+
+  // Player sprites in multiplayer modes are modified
+  //  using an internal color lookup table for re-indexing.
+  // If 0x4 0x8 or 0xc,
+  //  use a translation table for player colormaps
+  MF_TRANSLATION  	= 0xc000000,
+  // Hmm ???.
+  MF_TRANSSHIFT	= 26
+} map_object_flag;
 
 enum map_obj_state_id
 {
@@ -1057,21 +1125,22 @@ class map_object
 {
 public:
   map_object(vertex const *_map_position, float _facing_angle, map_obj_defn const *_defn);
-  ~map_object();
+  virtual ~map_object();
 
-  vertex const *get_map_position(void) const { return &map_position; }
+  camera const *get_camera(void) const { return &_camera; }
+
   void set_subsector(subsector const *ss) { _subsector = ss; }
   subsector const *get_subsector(void) const { return _subsector; }
   sector const *get_sector(void) const;
  
-  void tick(game *_game, episode_map *_map);
+  virtual void tick(game *_game, episode_map *_map);
 
-  void render_player_view(camera const *_camera, clipped_segment_projections *clipped_seg_projs) const;
-  map_object_projection *project(camera const *_camera) const;
+  void render_player_view(camera const *view_camera, clipped_segment_projections *clipped_seg_projs) const;
+  map_object_projection *project(camera const *view_camera) const;
 
-private:
+protected:
   void change_to_meta_state(map_obj_meta_state_id new_meta_state_id);
-  float get_rotation_angle(camera const *_camera) const;
+  float get_rotation_angle(camera const *view_camera) const;
   bool lookup_next_state(map_obj_state_id next_state_id, map_obj_meta_state_id *new_meta_state_id, map_obj_state const **new_state) const;
 
   map_obj_defn const     *defn;
@@ -1082,8 +1151,7 @@ private:
   int16_t                 health;
   sprite_animation const *cur_animation;
 
-  vertex                  map_position;
-  float                   facing_angle;
+  camera                  _camera;
   int16_t                 velocity;
 
   subsector const *_subsector;
