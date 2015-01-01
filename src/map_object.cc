@@ -1,3 +1,4 @@
+#include "common.h"
 #include "map_object.h"
 #include "sprites.h"
 #include "episode_map.h"
@@ -5,19 +6,22 @@
 
 #include "debug.h"
 
+#define GRAVITY_PER_TICK 10 // FIXME: make this accelerate, like real gravity
+
 map_object::map_object(vertex const *_map_position, float _facing_angle, map_obj_defn const *_defn)
 {
-  defn = _defn;
-
-  health = defn->spawn_health;
+  defn     = _defn;
+  health   = defn->spawn_health;
+  velocity = 0; // FIXME: unused?
 
   change_to_meta_state(META_STATE_NORMAL);
 
   _camera.set_map_position(_map_position);
   _camera.set_facing_angle(_facing_angle);
-  // FIXME: set camera view height...
 
-  velocity      = 0; // FIXME: override this for projectiles
+  floor_height = 0;  // floor height (absolute)
+  foot_height  = 0;  // foot height (absolute)
+  _camera.set_view_height(foot_height + defn->height);
 }
 
 map_object::~map_object()
@@ -26,23 +30,6 @@ map_object::~map_object()
 
 void map_object::tick(game *_game, episode_map *_map)
 {
-  // move
-  if(velocity > 0)
-  {
-    vertex new_position;
-    new_position.set_x(_camera.get_map_position()->get_x() + (velocity*cos(_camera.get_facing_angle())));
-    new_position.set_y(_camera.get_map_position()->get_y() + (velocity*sin(_camera.get_facing_angle())));
-    if(_map->can_move(_camera.get_map_position(), &new_position, defn->radius))
-    {
-      _camera.set_map_position(&new_position);
-    }
-    /*else
-    {
-      defn         = &explosion_defn;
-      animation    = sprites_lookup_animation(defn->sprite_prefix);
-    }*/
-  }
-
   // animate
   if(cur_state && (cur_state->num_ticks > 0))
   {
@@ -63,6 +50,19 @@ void map_object::tick(game *_game, episode_map *_map)
         cur_state = NULL;
       }
     }
+  }
+
+  // apply gravity
+  floor_height = _map->get_floor_height_at(_camera.get_map_position()); 
+  if(foot_height < floor_height)
+  {
+    foot_height = floor_height;
+    _camera.set_view_height(foot_height + defn->height);
+  }
+  if((foot_height > floor_height) && !(defn->flags & MF_NOGRAVITY))
+  {
+    foot_height = MAX(foot_height - GRAVITY_PER_TICK, floor_height);
+    _camera.set_view_height(foot_height + defn->height);
   }
 }
 
@@ -303,6 +303,13 @@ float map_object::get_rotation_angle(camera const *view_camera) const
   while(rot_angle <       0.0) { rot_angle += 2.0*M_PI; }
   while(rot_angle >= 2.0*M_PI) { rot_angle -= 2.0*M_PI; }
   return rot_angle;
+}
+
+bool map_object::overlaps(map_object const *obj) const
+{
+  float ctr_to_ctr_dist = _camera.get_map_position()->distance_to_point(obj->get_camera()->get_map_position());
+  float sum_of_radii    = defn->radius + obj->get_defn()->radius;
+  return (ctr_to_ctr_dist <= sum_of_radii);
 }
 
 /******************************************************************************

@@ -3,13 +3,12 @@ In Progress
 
 Queued up
 ---
-- FEATURE: collision detection vs. things (vs just lines)
 - FEATURE: projectiles damage enemies
 - FEATURE: enemies walk around
 
 - BUG: top of backface lower/upper walls should occlude further-away sprites
 - BUG: wall texture is misaligned in final room.
-- BUG: Some weird glitching: [(1783.3,-2631.2) facing 0.4]
+- BUG: Some weird glitching: [(1783.3,-2631.2) facing 0.4] -- seems like it's at (sub-)sector boundaries?
 
 - FEATURE: head bobbing
 

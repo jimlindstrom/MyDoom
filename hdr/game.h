@@ -41,6 +41,8 @@ public:
 
   void spawn_map_object(map_object *_map_object);
   void kill_map_object(map_object *_map_object);
+  int get_num_map_objects(void) const { return num_map_objects; }
+  map_object *get_nth_map_object(int n) { return map_objects[n]; }
 
 private:
   void render_player_view(void);

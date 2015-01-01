@@ -19,15 +19,14 @@ public:
   void set_is_strafing_left(  bool val) { is_strafing_left   = val; }
 
 protected:
+  void try_to_move(game *_game, episode_map *_map);
+
   bool   is_turning_right;
   bool   is_turning_left;
   bool   is_moving_forward;
   bool   is_moving_backward;
   bool   is_strafing_right;
   bool   is_strafing_left;
-
-  // FIXME: move this up a level?
-  float  floor_height;    // floor height in cur sector
 };
 
 

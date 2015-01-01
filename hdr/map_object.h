@@ -1127,6 +1127,8 @@ public:
   map_object(vertex const *_map_position, float _facing_angle, map_obj_defn const *_defn);
   virtual ~map_object();
 
+  map_obj_defn const *get_defn(void) const { return defn; }
+
   camera const *get_camera(void) const { return &_camera; }
   void reset_camera(vertex const *pos, float ang) { _camera.set_map_position(pos); _camera.set_facing_angle(ang); }
 
@@ -1138,6 +1140,7 @@ public:
 
   void render_player_view(camera const *view_camera, clipped_segment_projections *clipped_seg_projs) const;
   map_object_projection *project(camera const *view_camera) const;
+  bool overlaps(map_object const *obj) const;
 
 protected:
   void change_to_meta_state(map_obj_meta_state_id new_meta_state_id);
@@ -1153,9 +1156,11 @@ protected:
   sprite_animation const *cur_animation;
 
   camera                  _camera;
-  int16_t                 velocity;
+  int16_t                 velocity;  // FIXME: unused?
+  float                   foot_height;     // height of bottom of foot (absolute)
 
-  subsector const *_subsector;
+  subsector const        *_subsector;
+  float                   floor_height;    // floor height in cur sector (absolute)
 };
 
 void map_object_tests(void);
