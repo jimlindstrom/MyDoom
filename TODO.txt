@@ -20,7 +20,6 @@ Queued up
 
 - Show the stats
 
-- FEATURE: pick up ammo
 - FEATURE: things shoot you
 - FEATURE: damage & kill things
 

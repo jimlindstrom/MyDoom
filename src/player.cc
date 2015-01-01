@@ -4,6 +4,7 @@
 #include "common.h"
 #include "player.h"
 #include "episode_map.h"
+#include "game.h"
 
 player::player(vertex const *_map_position, float _facing_angle, map_obj_defn const *_defn)
  : mobile_map_object(_map_position, _facing_angle, _defn)
@@ -37,8 +38,44 @@ void player::draw_overhead_map_marker(overhead_map *omap) const
 void player::tick(game *_game, episode_map *_map)
 {
   mobile_map_object::tick(_game, _map);
-
+  check_for_pickups(_game, _map);
   animate_weapon();
+}
+
+void player::check_for_pickups(game *_game, episode_map *_map)
+{
+  int num_objs_to_delete = 0;
+  map_object *objs_to_delete[500];
+
+  for(int i=0; i<_game->get_num_map_objects(); i++)
+  {
+    map_object *obj = _game->get_nth_map_object(i);
+    if(obj == this) { continue; } // skip self
+
+    if(overlaps(obj)) // FIXME: only need to do this if in same/adjacent block
+    {
+      if(obj->get_defn()->flags & MF_SPECIAL)
+      {
+        pickup_item(obj);
+        objs_to_delete[num_objs_to_delete++] = obj;
+      }
+      if(obj->get_defn()->flags & MF_PICKUP)
+      {
+        pickup_item(obj);
+        objs_to_delete[num_objs_to_delete++] = obj;
+      }
+    }
+  }
+
+  for(int i=0; i<num_objs_to_delete; i++)
+  {
+    _game->kill_map_object(objs_to_delete[i]);
+  }
+}
+
+void player::pickup_item(map_object *obj)
+{
+  // FIXME: not implemented
 }
 
 void player::set_weapon(int idx, weapon *w)

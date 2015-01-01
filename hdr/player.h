@@ -21,7 +21,9 @@ public:
   void fire_weapon(void);
 
 private:
+  void check_for_pickups(game *_game, episode_map *_map);
   void animate_weapon(void);
+  void pickup_item(map_object *obj);
 
   weapon *weapons[NUM_WEAPONS];
   int selected_weapon_idx;
