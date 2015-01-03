@@ -6,7 +6,7 @@
 class mobile_map_object : public map_object
 {
 public:
-  mobile_map_object(vertex const *_map_position, float _facing_angle, map_obj_defn const *_defn);
+  mobile_map_object(vertex const *_map_position, float _facing_angle, float _foot_height, map_obj_defn const *_defn);
   virtual ~mobile_map_object();
 
   virtual void tick(game *_game, episode_map *_map);

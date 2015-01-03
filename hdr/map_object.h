@@ -1124,7 +1124,7 @@ class sector;      // forward declaration
 class map_object
 {
 public:
-  map_object(vertex const *_map_position, float _facing_angle, map_obj_defn const *_defn);
+  map_object(vertex const *_map_position, float _facing_angle, float _foot_height, map_obj_defn const *_defn);
   virtual ~map_object();
 
   map_obj_defn const *get_defn(void) const { return defn; }
@@ -1142,6 +1142,8 @@ public:
   map_object_projection *project(camera const *view_camera) const;
   bool overlaps(map_object const *obj) const;
 
+  virtual void handle_hit_by_projectile(game *_game, int16_t damage);
+
 protected:
   void change_to_meta_state(map_obj_meta_state_id new_meta_state_id);
   float get_rotation_angle(camera const *view_camera) const;
@@ -1156,7 +1158,7 @@ protected:
   sprite_animation const *cur_animation;
 
   camera                  _camera;
-  int16_t                 velocity;  // FIXME: unused?
+  int16_t                 velocity;        // FIXME: unused?
   float                   foot_height;     // height of bottom of foot (absolute)
 
   subsector const        *_subsector;

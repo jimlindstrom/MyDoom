@@ -5,8 +5,8 @@
 
 #define CAMERA_TURN_INCREMENT DEG_TO_RAD(3)
 
-mobile_map_object::mobile_map_object(vertex const *_map_position, float _facing_angle, map_obj_defn const *_defn)
- : map_object(_map_position, _facing_angle, _defn)
+mobile_map_object::mobile_map_object(vertex const *_map_position, float _facing_angle, float _foot_height, map_obj_defn const *_defn)
+ : map_object(_map_position, _facing_angle, _foot_height, _defn)
 {
   // set initially idle
   is_turning_right   = false;

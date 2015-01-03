@@ -9,7 +9,7 @@ map_object *map_object_factory::create(thing_instance const *ti)
   {
     if((*defn)->doomednum == ti->get_thing_type())
     {
-      return new map_object(ti->get_map_position(), ti->get_facing_angle(), *defn);
+      return new map_object(ti->get_map_position(), ti->get_facing_angle(), 0, *defn);
     }
   }
 
@@ -17,7 +17,7 @@ map_object *map_object_factory::create(thing_instance const *ti)
   {
     if((*defn)->doomednum == ti->get_thing_type())
     {
-      return new map_object(ti->get_map_position(), ti->get_facing_angle(), *defn);
+      return new map_object(ti->get_map_position(), ti->get_facing_angle(), 0, *defn);
     }
   }
 

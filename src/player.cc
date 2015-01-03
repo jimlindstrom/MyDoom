@@ -7,7 +7,7 @@
 #include "game.h"
 
 player::player(vertex const *_map_position, float _facing_angle, map_obj_defn const *_defn)
- : mobile_map_object(_map_position, _facing_angle, _defn)
+ : mobile_map_object(_map_position, _facing_angle, 0, _defn)
 {
   selected_weapon_idx = 0;
 }
@@ -76,6 +76,7 @@ void player::check_for_pickups(game *_game, episode_map *_map)
 void player::pickup_item(map_object *obj)
 {
   // FIXME: not implemented
+  // SEE: P_TouchSpecialThing (p_inter.c, line 339 of 918)
 }
 
 void player::set_weapon(int idx, weapon *w)

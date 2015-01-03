@@ -231,7 +231,8 @@ map_obj_defn blood_defn =
   100,                  // mass
   0,                    // damage
   //sfx_None,           // activesound
-  MF_NOBLOCKMAP,                // flags
+  MF_NOBLOCKMAP |       // flags
+  MF_NOGRAVITY,
   NULL,                 // raisestate
 };
 

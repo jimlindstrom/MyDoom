@@ -3,6 +3,7 @@
 #include "games.h"
 #include "game.h"
 #include "projectile.h"
+#include "bullet.h"
 #include "map_obj_defn_projectiles.h"
 
 /******************************************************************************
@@ -50,8 +51,19 @@ static sprite_state_machine_state barehands_states[] = {
 static sprite_state_machine_transition barehands_transitions[] = {
   {true, STATE_BAREHANDS_READY,   EVENT_SPRITE_ANIM_DONE, STATE_BAREHANDS_READY},
 
+  /* fire */
   {true, STATE_BAREHANDS_READY,   EVENT_WEAPON_FIRE,      STATE_BAREHANDS_PUNCH1},
 
+  /* don't fire, when not ready */
+  {true, STATE_BAREHANDS_PUNCH1,  EVENT_WEAPON_FIRE,      STATE_BAREHANDS_PUNCH1},
+  {true, STATE_BAREHANDS_PUNCH2,  EVENT_WEAPON_FIRE,      STATE_BAREHANDS_PUNCH2},
+  {true, STATE_BAREHANDS_PUNCH3,  EVENT_WEAPON_FIRE,      STATE_BAREHANDS_PUNCH3},
+  {true, STATE_BAREHANDS_PUNCH4,  EVENT_WEAPON_FIRE,      STATE_BAREHANDS_PUNCH4},
+  {true, STATE_BAREHANDS_PUNCH5,  EVENT_WEAPON_FIRE,      STATE_BAREHANDS_PUNCH5},
+  {true, STATE_BAREHANDS_DOWN,    EVENT_WEAPON_FIRE,      STATE_BAREHANDS_DOWN},
+  {true, STATE_BAREHANDS_UP,      EVENT_WEAPON_FIRE,      STATE_BAREHANDS_UP},
+
+  /* punch animation */
   {true, STATE_BAREHANDS_PUNCH1,  EVENT_SPRITE_ANIM_DONE, STATE_BAREHANDS_PUNCH2},
   {true, STATE_BAREHANDS_PUNCH2,  EVENT_SPRITE_ANIM_DONE, STATE_BAREHANDS_PUNCH3},
   {true, STATE_BAREHANDS_PUNCH3,  EVENT_SPRITE_ANIM_DONE, STATE_BAREHANDS_PUNCH4},
@@ -73,7 +85,7 @@ bool barehands::handle_event(int event_id)
   bool successful_transition = weapon::handle_event(event_id);
   if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
   {
-    printf("punch!\n");
+    printf("FIXME: punch!\n");
   }
   return successful_transition;
 }
@@ -101,8 +113,15 @@ static sprite_state_machine_transition pistol_transitions[] = {
 
   {true, STATE_PISTOL_READY,   EVENT_WEAPON_FIRE,      STATE_PISTOL_FLASH1},
 
-  {true, STATE_PISTOL_FLASH1,  EVENT_SPRITE_ANIM_DONE, STATE_PISTOL_RELOAD1},
+  {true, STATE_PISTOL_FLASH1,  EVENT_WEAPON_FIRE,      STATE_PISTOL_FLASH1},
+  {true, STATE_PISTOL_RELOAD1, EVENT_WEAPON_FIRE,      STATE_PISTOL_RELOAD1},
+  {true, STATE_PISTOL_RELOAD2, EVENT_WEAPON_FIRE,      STATE_PISTOL_RELOAD2},
+  {true, STATE_PISTOL_RELOAD3, EVENT_WEAPON_FIRE,      STATE_PISTOL_RELOAD3},
+  {true, STATE_PISTOL_RELOAD4, EVENT_WEAPON_FIRE,      STATE_PISTOL_RELOAD4},
+  {true, STATE_PISTOL_DOWN,    EVENT_WEAPON_FIRE,      STATE_PISTOL_DOWN},
+  {true, STATE_PISTOL_UP,      EVENT_WEAPON_FIRE,      STATE_PISTOL_UP},
 
+  {true, STATE_PISTOL_FLASH1,  EVENT_SPRITE_ANIM_DONE, STATE_PISTOL_RELOAD1},
   {true, STATE_PISTOL_RELOAD1, EVENT_SPRITE_ANIM_DONE, STATE_PISTOL_RELOAD2},
   {true, STATE_PISTOL_RELOAD2, EVENT_SPRITE_ANIM_DONE, STATE_PISTOL_RELOAD3},
   {true, STATE_PISTOL_RELOAD3, EVENT_SPRITE_ANIM_DONE, STATE_PISTOL_RELOAD4},
@@ -123,8 +142,14 @@ bool pistol::handle_event(int event_id)
   bool successful_transition = weapon::handle_event(event_id);
   if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
   {
-    printf("fire!\n");
+    map_object *_bullet = new bullet(_game->get_player()->get_camera()->get_map_position(), 
+                                     _game->get_player()->get_camera()->get_facing_angle(),
+                                     _game->get_player()->get_camera()->get_view_height(),
+                                     &tracer_defn, 
+                                     _game->get_player()->get_defn()->radius);
+    _game->spawn_map_object(_bullet);
   }
+
   return successful_transition;
 }
 
@@ -159,6 +184,20 @@ static sprite_state_machine_transition shotgun_transitions[] = {
 
   {true, STATE_SHOTGUN_READY,   EVENT_WEAPON_FIRE,      STATE_SHOTGUN_FLASH1},
 
+  {true, STATE_SHOTGUN_FLASH1,  EVENT_WEAPON_FIRE,      STATE_SHOTGUN_FLASH1},
+  {true, STATE_SHOTGUN_FLASH2,  EVENT_WEAPON_FIRE,      STATE_SHOTGUN_FLASH2},
+  {true, STATE_SHOTGUN_RELOAD1, EVENT_WEAPON_FIRE,      STATE_SHOTGUN_RELOAD1},
+  {true, STATE_SHOTGUN_RELOAD2, EVENT_WEAPON_FIRE,      STATE_SHOTGUN_RELOAD2},
+  {true, STATE_SHOTGUN_RELOAD3, EVENT_WEAPON_FIRE,      STATE_SHOTGUN_RELOAD3},
+  {true, STATE_SHOTGUN_RELOAD4, EVENT_WEAPON_FIRE,      STATE_SHOTGUN_RELOAD4},
+  {true, STATE_SHOTGUN_RELOAD5, EVENT_WEAPON_FIRE,      STATE_SHOTGUN_RELOAD5},
+  {true, STATE_SHOTGUN_RELOAD6, EVENT_WEAPON_FIRE,      STATE_SHOTGUN_RELOAD6},
+  {true, STATE_SHOTGUN_RELOAD7, EVENT_WEAPON_FIRE,      STATE_SHOTGUN_RELOAD7},
+  {true, STATE_SHOTGUN_RELOAD8, EVENT_WEAPON_FIRE,      STATE_SHOTGUN_RELOAD8},
+  {true, STATE_SHOTGUN_RELOAD9, EVENT_WEAPON_FIRE,      STATE_SHOTGUN_RELOAD9},
+  {true, STATE_SHOTGUN_DOWN,    EVENT_WEAPON_FIRE,      STATE_SHOTGUN_DOWN},
+  {true, STATE_SHOTGUN_UP,      EVENT_WEAPON_FIRE,      STATE_SHOTGUN_UP},
+
   {true, STATE_SHOTGUN_FLASH1,  EVENT_SPRITE_ANIM_DONE, STATE_SHOTGUN_FLASH2},
   {true, STATE_SHOTGUN_FLASH2,  EVENT_SPRITE_ANIM_DONE, STATE_SHOTGUN_RELOAD1},
 
@@ -189,7 +228,15 @@ bool shotgun::handle_event(int event_id)
   bool successful_transition = weapon::handle_event(event_id);
   if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
   {
-    printf("fire!\n");
+    for(int i=0; i<7; i++)
+    {
+      map_object *_bullet = new bullet(_game->get_player()->get_camera()->get_map_position(), 
+                                       _game->get_player()->get_camera()->get_facing_angle(),
+                                       _game->get_player()->get_camera()->get_view_height(),
+                                       &tracer_defn, 
+                                       _game->get_player()->get_defn()->radius);
+      _game->spawn_map_object(_bullet);
+    }
   }
   return successful_transition;
 }
@@ -216,6 +263,11 @@ static sprite_state_machine_transition chaingun_transitions[] = {
   {true, STATE_CHAINGUN_READY,   EVENT_SPRITE_ANIM_DONE, STATE_CHAINGUN_READY},
 
   {true, STATE_CHAINGUN_READY,   EVENT_WEAPON_FIRE,      STATE_CHAINGUN_FLASH1},
+  {true, STATE_CHAINGUN_FLASH1,  EVENT_WEAPON_FIRE,      STATE_CHAINGUN_FLASH1},
+  {true, STATE_CHAINGUN_FLASH2,  EVENT_WEAPON_FIRE,      STATE_CHAINGUN_FLASH1},
+  {true, STATE_CHAINGUN_RELOAD1, EVENT_WEAPON_FIRE,      STATE_CHAINGUN_FLASH1},
+  {true, STATE_CHAINGUN_RELOAD2, EVENT_WEAPON_FIRE,      STATE_CHAINGUN_FLASH1},
+  {true, STATE_CHAINGUN_RELOAD3, EVENT_WEAPON_FIRE,      STATE_CHAINGUN_FLASH1},
 
   {true, STATE_CHAINGUN_FLASH1,  EVENT_SPRITE_ANIM_DONE, STATE_CHAINGUN_FLASH2},
   {true, STATE_CHAINGUN_FLASH2,  EVENT_SPRITE_ANIM_DONE, STATE_CHAINGUN_RELOAD1},
@@ -239,7 +291,13 @@ bool chaingun::handle_event(int event_id)
   bool successful_transition = weapon::handle_event(event_id);
   if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
   {
-    printf("fire!\n");
+    // FIXME: this should fire **continuously**
+    map_object *_bullet = new bullet(_game->get_player()->get_camera()->get_map_position(), 
+                                     _game->get_player()->get_camera()->get_facing_angle(),
+                                     _game->get_player()->get_camera()->get_view_height(),
+                                     &tracer_defn, 
+                                     _game->get_player()->get_defn()->radius);
+    _game->spawn_map_object(_bullet);
   }
   return successful_transition;
 }
@@ -269,6 +327,16 @@ static sprite_state_machine_transition missile_launcher_transitions[] = {
 
   {true, STATE_MISSILE_LAUNCHER_READY,   EVENT_WEAPON_FIRE,      STATE_MISSILE_LAUNCHER_FLASH1},
 
+  {true, STATE_MISSILE_LAUNCHER_FLASH1,  EVENT_WEAPON_FIRE,      STATE_MISSILE_LAUNCHER_FLASH1},
+  {true, STATE_MISSILE_LAUNCHER_FLASH2,  EVENT_WEAPON_FIRE,      STATE_MISSILE_LAUNCHER_FLASH2},
+  {true, STATE_MISSILE_LAUNCHER_FLASH3,  EVENT_WEAPON_FIRE,      STATE_MISSILE_LAUNCHER_FLASH3},
+  {true, STATE_MISSILE_LAUNCHER_FLASH4,  EVENT_WEAPON_FIRE,      STATE_MISSILE_LAUNCHER_FLASH4},
+  {true, STATE_MISSILE_LAUNCHER_RELOAD1, EVENT_WEAPON_FIRE,      STATE_MISSILE_LAUNCHER_RELOAD1},
+  {true, STATE_MISSILE_LAUNCHER_RELOAD2, EVENT_WEAPON_FIRE,      STATE_MISSILE_LAUNCHER_RELOAD2},
+  {true, STATE_MISSILE_LAUNCHER_RELOAD3, EVENT_WEAPON_FIRE,      STATE_MISSILE_LAUNCHER_RELOAD3},
+  {true, STATE_MISSILE_LAUNCHER_DOWN,    EVENT_WEAPON_FIRE,      STATE_MISSILE_LAUNCHER_DOWN},
+  {true, STATE_MISSILE_LAUNCHER_UP,      EVENT_WEAPON_FIRE,      STATE_MISSILE_LAUNCHER_UP},
+
   {true, STATE_MISSILE_LAUNCHER_FLASH1,  EVENT_SPRITE_ANIM_DONE, STATE_MISSILE_LAUNCHER_FLASH2},
   {true, STATE_MISSILE_LAUNCHER_FLASH2,  EVENT_SPRITE_ANIM_DONE, STATE_MISSILE_LAUNCHER_FLASH3},
   {true, STATE_MISSILE_LAUNCHER_FLASH3,  EVENT_SPRITE_ANIM_DONE, STATE_MISSILE_LAUNCHER_FLASH4},
@@ -295,7 +363,9 @@ bool missile_launcher::handle_event(int event_id)
   {
     map_object *missile = new projectile(_game->get_player()->get_camera()->get_map_position(), 
                                          _game->get_player()->get_camera()->get_facing_angle(),
-                                         &rocket_defn);
+                                         _game->get_player()->get_camera()->get_view_height()-20,
+                                         &rocket_defn, 
+                                        _game->get_player()->get_defn()->radius);
     _game->spawn_map_object(missile);
   }
   return successful_transition;
@@ -323,6 +393,13 @@ static sprite_state_machine_transition plasma_rifle_transitions[] = {
 
   {true, STATE_PLASMA_RIFLE_READY,   EVENT_WEAPON_FIRE,      STATE_PLASMA_RIFLE_FLASH1},
 
+  {true, STATE_PLASMA_RIFLE_FLASH1,  EVENT_WEAPON_FIRE,      STATE_PLASMA_RIFLE_FLASH1},
+  {true, STATE_PLASMA_RIFLE_FLASH2,  EVENT_WEAPON_FIRE,      STATE_PLASMA_RIFLE_FLASH2},
+  {true, STATE_PLASMA_RIFLE_RELOAD1, EVENT_WEAPON_FIRE,      STATE_PLASMA_RIFLE_RELOAD1},
+  {true, STATE_PLASMA_RIFLE_RELOAD2, EVENT_WEAPON_FIRE,      STATE_PLASMA_RIFLE_RELOAD2},
+  {true, STATE_PLASMA_RIFLE_DOWN,    EVENT_WEAPON_FIRE,      STATE_PLASMA_RIFLE_DOWN},
+  {true, STATE_PLASMA_RIFLE_UP,      EVENT_WEAPON_FIRE,      STATE_PLASMA_RIFLE_UP},
+
   {true, STATE_PLASMA_RIFLE_FLASH1,  EVENT_SPRITE_ANIM_DONE, STATE_PLASMA_RIFLE_FLASH2},
   {true, STATE_PLASMA_RIFLE_FLASH2,  EVENT_SPRITE_ANIM_DONE, STATE_PLASMA_RIFLE_RELOAD1},
 
@@ -346,7 +423,9 @@ bool plasma_rifle::handle_event(int event_id)
   {
     map_object *plasma = new projectile(_game->get_player()->get_camera()->get_map_position(), 
                                         _game->get_player()->get_camera()->get_facing_angle(),
-                                        &plasma_defn);
+                                        _game->get_player()->get_camera()->get_view_height()-20,
+                                        &plasma_defn, 
+                                        _game->get_player()->get_defn()->radius);
     _game->spawn_map_object(plasma);
   }
   return successful_transition;
@@ -376,6 +455,15 @@ static sprite_state_machine_transition bfg_9000_transitions[] = {
 
   {true, STATE_BFG_9000_READY,   EVENT_WEAPON_FIRE,      STATE_BFG_9000_FLASH1},
 
+  {true, STATE_BFG_9000_FLASH1,  EVENT_WEAPON_FIRE,      STATE_BFG_9000_FLASH1},
+  {true, STATE_BFG_9000_FLASH2,  EVENT_WEAPON_FIRE,      STATE_BFG_9000_FLASH2},
+  {true, STATE_BFG_9000_RELOAD1, EVENT_WEAPON_FIRE,      STATE_BFG_9000_RELOAD1},
+  {true, STATE_BFG_9000_RELOAD2, EVENT_WEAPON_FIRE,      STATE_BFG_9000_RELOAD2},
+  {true, STATE_BFG_9000_RELOAD3, EVENT_WEAPON_FIRE,      STATE_BFG_9000_RELOAD3},
+  {true, STATE_BFG_9000_RELOAD4, EVENT_WEAPON_FIRE,      STATE_BFG_9000_RELOAD4},
+  {true, STATE_BFG_9000_DOWN,    EVENT_WEAPON_FIRE,      STATE_BFG_9000_DOWN},
+  {true, STATE_BFG_9000_UP,      EVENT_WEAPON_FIRE,      STATE_BFG_9000_UP},
+
   {true, STATE_BFG_9000_FLASH1,  EVENT_SPRITE_ANIM_DONE, STATE_BFG_9000_FLASH2},
   {true, STATE_BFG_9000_FLASH2,  EVENT_SPRITE_ANIM_DONE, STATE_BFG_9000_RELOAD1},
 
@@ -401,7 +489,9 @@ bool bfg_9000::handle_event(int event_id)
   {
     map_object *blast = new projectile(_game->get_player()->get_camera()->get_map_position(), 
                                        _game->get_player()->get_camera()->get_facing_angle(),
-                                       &bfg_defn);
+                                       _game->get_player()->get_camera()->get_view_height()-30,
+                                       &bfg_defn, 
+                                       _game->get_player()->get_defn()->radius);
     _game->spawn_map_object(blast);
   }
   return successful_transition;
@@ -431,6 +521,12 @@ static sprite_state_machine_transition chainsaw_transitions[] = {
   {true, STATE_CHAINSAW_READY1,  EVENT_WEAPON_FIRE,      STATE_CHAINSAW_SAW1},
   {true, STATE_CHAINSAW_READY2,  EVENT_WEAPON_FIRE,      STATE_CHAINSAW_SAW1},
 
+  {true, STATE_CHAINSAW_SAW1,    EVENT_WEAPON_FIRE,      STATE_CHAINSAW_SAW1},
+  {true, STATE_CHAINSAW_SAW2,    EVENT_WEAPON_FIRE,      STATE_CHAINSAW_SAW2},
+  {true, STATE_CHAINSAW_SAW3,    EVENT_WEAPON_FIRE,      STATE_CHAINSAW_SAW3},
+  {true, STATE_CHAINSAW_DOWN,    EVENT_WEAPON_FIRE,      STATE_CHAINSAW_DOWN},
+  {true, STATE_CHAINSAW_UP,      EVENT_WEAPON_FIRE,      STATE_CHAINSAW_UP},
+
   {true, STATE_CHAINSAW_SAW1,    EVENT_SPRITE_ANIM_DONE, STATE_CHAINSAW_SAW2},
   {true, STATE_CHAINSAW_SAW2,    EVENT_SPRITE_ANIM_DONE, STATE_CHAINSAW_SAW3},
   {true, STATE_CHAINSAW_SAW3,    EVENT_SPRITE_ANIM_DONE, STATE_CHAINSAW_READY1},
@@ -450,7 +546,7 @@ bool chainsaw::handle_event(int event_id)
   bool successful_transition = weapon::handle_event(event_id);
   if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
   {
-    printf("fire!\n");
+    printf("FIXME: saw!\n");
   }
   return successful_transition;
 }
@@ -524,7 +620,7 @@ bool super_shotgun::handle_event(int event_id)
   bool successful_transition = weapon::handle_event(event_id);
   if(successful_transition && (event_id == EVENT_WEAPON_FIRE))
   {
-    printf("fire!\n");
+    printf("FIXME: fire!\n");
   }
   return successful_transition;
 }

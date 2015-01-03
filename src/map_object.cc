@@ -3,12 +3,13 @@
 #include "sprites.h"
 #include "episode_map.h"
 #include "game.h"
+#include "map_obj_defn_inerts.h"
 
 #include "debug.h"
 
 #define GRAVITY_PER_TICK 10 // FIXME: make this accelerate, like real gravity
 
-map_object::map_object(vertex const *_map_position, float _facing_angle, map_obj_defn const *_defn)
+map_object::map_object(vertex const *_map_position, float _facing_angle, float _foot_height, map_obj_defn const *_defn)
 {
   defn     = _defn;
   health   = defn->spawn_health;
@@ -19,8 +20,8 @@ map_object::map_object(vertex const *_map_position, float _facing_angle, map_obj
   _camera.set_map_position(_map_position);
   _camera.set_facing_angle(_facing_angle);
 
-  floor_height = 0;  // floor height (absolute)
-  foot_height  = 0;  // foot height (absolute)
+  floor_height = 0;            // floor height (absolute)
+  foot_height  = _foot_height; // foot height (absolute)
   _camera.set_view_height(foot_height + defn->height);
 }
 
@@ -281,7 +282,7 @@ map_object_projection *map_object::project(camera const *view_camera) const
 
   // project vertically
   float y0, dy;
-  float rel_height = view_camera->get_view_height() - get_sector()->get_floor_height(); // FIXME: assumes it sits on floor
+  float rel_height = view_camera->get_view_height() - _camera.get_view_height() + defn->height;
   _projector->project_z_to_y(-rel_height, dist_c, &y0, &dy);
   float h = (proj->x_r - proj->x_l) * proj->_sprite->get_height() / proj->_sprite->get_width();
   proj->y_t = y0-h;
@@ -310,6 +311,45 @@ bool map_object::overlaps(map_object const *obj) const
   float ctr_to_ctr_dist = _camera.get_map_position()->distance_to_point(obj->get_camera()->get_map_position());
   float sum_of_radii    = defn->radius + obj->get_defn()->radius;
   return (ctr_to_ctr_dist <= sum_of_radii);
+}
+
+void map_object::handle_hit_by_projectile(game *_game, int16_t damage)
+{
+  health = MAX(0, health-damage);
+  if(health > 0)
+  {
+    if(defn->pain_states)
+    {
+      change_to_meta_state(META_STATE_PAIN);
+    }
+
+    if(!(defn->flags && MF_NOBLOOD))
+    {
+      map_object *blood = new map_object(_camera.get_map_position(),
+                                         _camera.get_facing_angle(),
+                                         _camera.get_view_height(),
+                                         &blood_defn);
+      _game->spawn_map_object(blood);
+    }
+  }
+  else
+  {
+    if(defn->death_states)
+    {
+      if((cur_meta_state_id == META_STATE_NORMAL ) ||
+         (cur_meta_state_id == META_STATE_SEE    ) ||
+         (cur_meta_state_id == META_STATE_PAIN   ) ||
+         (cur_meta_state_id == META_STATE_MELEE  ) ||
+         (cur_meta_state_id == META_STATE_MISSILE) ) 
+      {
+        change_to_meta_state(META_STATE_DEATH);
+      }
+    }
+    else
+    {
+      cur_state = NULL;
+    }
+  }
 }
 
 /******************************************************************************

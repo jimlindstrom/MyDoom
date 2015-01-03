@@ -3,7 +3,9 @@ In Progress
 
 Queued up
 ---
-- FEATURE: projectiles damage enemies
+- FEATURE: can punch nearby enemies
+- FEATURE: can saw nearby enemies
+
 - FEATURE: enemies walk around
 
 - BUG: top of backface lower/upper walls should occlude further-away sprites
@@ -21,7 +23,6 @@ Queued up
 - Show the stats
 
 - FEATURE: things shoot you
-- FEATURE: damage & kill things
 
 - FEATURE: use different skies in different levels
 - FEATURE: animate wall textures (p_spec.c:101). See: http://doom.wikia.com/wiki/Animated_wall (There aren't many in doom1)

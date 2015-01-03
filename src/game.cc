@@ -94,7 +94,7 @@ void game::init_map_objects(void)
   _player->set_weapon(6, new bfg_9000(this));
   _player->set_weapon(7, new chainsaw(this));
   _player->set_weapon(8, new super_shotgun(this));
-  _player->select_weapon(2);
+  _player->select_weapon(1);
 
   if(game_custom_start_pos)
   {
