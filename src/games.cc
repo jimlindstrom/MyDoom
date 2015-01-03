@@ -15,6 +15,8 @@
 
 #include "game.h"
 
+char map_name[10] = "E1M1";
+
 static int16_t screen_width  = 768;
 static int16_t screen_height = 480;
 static game *cur_game = NULL;
@@ -62,7 +64,7 @@ void game_run(void)
 {
   printf("Running...\n");
 
-  cur_map = episode_maps_get_by_name("E1M1");
+  cur_map = episode_maps_get_by_name(map_name);
   if(!cur_map)
   {
     printf("ERROR: couldn't find map\n");

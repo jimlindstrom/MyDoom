@@ -64,6 +64,10 @@ int main(int argc, char **argv)
       game_custom_start_y = atof(argv[++i]);
       game_custom_start_r = atof(argv[++i]);
     }
+    else if(strcmp(argv[i], "--map")==0)
+    {
+      strcpy(map_name, argv[++i]);
+    }
   }
 
   run_game_thread();
